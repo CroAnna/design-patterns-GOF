@@ -25,7 +25,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<mainClass>
-								edu.unizg.foi.uzdiz.askarica20.zadaca_1.MainApplication</mainClass>
+								edu.unizg.foi.uzdiz.askarica20.zadaca_1.GlavniProgram</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
