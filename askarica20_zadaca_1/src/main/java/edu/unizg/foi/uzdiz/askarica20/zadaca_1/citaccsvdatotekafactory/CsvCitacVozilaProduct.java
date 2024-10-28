@@ -4,8 +4,8 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory;
 public class CsvCitacVozilaProduct extends CsvCitacProduct {
 
   @Override
-  public void ucitaj() {
-    // TODO Auto-generated method stub
+  public void ucitaj(String datoteka) {
+    System.out.println("ucitaj datoteku vozila");
   }
 
 }

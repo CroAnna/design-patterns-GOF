@@ -1,5 +1,11 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_1;
 
+import edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory.CsvCitacCreator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory.CsvCitacKompozicijaCreator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory.CsvCitacProduct;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory.CsvCitacStanicaCreator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory.CsvCitacVozilaCreator;
+
 public class GlavniProgram {
 
   public static void main(String[] args) {
@@ -8,6 +14,7 @@ public class GlavniProgram {
         System.out.println("Neispravni argumenti.");
       } else {
         System.out.println("-----------ok argumenti----------------");
+        ucitajDatoteke(args);
       }
     } catch (IllegalArgumentException e) {
       System.out.println("Greška: " + e.getMessage());
@@ -22,8 +29,7 @@ public class GlavniProgram {
     }
 
     for (int i = 0; i < args.length; i += 2) {
-      String zastavica = args[i];
-      String datoteka = args[i + 1];
+      String zastavica = args[i], datoteka = args[i + 1];
 
       switch (zastavica) {
         case "--zs":
@@ -36,7 +42,7 @@ public class GlavniProgram {
           zkFlag++;
           break;
         default:
-          return false; // Nepoznata zastavica
+          return false;
       }
 
       if (datoteka.isEmpty()) {
@@ -48,6 +54,30 @@ public class GlavniProgram {
       return true;
     } else {
       throw new IllegalArgumentException("Nema po jedan dokument za svaku zastavicu.");
+    }
+  }
+
+  public static void ucitajDatoteke(String[] args) {
+    for (int i = 0; i < args.length; i += 2) {
+      String zastavica = args[i];
+      String datoteka = args[i + 1];
+      CsvCitacCreator concreteCreator = null;
+
+      switch (zastavica) {
+        case "--zs":
+          concreteCreator = new CsvCitacStanicaCreator();
+          break;
+        case "--zps":
+          concreteCreator = new CsvCitacVozilaCreator();
+          break;
+        case "--zk":
+          concreteCreator = new CsvCitacKompozicijaCreator();
+          break;
+      }
+
+      CsvCitacProduct concreteProduct = concreteCreator.kreirajCitac(); // factory method
+      concreteProduct.ucitaj(datoteka); // TODO sloziti da se ucitavaju po redu (a ne ovisno kak se
+                                        // pojave u argumentima)
     }
   }
 }
