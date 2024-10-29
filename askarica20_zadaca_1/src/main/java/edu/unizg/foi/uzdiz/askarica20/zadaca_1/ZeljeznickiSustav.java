@@ -54,8 +54,8 @@ public class ZeljeznickiSustav {
     String unos = "";
     Scanner skener = new Scanner(System.in);
 
-    System.out.println("Dobrodosli u FOI Zeljeznice!\n");
-    // radi i slusaj komande dok korisnik ne odabere Q
+    System.out.println("-- Dobrodosli u FOI Zeljeznice! --\n");
+
     do {
       System.out.println("Unesite komandu ili odaberite Q za izlaz.");
       unos = skener.nextLine();

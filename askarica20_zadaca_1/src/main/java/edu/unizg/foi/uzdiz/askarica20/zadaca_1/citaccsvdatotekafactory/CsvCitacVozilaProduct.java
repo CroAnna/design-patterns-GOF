@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_1.ZeljeznickiSustav;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Vozilo;
 
 // ConcreteProduct
 public class CsvCitacVozilaProduct extends CsvCitacProduct {
@@ -49,19 +48,20 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
         }
 
         if (redakDobrogFormata && dijeloviRetka.length == 18) {
-          // TODO ovo tu ce se mijenjat za builder
-          Vozilo vozilo = new Vozilo(brojRetka, dijeloviRetka[0], dijeloviRetka[1],
-              dijeloviRetka[2], Integer.valueOf(dijeloviRetka[3]), dijeloviRetka[4],
-              dijeloviRetka[5], dijeloviRetka[6], Integer.valueOf(dijeloviRetka[7]),
-              Double.parseDouble(dijeloviRetka[8].replace(',', '.')),
-              Integer.valueOf(dijeloviRetka[9]), Integer.valueOf(dijeloviRetka[10]),
-              Integer.valueOf(dijeloviRetka[11]), Integer.valueOf(dijeloviRetka[12]),
-              Integer.valueOf(dijeloviRetka[13]),
-              Double.valueOf(dijeloviRetka[14].replace(',', '.')),
-              Double.valueOf(dijeloviRetka[15].replace(',', '.')),
-              Integer.valueOf(dijeloviRetka[16]), dijeloviRetka[17]);
+          // TODO dodaj builder kreiranje objekata
+          /*
+           * Vozilo vozilo = new Vozilo(brojRetka, dijeloviRetka[0], dijeloviRetka[1],
+           * dijeloviRetka[2], Integer.valueOf(dijeloviRetka[3]), dijeloviRetka[4],
+           * dijeloviRetka[5], dijeloviRetka[6], Integer.valueOf(dijeloviRetka[7]),
+           * Double.parseDouble(dijeloviRetka[8].replace(',', '.')),
+           * Integer.valueOf(dijeloviRetka[9]), Integer.valueOf(dijeloviRetka[10]),
+           * Integer.valueOf(dijeloviRetka[11]), Integer.valueOf(dijeloviRetka[12]),
+           * Integer.valueOf(dijeloviRetka[13]), Double.valueOf(dijeloviRetka[14].replace(',',
+           * '.')), Double.valueOf(dijeloviRetka[15].replace(',', '.')),
+           * Integer.valueOf(dijeloviRetka[16]), dijeloviRetka[17]);
+           */
 
-          ZeljeznickiSustav.dohvatiInstancu().dodajVozilo(vozilo);
+          // ZeljeznickiSustav.dohvatiInstancu().dodajVozilo(vozilo);
         } else {
           ukupanBrojGresakaUDatoteci++;
           ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();

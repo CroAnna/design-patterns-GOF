@@ -29,33 +29,6 @@ public class Vozilo {
     super();
   }
 
-  // mozda ovaj konstruktor maknut, ak se koristi builder
-  public Vozilo(int id, String oznaka, String opis, String proizvodac, int godina, String namjena,
-      String vrstaPrijevoza, String vrstaPogona, int maksimalnaBrzina, double maksimalnaSnaga,
-      int brojSjedecihMjesta, int brojStajacihMjesta, int brojBicikala, int brojKreveta,
-      int brojAutomobila, double nosivost, double povrsina, int zapremnina, String statusVozila) {
-    super();
-    this.id = id;
-    this.oznaka = oznaka;
-    this.opis = opis;
-    this.proizvodac = proizvodac;
-    this.godina = godina;
-    this.namjena = namjena;
-    this.vrstaPrijevoza = vrstaPrijevoza;
-    this.vrstaPogona = vrstaPogona;
-    this.maksimalnaBrzina = maksimalnaBrzina;
-    this.maksimalnaSnaga = maksimalnaSnaga;
-    this.brojSjedecihMjesta = brojSjedecihMjesta;
-    this.brojStajacihMjesta = brojStajacihMjesta;
-    this.brojBicikala = brojBicikala;
-    this.brojKreveta = brojKreveta;
-    this.brojAutomobila = brojAutomobila;
-    this.nosivost = nosivost;
-    this.povrsina = povrsina;
-    this.zapremnina = zapremnina;
-    this.statusVozila = statusVozila;
-  }
-
   public int getId() {
     return id;
   }
