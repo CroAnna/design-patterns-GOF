@@ -15,21 +15,11 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
     System.out.println("ucitaj datoteku stanica");
 
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
-    Pattern predlozakStanica = Pattern.compile("^(?<nazivStanice>[^;]+);" + // Station name
-        "(?<oznakaPruge>[^;]+);" + // Line designation
-        "(?<vrstaStanice>[^;]+);" + // Station type
-        "(?<statusStanice>[^;]+);" + // Station status
-        "(?<putniciUlIz>DA|NE);" + // Passengers entering/exiting (boolean)
-        "(?<robaUtIst>DA|NE);" + // Goods entering/exiting (boolean)
-        "(?<kategorijaPruge>[^;]+);" + // Track category
-        "(?<brojPerona>\\d+);" + // Number of platforms
-        "(?<vrstaPruge>[^;]+);" + // Track type
-        "(?<brojKolosjeka>\\d+);" + // Number of tracks
-        "(?<doPoOsovini>\\d+[.,]\\d+);" + // Load per axle (double)
-        "(?<doPoDuznomM>\\d+[.,]\\d+);" + // Length (double)
-        "(?<statusPruge>[^;]+);" + // Track status
-        "(?<duzina>\\d+)$" // Length (integer)
-    );
+    Pattern predlozakStanica = Pattern.compile("^(?<nazivStanice>[^;]+);" + "(?<oznakaPruge>[^;]+);"
+        + "(?<vrstaStanice>[^;]+);" + "(?<statusStanice>[^;]+);" + "(?<putniciUlIz>DA|NE);"
+        + "(?<robaUtIst>DA|NE);" + "(?<kategorijaPruge>[^;]+);" + "(?<brojPerona>\\d+);"
+        + "(?<vrstaPruge>[^;]+);" + "(?<brojKolosjeka>\\d+);" + "(?<doPoOsovini>\\d+[.,]\\d+);"
+        + "(?<doPoDuznomM>\\d+[.,]\\d+);" + "(?<statusPruge>[^;]+);" + "(?<duzina>\\d+)$");
 
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       citac.readLine();

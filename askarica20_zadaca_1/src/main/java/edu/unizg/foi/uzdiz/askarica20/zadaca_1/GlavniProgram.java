@@ -15,6 +15,8 @@ public class GlavniProgram {
       } else {
         System.out.println("-----------ok argumenti----------------");
         ucitajDatoteke(args);
+
+        ZeljeznickiSustav.dohvatiInstancu().zapocniRadSustava();
       }
     } catch (IllegalArgumentException e) {
       System.out.println("Greška: " + e.getMessage());
