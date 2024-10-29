@@ -15,6 +15,8 @@ public class ZeljeznickiSustav {
   private final List<Stanica> listaStanica = new ArrayList();
   private final List<Kompozicija> listaKompozicija = new ArrayList();
 
+  private int ukupanBrojGresakaUSustavu = 0;
+
   private ZeljeznickiSustav() {}; // singleton ima privatni defaultni konstruktor
 
   // staticka metoda getInstance koja se ponasa kao konstruktor
@@ -23,5 +25,25 @@ public class ZeljeznickiSustav {
       instanca = new ZeljeznickiSustav();
     }
     return instanca;
+  }
+
+  public void dodajVozilo(Vozilo vozilo) {
+    listaVozila.add(vozilo);
+  }
+
+  public void dodajStanicu(Stanica stanica) {
+    listaStanica.add(stanica);
+  }
+
+  public void dodajKompoziciju(Kompozicija kompozicija) {
+    listaKompozicija.add(kompozicija);
+  }
+
+  public void dodajGreskuUSustav() {
+    this.ukupanBrojGresakaUSustavu++;
+  }
+
+  public int dohvatiGreskeUSustavu() {
+    return this.ukupanBrojGresakaUSustavu;
   }
 }

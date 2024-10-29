@@ -24,9 +24,9 @@ public class Stanica {
     super();
   }
 
-  public Stanica(int id, String nazivStanice, String oznakaPruge, String statusStanice,
-      boolean putniciUlIz, boolean robaUtIst, String kategorijaPruge, int brojPerona,
-      String vrstaPruge, int brojKolosjeka, double doPoOsovini, double doPoDuznomM,
+  public Stanica(int id, String nazivStanice, String oznakaPruge, String vrstaStanice,
+      String statusStanice, boolean putniciUlIz, boolean robaUtIst, String kategorijaPruge,
+      int brojPerona, String vrstaPruge, int brojKolosjeka, double doPoOsovini, double doPoDuznomM,
       String statusPruge, int duzina) {
     super();
     this.id = id;
