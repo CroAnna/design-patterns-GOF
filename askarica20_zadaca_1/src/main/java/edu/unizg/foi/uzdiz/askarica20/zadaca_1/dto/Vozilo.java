@@ -29,6 +29,7 @@ public class Vozilo {
     super();
   }
 
+  // mozda ovaj konstruktor maknut, ak se koristi builder
   public Vozilo(int id, String oznaka, String opis, String proizvodac, int godina, String namjena,
       String vrstaPrijevoza, String vrstaPogona, int maksimalnaBrzina, double maksimalnaSnaga,
       int brojSjedecihMjesta, int brojStajacihMjesta, int brojBicikala, int brojKreveta,
