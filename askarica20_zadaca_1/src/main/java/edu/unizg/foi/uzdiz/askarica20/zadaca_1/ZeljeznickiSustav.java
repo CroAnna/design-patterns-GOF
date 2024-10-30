@@ -64,18 +64,26 @@ public class ZeljeznickiSustav {
       String[] dijeloviKomande = unos.split(" ");
       String glavniDioKomande = dijeloviKomande[0];
 
-      if (glavniDioKomande.equalsIgnoreCase("IP")) {
+      if (glavniDioKomande.equals("IP")) {
         System.out.println("IP --> " + unos);
 
-      } else if (glavniDioKomande.equalsIgnoreCase("ISP")) {
+      } else if (glavniDioKomande.equals("ISP")) {
         System.out.println("ISP --> " + unos);
 
-      } else if (glavniDioKomande.equalsIgnoreCase("ISI2S")) {
+      } else if (glavniDioKomande.equals("ISI2S")) {
         provjeriISI2S(dijeloviKomande, unos);
 
-      } else if (glavniDioKomande.equalsIgnoreCase("IK")) {
+      } else if (glavniDioKomande.equals("IK")) {
         System.out.println("IK --> " + unos);
 
+      } else if (glavniDioKomande.equals("SVAVOZILA")) {
+        System.out.println("\n--- Ispis svih vozila u sustavu ---");
+        for (Vozilo vozilo : listaVozila) {
+          System.out.println(vozilo);
+        }
+        if (listaVozila.isEmpty()) {
+          System.out.println("Lista vozila je prazna.");
+        }
       } else {
         if (!unos.equalsIgnoreCase("Q")) {
           System.out.println("Neispravna komanda.");

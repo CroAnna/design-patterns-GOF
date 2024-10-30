@@ -180,4 +180,12 @@ public class Vozilo {
   public void setStatusVozila(String statusVozila) {
     this.statusVozila = statusVozila;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\nOznaka: ").append(oznaka).append("\nOpis: ").append(opis).append("\nProizvođač: ")
+        .append(proizvodac).append("\nVrsta prijevoza: ").append(vrstaPrijevoza);
+    return sb.toString();
+  }
 }
