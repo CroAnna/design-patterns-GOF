@@ -59,47 +59,73 @@ public class ZeljeznickiSustav {
     do {
       System.out.println("Unesite komandu ili odaberite Q za izlaz.");
       unos = skener.nextLine();
-
-      System.out.println("Odabrano: " + unos);
-      String[] dijeloviKomande = unos.split(" ");
-      String glavniDioKomande = dijeloviKomande[0];
-
-      if (glavniDioKomande.equals("IP")) {
-        System.out.println("IP --> " + unos);
-        provjeriIP(dijeloviKomande, unos);
-      } else if (glavniDioKomande.equals("ISP")) {
-        System.out.println("ISP --> " + unos);
-
-      } else if (glavniDioKomande.equals("ISI2S")) {
-        provjeriISI2S(dijeloviKomande, unos);
-
-      } else if (glavniDioKomande.equals("IK")) {
-        System.out.println("IK --> " + unos);
-
-      } else if (glavniDioKomande.equals("SVAVOZILA")) {
-        System.out.println("\n--- Ispis svih vozila u sustavu ---");
-        for (Vozilo v : listaVozila) {
-          System.out.println(v);
-        }
-        if (listaVozila.isEmpty()) {
-          System.out.println("Lista vozila je prazna.");
-        }
-      } else if (glavniDioKomande.equals("SVESTANICE")) {
-        System.out.println("\n--- Ispis svih stanica u sustavu ---");
-        for (Stanica s : listaStanica) {
-          System.out.println(s);
-        }
-        if (listaStanica.isEmpty()) {
-          System.out.println("Lista stanica je prazna.");
-        }
-      } else {
-        if (!unos.equalsIgnoreCase("Q")) {
-          System.out.println("Neispravna komanda.");
-        }
-      }
-
+      provjeraVrsteUnosa(unos);
     } while (!unos.equalsIgnoreCase("Q"));
+
     System.out.println("Gasenje sustava FOI Zeljeznice...\n");
+  }
+
+  private void provjeraVrsteUnosa(String unos) {
+    String[] dijeloviKomande = unos.split(" ");
+    String glavniDioKomande = dijeloviKomande[0];
+
+    if (glavniDioKomande.equals("IP")) {
+      provjeriIP(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("ISP")) {
+      provjeriISP(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("ISI2S")) {
+      provjeriISI2S(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IK")) {
+    } else if (glavniDioKomande.equals("SVAVOZILA")) {
+      ispisSvihVozilaUSustavu();
+    } else if (glavniDioKomande.equals("SVESTANICE")) {
+      ispisSvihStanicaUSustavu();
+    } else {
+      if (!unos.equalsIgnoreCase("Q")) {
+        System.out.println("Neispravna komanda.");
+      }
+    }
+  }
+
+  private void provjeriISP(String[] dijeloviKomande, String unos) {
+    Pattern predlozakISP =
+        Pattern.compile("^ISP (?<oznakaPruge>[\\p{L}\\d]+) (?<redoslijed>[NO])\\s*$");
+    Matcher poklapanjePredlozakISP = predlozakISP.matcher(unos);
+
+    if (!poklapanjePredlozakISP.matches()) {
+      System.out.println("Neispravna komanda - format ISP oznakaPruge redoslijed");
+    } else {
+      List<Stanica> stanicePruge = dohvatiStanicePruge(poklapanjePredlozakISP.group("oznakaPruge"));
+      if (stanicePruge.size() > 0) {
+        ispisStanicaPruge(stanicePruge, poklapanjePredlozakISP.group("redoslijed"));
+      } else {
+        System.out.println("Ne postoji pruga s tom oznakom.");
+      }
+    }
+  }
+
+  private void ispisStanicaPruge(List<Stanica> stanicePruge, String redoslijed) {
+    System.out.println("\n\n------------ ISPIS STANICA PRUGE ------------\n");
+    int udaljenostOdPocetne = 0;
+
+    if ("N".equals(redoslijed)) {
+      for (Stanica s : stanicePruge) {
+        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
+        System.out.println(s.getNazivStanice() + " " + s.getVrstaPruge() + " "
+            + String.valueOf(udaljenostOdPocetne));
+      }
+    } else if ("O".equals(redoslijed)) {
+      for (Stanica s : stanicePruge) {
+        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
+      }
+      for (int i = stanicePruge.size() - 1; i >= 0; i--) {
+        Stanica s = stanicePruge.get(i);
+        System.out
+            .println(s.getNazivStanice() + " " + s.getVrstaPruge() + " " + udaljenostOdPocetne);
+        udaljenostOdPocetne = udaljenostOdPocetne - s.getDuzina();
+      }
+    }
+    System.out.println("\n\n---------------------------------------------\n");
   }
 
   private void provjeriIP(String[] dijeloviKomande, String unos) {
@@ -113,7 +139,6 @@ public class ZeljeznickiSustav {
     }
   }
 
-
   private void provjeriISI2S(String[] dijeloviKomande, String unos) {
     Pattern predlozakISI2S =
         Pattern.compile("^ISI2S (?<polaznaStanica>[\\p{L} ]+) - (?<odredisnaStanica>[\\p{L} ]+)$");
@@ -122,9 +147,18 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakISI2S.matches()) {
       System.out.println("Neispravna komanda - format ISI2S polaziste - odrediste");
     } else {
-      prikaziStanice(poklapanjePredlozakISI2S.group("polaznaStanica"),
-          poklapanjePredlozakISI2S.group("odredisnaStanica"));
+      // TODO
     }
+  }
+
+  private List<Stanica> dohvatiStanicePruge(String oznakaPruge) {
+    List<Stanica> stanicePruge = new ArrayList();
+    for (Stanica s : listaStanica) {
+      if (s.getOznakaPruge().equals(oznakaPruge)) {
+        stanicePruge.add(s);
+      }
+    }
+    return stanicePruge;
   }
 
   private void ispisiPruge() {
@@ -162,20 +196,23 @@ public class ZeljeznickiSustav {
     }
   }
 
-  private void prikaziStanice(String polaznaStanica, String odredisnaStanica) {
-    System.out.println("polaznaStanica " + polaznaStanica + odredisnaStanica);
-    List<Stanica> stanice = dohvatiMedustanice(polaznaStanica, odredisnaStanica);
+  private void ispisSvihVozilaUSustavu() {
+    System.out.println("\n--- Ispis svih vozila u sustavu ---");
+    for (Vozilo v : listaVozila) {
+      System.out.println(v);
+    }
+    if (listaVozila.isEmpty()) {
+      System.out.println("Lista vozila je prazna.");
+    }
   }
 
-  private List<Stanica> dohvatiMedustanice(String pol, String odr) {
-    List<Stanica> stanice = new ArrayList<>();
-    // TODO algoritam koji dohvaca rute od stanice do stanice
-    return stanice;
+  private void ispisSvihStanicaUSustavu() {
+    System.out.println("\n--- Ispis svih stanica u sustavu ---");
+    for (Stanica s : listaStanica) {
+      System.out.println(s);
+    }
+    if (listaStanica.isEmpty()) {
+      System.out.println("Lista stanica je prazna.");
+    }
   }
-
-  private void ispisiPrugu(String pruga, String pocetna, String zavrsna, int udaljenost) {
-
-  }
-
 }
-
