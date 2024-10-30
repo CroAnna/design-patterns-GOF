@@ -10,19 +10,14 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Vozilo;
 
 public class ZeljeznickiSustav {
-  // ovo je singleton
-
   private static ZeljeznickiSustav instanca;
-
   private final List<Vozilo> listaVozila = new ArrayList();
   private final List<Stanica> listaStanica = new ArrayList();
   private final List<Kompozicija> listaKompozicija = new ArrayList();
-
   private int ukupanBrojGresakaUSustavu = 0;
 
-  private ZeljeznickiSustav() {}; // singleton ima privatni defaultni konstruktor
+  private ZeljeznickiSustav() {};
 
-  // staticka metoda getInstance koja se ponasa kao konstruktor
   public static ZeljeznickiSustav dohvatiInstancu() {
     if (instanca == null) {
       instanca = new ZeljeznickiSustav();
@@ -65,13 +60,6 @@ public class ZeljeznickiSustav {
     System.out.println("Gasenje sustava FOI Zeljeznice...\n");
   }
 
-  private void nacrtajVlak() {
-    String train =
-        "       ___\n" + "  __[__|__]__[__|__]__[__|__]__\n" + "   O-O---O-O---O-O---O-O---O-O\n";
-
-    System.out.println(train);
-  }
-
   private void provjeraVrsteUnosa(String unos) {
     String[] dijeloviKomande = unos.split(" ");
     String glavniDioKomande = dijeloviKomande[0];
@@ -83,6 +71,7 @@ public class ZeljeznickiSustav {
     } else if (glavniDioKomande.equals("ISI2S")) {
       provjeriISI2S(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IK")) {
+      provjeriIK(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("SVAVOZILA")) {
       ispisSvihVozilaUSustavu();
     } else if (glavniDioKomande.equals("SVESTANICE")) {
@@ -92,6 +81,23 @@ public class ZeljeznickiSustav {
     } else {
       if (!unos.equalsIgnoreCase("Q")) {
         System.out.println("Neispravna komanda.");
+      }
+    }
+  }
+
+  private void provjeriIK(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIK = Pattern.compile("^IK (?<oznaka>\\d+)$");
+    Matcher poklapanjePredlozakIK = predlozakIK.matcher(unos);
+
+    if (!poklapanjePredlozakIK.matches()) {
+      System.out.println("Neispravna komanda - format IK oznaka");
+    } else {
+      List<Vozilo> vozilaKompozicije =
+          dohvatiVozilaKompozicije(Integer.valueOf(poklapanjePredlozakIK.group("oznaka")));
+      if (vozilaKompozicije.size() > 0) {
+        ispisDijelovaKompozicije(vozilaKompozicije);
+      } else {
+        System.out.println("Ne postoji kompozicija s tom oznakom.");
       }
     }
   }
@@ -110,6 +116,16 @@ public class ZeljeznickiSustav {
       } else {
         System.out.println("Ne postoji pruga s tom oznakom.");
       }
+    }
+  }
+
+  private void ispisDijelovaKompozicije(List<Vozilo> vozilaKompozicije) {
+    for (Vozilo v : vozilaKompozicije) {
+      String uloga = v.getVrstaPogona().equals("N") ? "V" : "P";
+      System.out.println(v.getOznaka() + " " + uloga + " " + v.getOpis() + " " + v.getGodina() + " "
+          + v.getNamjena() + " " + v.getVrstaPogona() + " " + v.getMaksimalnaBrzina()
+
+      );
     }
   }
 
@@ -158,6 +174,28 @@ public class ZeljeznickiSustav {
     } else {
       // TODO
     }
+  }
+
+  private List<Vozilo> dohvatiVozilaKompozicije(int oznaka) {
+    List<Vozilo> vozilaKompozicije = new ArrayList();
+    for (Kompozicija k : listaKompozicija) {
+      if (k.getOznaka() == oznaka) {
+        Vozilo vozilo = dohvatiVoziloPoOznaci(k.getOznakaPrijevoznogSredstva());
+        if (vozilo != null) {
+          vozilaKompozicije.add(vozilo);
+        }
+      }
+    }
+    return vozilaKompozicije;
+  }
+
+  private Vozilo dohvatiVoziloPoOznaci(String oznaka) {
+    for (Vozilo v : listaVozila) {
+      if (v.getOznaka().equals(oznaka)) {
+        return v;
+      }
+    }
+    return null;
   }
 
   private List<Stanica> dohvatiStanicePruge(String oznakaPruge) {
@@ -233,5 +271,11 @@ public class ZeljeznickiSustav {
     if (listaKompozicija.isEmpty()) {
       System.out.println("Lista kompozicija je prazna.");
     }
+  }
+
+  private void nacrtajVlak() {
+    String train =
+        "       ___\n" + "  __[__|__]__[__|__]__[__|__]__\n" + "   O-O---O-O---O-O---O-O---O-O\n";
+    System.out.println(train);
   }
 }
