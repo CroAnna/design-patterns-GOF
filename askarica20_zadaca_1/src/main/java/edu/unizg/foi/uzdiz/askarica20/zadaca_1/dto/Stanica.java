@@ -156,4 +156,12 @@ public class Stanica {
   public void setDuzina(int duzina) {
     this.duzina = duzina;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\nNaziv stanice: ").append(nazivStanice).append("\nOznaka pruge: ")
+        .append(oznakaPruge).append("\nDuzina: ").append(duzina);
+    return sb.toString();
+  }
 }

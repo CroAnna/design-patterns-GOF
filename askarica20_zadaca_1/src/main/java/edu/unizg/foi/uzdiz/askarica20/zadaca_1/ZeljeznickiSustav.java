@@ -66,7 +66,7 @@ public class ZeljeznickiSustav {
 
       if (glavniDioKomande.equals("IP")) {
         System.out.println("IP --> " + unos);
-
+        provjeriIP(dijeloviKomande, unos);
       } else if (glavniDioKomande.equals("ISP")) {
         System.out.println("ISP --> " + unos);
 
@@ -78,11 +78,19 @@ public class ZeljeznickiSustav {
 
       } else if (glavniDioKomande.equals("SVAVOZILA")) {
         System.out.println("\n--- Ispis svih vozila u sustavu ---");
-        for (Vozilo vozilo : listaVozila) {
-          System.out.println(vozilo);
+        for (Vozilo v : listaVozila) {
+          System.out.println(v);
         }
         if (listaVozila.isEmpty()) {
           System.out.println("Lista vozila je prazna.");
+        }
+      } else if (glavniDioKomande.equals("SVESTANICE")) {
+        System.out.println("\n--- Ispis svih stanica u sustavu ---");
+        for (Stanica s : listaStanica) {
+          System.out.println(s);
+        }
+        if (listaStanica.isEmpty()) {
+          System.out.println("Lista stanica je prazna.");
         }
       } else {
         if (!unos.equalsIgnoreCase("Q")) {
@@ -93,6 +101,18 @@ public class ZeljeznickiSustav {
     } while (!unos.equalsIgnoreCase("Q"));
     System.out.println("Gasenje sustava FOI Zeljeznice...\n");
   }
+
+  private void provjeriIP(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIP = Pattern.compile("^IP$");
+    Matcher poklapanjePredlozakIP = predlozakIP.matcher(unos);
+
+    if (!poklapanjePredlozakIP.matches()) {
+      System.out.println("Neispravna komanda - format IP");
+    } else {
+      ispisiPruge();
+    }
+  }
+
 
   private void provjeriISI2S(String[] dijeloviKomande, String unos) {
     Pattern predlozakISI2S =
@@ -107,10 +127,44 @@ public class ZeljeznickiSustav {
     }
   }
 
+  private void ispisiPruge() {
+    int udaljenost = 0;
+    String prethodnaOznakaPruge = null;
+    Stanica pocetnaStanica = null, zavrsnaStanica = null, prethodnaStanica = null;
+
+    System.out.println("\n\n---------------- ISPIS PRUGA ----------------   \n");
+
+    for (Stanica s : listaStanica) {
+      if (prethodnaOznakaPruge == null) {
+        prethodnaOznakaPruge = s.getOznakaPruge();
+        pocetnaStanica = s;
+        prethodnaStanica = s;
+        udaljenost = udaljenost + s.getDuzina();
+      } else if (!prethodnaOznakaPruge.equals(s.getOznakaPruge())) {
+        zavrsnaStanica = prethodnaStanica;
+        System.out.println(prethodnaOznakaPruge + " " + pocetnaStanica.getNazivStanice() + " - "
+            + zavrsnaStanica.getNazivStanice() + " " + String.valueOf(udaljenost));
+
+        prethodnaStanica = s;
+        udaljenost = 0;
+        pocetnaStanica = s;
+        prethodnaOznakaPruge = s.getOznakaPruge();
+
+      } else if (listaStanica.getLast().getId() == s.getId()) {
+        udaljenost = udaljenost + s.getDuzina();
+        System.out.println(prethodnaOznakaPruge + " " + pocetnaStanica.getNazivStanice() + " - "
+            + s.getNazivStanice() + " " + String.valueOf(udaljenost)
+            + "\n\n---------------------------------------------\n");
+      } else {
+        udaljenost = udaljenost + s.getDuzina();
+        prethodnaStanica = s;
+      }
+    }
+  }
+
   private void prikaziStanice(String polaznaStanica, String odredisnaStanica) {
     System.out.println("polaznaStanica " + polaznaStanica + odredisnaStanica);
     List<Stanica> stanice = dohvatiMedustanice(polaznaStanica, odredisnaStanica);
-    generirajTablicu(stanice);
   }
 
   private List<Stanica> dohvatiMedustanice(String pol, String odr) {
@@ -119,6 +173,9 @@ public class ZeljeznickiSustav {
     return stanice;
   }
 
-  private void generirajTablicu(List<Stanica> stanice) {}
+  private void ispisiPrugu(String pruga, String pocetna, String zavrsna, int udaljenost) {
+
+  }
+
 }
 
