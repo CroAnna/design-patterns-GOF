@@ -13,9 +13,7 @@ public class GlavniProgram {
       if (!provjeriSastavArgumenata(args)) {
         System.out.println("Neispravni argumenti.");
       } else {
-        System.out.println("-----------ok argumenti----------------");
         ucitajDatoteke(args);
-
         ZeljeznickiSustav.dohvatiInstancu().zapocniRadSustava();
       }
     } catch (IllegalArgumentException e) {

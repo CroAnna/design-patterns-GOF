@@ -12,8 +12,6 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
 
   @Override
   public void ucitaj(String datoteka) {
-    System.out.println("ucitaj datoteku stanica");
-
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
     Pattern predlozakStanica = Pattern.compile("^(?<nazivStanice>[^;]+);" + "(?<oznakaPruge>[^;]+);"
         + "(?<vrstaStanice>[^;]+);" + "(?<statusStanice>[^;]+);" + "(?<putniciUlIz>DA|NE);"
@@ -28,15 +26,12 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
       int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
 
       while ((redak = citac.readLine()) != null) {
-        System.out.println(redak);
-
         Matcher poklapanjeStanica = predlozakStanica.matcher(redak);
         Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
 
         boolean redakDobrogFormata = poklapanjeStanica.matches();
 
         String[] dijeloviRetka = redak.split(";");
-        System.out.println(dijeloviRetka.length);
 
         // TODO dodaj provjeru jel prvi redak informativni
         // provjeriPrviRedak(dijeloviRetka,citac);
@@ -63,10 +58,11 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
           System.out.println("Svi stupci nisu ispravno popunjeni u " + brojRetka
               + ". retku! Ukupno gresaka u datoteci: " + ukupanBrojGresakaUDatoteci
               + "! Ukupno gresaka u sustavu: "
-              + ZeljeznickiSustav.dohvatiInstancu().dohvatiGreskeUSustavu());
+              + ZeljeznickiSustav.dohvatiInstancu().dohvatiGreskeUSustavu() + "\n");
         }
         brojRetka++;
       }
+      System.out.println("Stanice uspjesno ucitane.");
     } catch (Exception e) {
       System.out.println(e.getMessage());
       e.printStackTrace();

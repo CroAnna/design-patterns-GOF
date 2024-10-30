@@ -53,4 +53,12 @@ public class Kompozicija {
   public void setUloga(String uloga) {
     this.uloga = uloga;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\nOznaka kompozicije: ").append(oznaka).append("\nOznaka prijevoznog sredstva: ")
+        .append(oznakaPrijevoznogSredstva).append("\nUloga: ").append(uloga);
+    return sb.toString();
+  }
 }

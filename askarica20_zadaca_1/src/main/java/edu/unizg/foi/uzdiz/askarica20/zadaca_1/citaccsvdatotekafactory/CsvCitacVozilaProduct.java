@@ -15,8 +15,6 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
 
   @Override
   public void ucitaj(String datoteka) {
-    System.out.println("ucitaj datoteku vozila");
-
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
     Pattern predlozakVozilo = Pattern.compile("(?<oznaka>[^;]+);" + "(?<opis>[^;]+);"
         + "(?<proizvodac>[^;\\-]+|\\-);" + "(?<godina>\\d{4});" + "(?<namjena>[^;]+);"
@@ -34,15 +32,12 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
       int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
 
       while ((redak = citac.readLine()) != null) {
-        System.out.println(redak);
-
         Matcher poklapanjeVozila = predlozakVozilo.matcher(redak);
         Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
 
         boolean redakDobrogFormata = poklapanjeVozila.matches();
 
         String[] dijeloviRetka = redak.split(";");
-        System.out.println(dijeloviRetka.length);
 
         // TODO dodaj provjeru jel prvi redak informativni
         // provjeriPrviRedak(dijeloviRetka,citac);
@@ -54,7 +49,6 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
         if (redakDobrogFormata && dijeloviRetka.length == 18) {
           VoziloBuilder builder = new VoziloConcreteBuilder();
           VoziloDirector voziloDirector = new VoziloDirector(builder);
-
           Vozilo vozilo = null;
 
           switch (dijeloviRetka[5]) {
@@ -130,6 +124,7 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
         }
         brojRetka++;
       }
+      System.out.println("Vozila uspjesno ucitana.");
     } catch (Exception e) {
       System.out.println(e.getMessage());
       e.printStackTrace();

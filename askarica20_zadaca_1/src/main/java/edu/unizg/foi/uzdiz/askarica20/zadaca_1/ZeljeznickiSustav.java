@@ -53,16 +53,23 @@ public class ZeljeznickiSustav {
   public void zapocniRadSustava() {
     String unos = "";
     Scanner skener = new Scanner(System.in);
-
-    System.out.println("-- Dobrodosli u FOI Zeljeznice! --\n");
+    nacrtajVlak();
+    System.out.println("-- Dobrodosli u FOI Zeljeznice! --");
 
     do {
-      System.out.println("Unesite komandu ili odaberite Q za izlaz.");
+      System.out.println("\nUnesite komandu ili odaberite Q za izlaz.");
       unos = skener.nextLine();
       provjeraVrsteUnosa(unos);
     } while (!unos.equalsIgnoreCase("Q"));
 
     System.out.println("Gasenje sustava FOI Zeljeznice...\n");
+  }
+
+  private void nacrtajVlak() {
+    String train =
+        "       ___\n" + "  __[__|__]__[__|__]__[__|__]__\n" + "   O-O---O-O---O-O---O-O---O-O\n";
+
+    System.out.println(train);
   }
 
   private void provjeraVrsteUnosa(String unos) {
@@ -80,6 +87,8 @@ public class ZeljeznickiSustav {
       ispisSvihVozilaUSustavu();
     } else if (glavniDioKomande.equals("SVESTANICE")) {
       ispisSvihStanicaUSustavu();
+    } else if (glavniDioKomande.equals("SVEKOMP")) {
+      ispisSvihKompozicijaUSustavu();
     } else {
       if (!unos.equalsIgnoreCase("Q")) {
         System.out.println("Neispravna komanda.");
@@ -213,6 +222,16 @@ public class ZeljeznickiSustav {
     }
     if (listaStanica.isEmpty()) {
       System.out.println("Lista stanica je prazna.");
+    }
+  }
+
+  private void ispisSvihKompozicijaUSustavu() {
+    System.out.println("\n--- Ispis svih kompozicija u sustavu ---");
+    for (Kompozicija k : listaKompozicija) {
+      System.out.println(k);
+    }
+    if (listaKompozicija.isEmpty()) {
+      System.out.println("Lista kompozicija je prazna.");
     }
   }
 }
