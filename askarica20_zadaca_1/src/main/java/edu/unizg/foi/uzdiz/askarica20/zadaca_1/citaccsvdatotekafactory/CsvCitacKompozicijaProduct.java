@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_1.ZeljeznickiSustav;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Kompozicija;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Vozilo;
 
 // ConcreteProduct
 public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
@@ -19,6 +20,8 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       String redak;
       int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
+      Kompozicija trenutnaKompozicija = null;
+      boolean imaPogon = false;
 
       while ((redak = citac.readLine()) != null) {
         boolean preskociPrvog = false;
@@ -32,17 +35,44 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
           boolean redakDobrogFormata = poklapanjeKompozicija.matches();
           String[] dijeloviRetka = redak.split(";");
 
-          if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
+          if (redak.startsWith("#")) {
             // System.out.print("preskocen" + redak + "\n");
             brojRetka++;
-            continue; // prazan red ni ak počinje s # se ne racuna kao greska, nego se samo treba
-                      // preskociti
+            continue;
+          }
+
+          if (poklapanjePraznogRetka.matches()) {
+            // kraj trenutne kompozicije
+            if (trenutnaKompozicija != null && imaPogon) {
+              ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
+            }
+            trenutnaKompozicija = null;
+            imaPogon = false;
+            brojRetka++;
+            continue;
           }
 
           if (redakDobrogFormata && dijeloviRetka.length == 3) {
-            Kompozicija kompozicija = new Kompozicija(brojRetka, Integer.valueOf(dijeloviRetka[0]),
-                dijeloviRetka[1], dijeloviRetka[2]);
-            ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(kompozicija);
+            if (trenutnaKompozicija == null
+                || trenutnaKompozicija.getOznaka() != Integer.valueOf(dijeloviRetka[0])) {
+              trenutnaKompozicija = new Kompozicija(brojRetka, Integer.valueOf(dijeloviRetka[0]));
+            }
+
+            Vozilo vozilo =
+                ZeljeznickiSustav.dohvatiInstancu().dohvatiVoziloPoOznaci(dijeloviRetka[1]);
+            if ("P".equals(dijeloviRetka[2])) {
+              if (!imaPogon) {
+                imaPogon = true;
+              }
+              trenutnaKompozicija.addVozilo(vozilo);
+            } else if (imaPogon) {
+              trenutnaKompozicija.addVozilo(vozilo);
+            } else {
+              ukupanBrojGresakaUDatoteci++;
+              ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+              System.out.println("Kompozicija - Greška u retku " + brojRetka
+                  + ": Prvo prijevozno sredstvo mora imati pogon.");
+            }
           } else {
             ukupanBrojGresakaUDatoteci++;
             ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
@@ -55,6 +85,11 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
         }
         brojRetka++;
       }
+
+      if (trenutnaKompozicija != null && imaPogon) {
+        ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
+      }
+
       System.out.println("Kompozicije uspjesno ucitane.");
     } catch (Exception e) {
       System.out.println(e.getMessage());

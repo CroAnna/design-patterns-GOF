@@ -1,25 +1,23 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto;
 
-/**
- *
- * @author Ana Skarica
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class Kompozicija {
   private int id;
   private int oznaka;
-  private String oznakaPrijevoznogSredstva;
   private String uloga;
+  private List<Vozilo> vozila;
 
   public Kompozicija() {
     super();
   }
 
-  public Kompozicija(int id, int oznaka, String oznakaPrijevoznogSredstva, String uloga) {
+  public Kompozicija(int id, int oznaka) {
     super();
     this.id = id;
     this.oznaka = oznaka;
-    this.oznakaPrijevoznogSredstva = oznakaPrijevoznogSredstva;
-    this.uloga = uloga;
+    this.vozila = new ArrayList<>();
   }
 
   public int getId() {
@@ -38,27 +36,22 @@ public class Kompozicija {
     this.oznaka = oznaka;
   }
 
-  public String getOznakaPrijevoznogSredstva() {
-    return oznakaPrijevoznogSredstva;
+  public List<Vozilo> getVozila() {
+    return vozila;
   }
 
-  public void setOznakaPrijevoznogSredstva(String oznakaPrijevoznogSredstva) {
-    this.oznakaPrijevoznogSredstva = oznakaPrijevoznogSredstva;
-  }
-
-  public String getUloga() {
-    return uloga;
-  }
-
-  public void setUloga(String uloga) {
-    this.uloga = uloga;
+  public void addVozilo(Vozilo vozilo) {
+    vozila.add(vozilo);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("\nOznaka kompozicije: ").append(oznaka).append("\nOznaka prijevoznog sredstva: ")
-        .append(oznakaPrijevoznogSredstva).append("\nUloga: ").append(uloga);
+    sb.append("Kompozicija: ").append(oznaka).append(" ").append(uloga).append(" ");
+    for (Vozilo vozilo : vozila) {
+      sb.append(vozilo.toString());
+    }
+    sb.append("\n");
     return sb.toString();
   }
 }

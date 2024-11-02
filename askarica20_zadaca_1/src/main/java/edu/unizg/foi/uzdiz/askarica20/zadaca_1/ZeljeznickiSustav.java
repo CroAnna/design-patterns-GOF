@@ -92,10 +92,11 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIK.matches()) {
       System.out.println("Neispravna komanda - format IK oznaka");
     } else {
-      List<Vozilo> vozilaKompozicije =
-          dohvatiVozilaKompozicije(Integer.valueOf(poklapanjePredlozakIK.group("oznaka")));
-      if (vozilaKompozicije.size() > 0) {
-        ispisDijelovaKompozicije(vozilaKompozicije);
+      int oznaka = Integer.valueOf(poklapanjePredlozakIK.group("oznaka"));
+      Kompozicija kompozicija = dohvatiPodatkeKompozicije(oznaka);
+
+      if (kompozicija != null) {
+        ispisKompozicije(kompozicija);
       } else {
         System.out.println("Ne postoji kompozicija s tom oznakom.");
       }
@@ -117,40 +118,6 @@ public class ZeljeznickiSustav {
         System.out.println("Ne postoji pruga s tom oznakom.");
       }
     }
-  }
-
-  private void ispisDijelovaKompozicije(List<Vozilo> vozilaKompozicije) {
-    for (Vozilo v : vozilaKompozicije) {
-      String uloga = v.getVrstaPogona().equals("N") ? "V" : "P";
-      System.out.println(v.getOznaka() + " " + uloga + " " + v.getOpis() + " " + v.getGodina() + " "
-          + v.getNamjena() + " " + v.getVrstaPogona() + " " + v.getMaksimalnaBrzina()
-
-      );
-    }
-  }
-
-  private void ispisStanicaPruge(List<Stanica> stanicePruge, String redoslijed) {
-    System.out.println("\n\n------------ ISPIS STANICA PRUGE ------------\n");
-    int udaljenostOdPocetne = 0;
-
-    if ("N".equals(redoslijed)) {
-      for (Stanica s : stanicePruge) {
-        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
-        System.out.println(s.getNazivStanice() + " " + s.getVrstaPruge() + " "
-            + String.valueOf(udaljenostOdPocetne));
-      }
-    } else if ("O".equals(redoslijed)) {
-      for (Stanica s : stanicePruge) {
-        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
-      }
-      for (int i = stanicePruge.size() - 1; i >= 0; i--) {
-        Stanica s = stanicePruge.get(i);
-        System.out
-            .println(s.getNazivStanice() + " " + s.getVrstaPruge() + " " + udaljenostOdPocetne);
-        udaljenostOdPocetne = udaljenostOdPocetne - s.getDuzina();
-      }
-    }
-    System.out.println("\n\n---------------------------------------------\n");
   }
 
   private void provjeriIP(String[] dijeloviKomande, String unos) {
@@ -184,6 +151,40 @@ public class ZeljeznickiSustav {
     }
   }
 
+  private Kompozicija dohvatiPodatkeKompozicije(int oznaka) {
+    Kompozicija kompozicija = null;
+    for (Kompozicija k : listaKompozicija) {
+      if (k.getOznaka() == oznaka) {
+        return k;
+      }
+    }
+    return null;
+  }
+
+  private void ispisStanicaPruge(List<Stanica> stanicePruge, String redoslijed) {
+    System.out.println("\n\n------------ ISPIS STANICA PRUGE ------------\n");
+    int udaljenostOdPocetne = 0;
+
+    if ("N".equals(redoslijed)) {
+      for (Stanica s : stanicePruge) {
+        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
+        System.out.println(s.getNazivStanice() + " " + s.getVrstaPruge() + " "
+            + String.valueOf(udaljenostOdPocetne));
+      }
+    } else if ("O".equals(redoslijed)) {
+      for (Stanica s : stanicePruge) {
+        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
+      }
+      for (int i = stanicePruge.size() - 1; i >= 0; i--) {
+        Stanica s = stanicePruge.get(i);
+        System.out
+            .println(s.getNazivStanice() + " " + s.getVrstaPruge() + " " + udaljenostOdPocetne);
+        udaljenostOdPocetne = udaljenostOdPocetne - s.getDuzina();
+      }
+    }
+    System.out.println("\n\n---------------------------------------------\n");
+  }
+
   private List<Stanica> dohvatiMedustanice(String polaznaStanica, String odredisnaStanica) {
     List<Stanica> listaMedustanica = new ArrayList();
     // TODO
@@ -191,20 +192,7 @@ public class ZeljeznickiSustav {
     return listaMedustanica;
   }
 
-  private List<Vozilo> dohvatiVozilaKompozicije(int oznaka) {
-    List<Vozilo> vozilaKompozicije = new ArrayList();
-    for (Kompozicija k : listaKompozicija) {
-      if (k.getOznaka() == oznaka) {
-        Vozilo vozilo = dohvatiVoziloPoOznaci(k.getOznakaPrijevoznogSredstva());
-        if (vozilo != null) {
-          vozilaKompozicije.add(vozilo);
-        }
-      }
-    }
-    return vozilaKompozicije;
-  }
-
-  private Vozilo dohvatiVoziloPoOznaci(String oznaka) {
+  public Vozilo dohvatiVoziloPoOznaci(String oznaka) {
     for (Vozilo v : listaVozila) {
       if (v.getOznaka().equals(oznaka)) {
         return v;
@@ -221,6 +209,18 @@ public class ZeljeznickiSustav {
       }
     }
     return stanicePruge;
+  }
+
+  public void ispisKompozicije(Kompozicija k) {
+    System.out.println("\n\n---------------- ISPIS KOMPOZICIJE ----------------\n");
+    List<Vozilo> vozilaUKompoziciji = k.getVozila();
+    for (Vozilo v : vozilaUKompoziciji) {
+      String uloga = v.getVrstaPogona().equals("N") ? "V" : "P";
+      System.out.println(v.getOznaka() + " " + uloga + " " + v.getOpis() + " " + v.getGodina() + " "
+          + v.getNamjena() + " " + v.getVrstaPogona() + " " + v.getMaksimalnaBrzina() + "\n");
+    }
+    System.out.println("\n---------------------------------------------------\n");
+
   }
 
   private void ispisiPruge() {
@@ -267,7 +267,6 @@ public class ZeljeznickiSustav {
       System.out.println("Lista stanica je prazna.");
     }
   }
-
 
   private void ispisSvihVozilaUSustavu() {
     System.out.println("\n--- Ispis svih vozila u sustavu ---");
