@@ -172,8 +172,23 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakISI2S.matches()) {
       System.out.println("Neispravna komanda - format ISI2S polaziste - odrediste");
     } else {
-      // TODO
+      List<Stanica> medustanice =
+          dohvatiMedustanice(poklapanjePredlozakISI2S.group("polaznaStanica"),
+              poklapanjePredlozakISI2S.group("odredisnaStanica"));
+
+      if (medustanice.size() > 0) {
+        ispisListeStanica(medustanice);
+      } else {
+        System.out.println("Ne postoji pruga s tom oznakom.");
+      }
     }
+  }
+
+  private List<Stanica> dohvatiMedustanice(String polaznaStanica, String odredisnaStanica) {
+    List<Stanica> listaMedustanica = new ArrayList();
+    // TODO
+
+    return listaMedustanica;
   }
 
   private List<Vozilo> dohvatiVozilaKompozicije(int oznaka) {
@@ -242,6 +257,17 @@ public class ZeljeznickiSustav {
       }
     }
   }
+
+  private void ispisListeStanica(List<Stanica> stanice) {
+    System.out.println("\n--- Ispis stanica  ---");
+    for (Stanica s : stanice) {
+      System.out.println(s);
+    }
+    if (listaStanica.isEmpty()) {
+      System.out.println("Lista stanica je prazna.");
+    }
+  }
+
 
   private void ispisSvihVozilaUSustavu() {
     System.out.println("\n--- Ispis svih vozila u sustavu ---");
