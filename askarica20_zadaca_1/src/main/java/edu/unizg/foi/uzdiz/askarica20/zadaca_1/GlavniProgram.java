@@ -58,26 +58,39 @@ public class GlavniProgram {
   }
 
   public static void ucitajDatoteke(String[] args) {
+    String stanicaFile = null, vozilaFile = null, kompozicijaFile = null;
+
     for (int i = 0; i < args.length; i += 2) {
       String zastavica = args[i];
       String datoteka = args[i + 1];
-      CsvCitacCreator concreteCreator = null;
 
       switch (zastavica) {
         case "--zs":
-          concreteCreator = new CsvCitacStanicaCreator();
+          stanicaFile = datoteka;
           break;
         case "--zps":
-          concreteCreator = new CsvCitacVozilaCreator();
+          vozilaFile = datoteka;
           break;
         case "--zk":
-          concreteCreator = new CsvCitacKompozicijaCreator();
+          kompozicijaFile = datoteka;
           break;
       }
+    }
 
-      CsvCitacProduct concreteProduct = concreteCreator.kreirajCitac(); // factory method
-      concreteProduct.ucitaj(datoteka); // TODO sloziti da se ucitavaju po redu (a ne ovisno kak se
-                                        // pojave u argumentima)
+    if (stanicaFile != null) {
+      processFile(stanicaFile, new CsvCitacStanicaCreator());
+    }
+    if (vozilaFile != null) {
+      processFile(vozilaFile, new CsvCitacVozilaCreator());
+    }
+    if (kompozicijaFile != null) {
+      processFile(kompozicijaFile, new CsvCitacKompozicijaCreator());
     }
   }
+
+  private static void processFile(String file, CsvCitacCreator creator) {
+    CsvCitacProduct concreteProduct = creator.kreirajCitac(); // factory method
+    concreteProduct.ucitaj(file);
+  }
+
 }
