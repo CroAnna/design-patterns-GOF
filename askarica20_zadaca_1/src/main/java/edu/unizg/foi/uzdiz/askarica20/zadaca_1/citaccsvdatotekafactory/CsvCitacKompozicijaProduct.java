@@ -33,7 +33,8 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
           String[] dijeloviRetka = redak.split(";");
 
           if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
-            System.out.print("preskocen" + redak + "\n");
+            // System.out.print("preskocen" + redak + "\n");
+            brojRetka++;
             continue; // prazan red ni ak počinje s # se ne racuna kao greska, nego se samo treba
                       // preskociti
           }
