@@ -46,8 +46,10 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
           // TODO dodaj provjeru jel prvi redak informativni
           // provjeriPrviRedak(dijeloviRetka,citac);
 
-          if (poklapanjePraznogRetka.matches()) {
-            continue; // prazan red se ne racuna kao greska, nego se samo treba preskociti
+          if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
+            System.out.print("preskocen" + redak + "\n");
+            continue; // prazan red ni ak počinje s # se ne racuna kao greska, nego se samo treba
+                      // preskociti
           }
 
           if (redakDobrogFormata && dijeloviRetka.length == 18) {

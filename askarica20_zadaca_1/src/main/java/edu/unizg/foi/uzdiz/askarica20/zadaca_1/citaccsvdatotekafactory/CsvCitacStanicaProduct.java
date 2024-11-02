@@ -35,8 +35,10 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
           boolean redakDobrogFormata = poklapanjeStanica.matches();
           String[] dijeloviRetka = redak.split(";");
 
-          if (poklapanjePraznogRetka.matches()) {
-            continue; // prazan red se ne racuna kao greska, nego se samo treba preskociti
+          if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
+            System.out.print("preskocen" + redak + "\n");
+            continue; // prazan red ni ak počinje s # se ne racuna kao greska, nego se samo treba
+                      // preskociti
           }
 
           if (redakDobrogFormata && dijeloviRetka.length == 14) {
