@@ -89,16 +89,7 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
             }
           } else {
             ukupanBrojGresakaUDatoteci++;
-            ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-
-            System.out.println("Kompozicije - Greške u retku " + brojRetka + ":");
-            for (String greska : greske) {
-              System.out.println("- " + greska);
-            }
-            System.out
-                .println("Ukupno grešaka u datoteci kompozicija: " + ukupanBrojGresakaUDatoteci);
-            System.out.println("Ukupno grešaka u sustavu: "
-                + ZeljeznickiSustav.dohvatiInstancu().dohvatiGreskeUSustavu());
+            prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
           }
         }
         brojRetka++;
@@ -113,6 +104,18 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
     }
+  }
+
+  private void prikaziGreske(List<String> greske, int brojRetka, int ukupanBrojGresakaUDatoteci) {
+    ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+
+    System.out.println("Kompozicije - Greške u retku " + brojRetka + ":");
+    for (String greska : greske) {
+      System.out.println("- " + greska);
+    }
+    System.out.println("Ukupno grešaka u datoteci kompozicija: " + ukupanBrojGresakaUDatoteci);
+    System.out.println(
+        "Ukupno grešaka u sustavu: " + ZeljeznickiSustav.dohvatiInstancu().dohvatiGreskeUSustavu());
   }
 
   private List<String> validirajRedak(String redak) {
