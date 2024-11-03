@@ -2,6 +2,7 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_1.citaccsvdatotekafactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,94 +16,98 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
   private static final String[] NAZIVI_STUPACA =
       {"Oznaka kompozicije", "Oznaka prijevoznog sredstva", "Uloga"};
 
-  private static final Pattern[] UZORCI_STUPACA = {Pattern.compile("\\d+"), // oznaka kompozicije
-      Pattern.compile("[^;]+"), // oznaka prijevoznog sredstva
-      Pattern.compile("[PV];?+") // uloga
-  };
+  private static final Pattern[] UZORCI_STUPACA =
+      {Pattern.compile("\\d+"), Pattern.compile("[^;]+"), Pattern.compile("[PV];?+")};
+
+  private Kompozicija trenutnaKompozicija = null;
+  private boolean imaPogon = false;
 
   @Override
   public void ucitaj(String datoteka) {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
-
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
-      String redak;
-      int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
-      Kompozicija trenutnaKompozicija = null;
-      boolean imaPogon = false;
-
-      while ((redak = citac.readLine()) != null) {
-        boolean preskociPrvog = false;
-        if (brojRetka == 1) {
-          preskociPrvog = prviRedakJeInformativan(redak.split(";"), citac);
-        }
-
-        if (!preskociPrvog) {
-          Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
-
-          if (redak.startsWith("#")) {
-            brojRetka++;
-            continue;
-          }
-
-          if (poklapanjePraznogRetka.matches()) {
-            if (trenutnaKompozicija != null && imaPogon) {
-              ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
-            }
-            trenutnaKompozicija = null;
-            imaPogon = false;
-            brojRetka++;
-            continue;
-          }
-
-          List<String> greske = validirajRedak(redak);
-
-          if (greske.isEmpty()) {
-            String[] dijeloviRetka = redak.split(";");
-            try {
-              if (trenutnaKompozicija == null
-                  || trenutnaKompozicija.getOznaka() != Integer.valueOf(dijeloviRetka[0])) {
-                if (trenutnaKompozicija != null && imaPogon) {
-                  ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
-                }
-                trenutnaKompozicija = new Kompozicija(brojRetka, Integer.valueOf(dijeloviRetka[0]));
-                imaPogon = false;
-              }
-
-              Vozilo vozilo =
-                  ZeljeznickiSustav.dohvatiInstancu().dohvatiVoziloPoOznaci(dijeloviRetka[1]);
-
-              if ("P".equals(dijeloviRetka[2])) {
-                imaPogon = true;
-                trenutnaKompozicija.addVozilo(vozilo);
-              } else if (imaPogon) {
-                trenutnaKompozicija.addVozilo(vozilo);
-              } else {
-                ukupanBrojGresakaUDatoteci++;
-                ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-                System.out.println("Kompozicija - Greška u retku " + brojRetka
-                    + ": Prvo prijevozno sredstvo mora imati pogon.");
-              }
-            } catch (Exception e) {
-              ukupanBrojGresakaUDatoteci++;
-              ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-              System.out.println("Greška pri obradi retka " + brojRetka + ": " + e.getMessage());
-            }
-          } else {
-            ukupanBrojGresakaUDatoteci++;
-            prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
-          }
-        }
-        brojRetka++;
-      }
-
-      if (trenutnaKompozicija != null && imaPogon) {
-        ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
-      }
-
+      obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
       System.out.println("Kompozicije uspjesno ucitane.");
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
+    }
+  }
+
+  private void obradiSadrzajDatoteke(BufferedReader citac, Pattern predlozakPrazanRedak)
+      throws IOException {
+    String redak;
+    int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
+
+    while ((redak = citac.readLine()) != null) {
+      boolean preskociPrvog = false;
+      if (brojRetka == 1) {
+        preskociPrvog = prviRedakJeInformativan(redak.split(";"), citac);
+      }
+
+      if (!preskociPrvog) {
+        Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
+
+        if (redak.startsWith("#")) {
+          brojRetka++;
+          continue;
+        }
+
+        if (poklapanjePraznogRetka.matches()) {
+          if (trenutnaKompozicija != null && imaPogon) {
+            ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
+          }
+          trenutnaKompozicija = null;
+          imaPogon = false;
+          brojRetka++;
+          continue;
+        }
+        obradiRedak(redak, brojRetka, ukupanBrojGresakaUDatoteci);
+      }
+      brojRetka++;
+    }
+
+    if (trenutnaKompozicija != null && imaPogon) {
+      ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
+    }
+  }
+
+  private void obradiRedak(String redak, int brojRetka, int ukupanBrojGresakaUDatoteci) {
+    List<String> greske = validirajRedak(redak);
+
+    if (greske.isEmpty()) {
+      String[] dijeloviRetka = redak.split(";");
+      try {
+        if (trenutnaKompozicija == null
+            || trenutnaKompozicija.getOznaka() != Integer.valueOf(dijeloviRetka[0])) {
+          if (trenutnaKompozicija != null && imaPogon) {
+            ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
+          }
+          trenutnaKompozicija = new Kompozicija(brojRetka, Integer.valueOf(dijeloviRetka[0]));
+          imaPogon = false;
+        }
+
+        Vozilo vozilo = ZeljeznickiSustav.dohvatiInstancu().dohvatiVoziloPoOznaci(dijeloviRetka[1]);
+
+        if ("P".equals(dijeloviRetka[2])) {
+          imaPogon = true;
+          trenutnaKompozicija.addVozilo(vozilo);
+        } else if (imaPogon) {
+          trenutnaKompozicija.addVozilo(vozilo);
+        } else {
+          ukupanBrojGresakaUDatoteci++;
+          ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+          System.out.println("Kompozicija - Greška u retku " + brojRetka
+              + ": Prvo prijevozno sredstvo mora imati pogon.");
+        }
+      } catch (Exception e) {
+        ukupanBrojGresakaUDatoteci++;
+        ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+        System.out.println("Greška pri obradi retka " + brojRetka + ": " + e.getMessage());
+      }
+    } else {
+      ukupanBrojGresakaUDatoteci++;
+      prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
     }
   }
 

@@ -33,58 +33,58 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
   @Override
   public void ucitaj(String datoteka) {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
-
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
-      String redak;
-      int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
-
-      while ((redak = citac.readLine()) != null) {
-        boolean preskociPrvog = false;
-        if (brojRetka == 1) {
-          preskociPrvog = prviRedakJeInformativan(redak.split(";"), citac);
-        }
-
-        if (!preskociPrvog) {
-          Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
-
-          if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
-            // System.out.println("Preskočen redak: " + redak);
-            brojRetka++;
-            continue;
-          }
-
-          List<String> greske = validirajRedak(redak);
-
-          if (greske.isEmpty()) {
-            String[] dijeloviRetka = redak.split(";");
-            try {
-              Stanica stanica =
-                  new Stanica(brojRetka, dijeloviRetka[0], dijeloviRetka[1], dijeloviRetka[2],
-                      dijeloviRetka[3], Boolean.valueOf(dijeloviRetka[4].equals("DA")),
-                      Boolean.valueOf(dijeloviRetka[5].equals("DA")), dijeloviRetka[6],
-                      Integer.valueOf(dijeloviRetka[7]), dijeloviRetka[8],
-                      Integer.valueOf(dijeloviRetka[9]),
-                      Double.parseDouble(dijeloviRetka[10].replace(',', '.')),
-                      Double.parseDouble(dijeloviRetka[11].replace(',', '.')), dijeloviRetka[12],
-                      Integer.valueOf(dijeloviRetka[13]));
-              ZeljeznickiSustav.dohvatiInstancu().dodajStanicu(stanica);
-            } catch (NumberFormatException e) {
-              System.out
-                  .println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka);
-              ukupanBrojGresakaUDatoteci++;
-              ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-            }
-          } else {
-            ukupanBrojGresakaUDatoteci++;
-            prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
-          }
-        }
-        brojRetka++;
-      }
+      obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
       System.out.println("Stanice uspješno učitane.");
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
+    }
+  }
+
+  private void obradiSadrzajDatoteke(BufferedReader citac, Pattern predlozakPrazanRedak)
+      throws Exception {
+    String redak;
+    int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
+
+    while ((redak = citac.readLine()) != null) {
+      boolean preskociPrvog = false;
+      if (brojRetka == 1) {
+        preskociPrvog = prviRedakJeInformativan(redak.split(";"), citac);
+      }
+
+      if (!preskociPrvog) {
+        Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
+        if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
+          // System.out.println("Preskočen redak: " + redak);
+          brojRetka++;
+          continue;
+        }
+
+        List<String> greske = validirajRedak(redak);
+        if (greske.isEmpty()) {
+          String[] dijeloviRetka = redak.split(";");
+          try {
+            Stanica stanica = new Stanica(brojRetka, dijeloviRetka[0], dijeloviRetka[1],
+                dijeloviRetka[2], dijeloviRetka[3], Boolean.valueOf(dijeloviRetka[4].equals("DA")),
+                Boolean.valueOf(dijeloviRetka[5].equals("DA")), dijeloviRetka[6],
+                Integer.valueOf(dijeloviRetka[7]), dijeloviRetka[8],
+                Integer.valueOf(dijeloviRetka[9]),
+                Double.parseDouble(dijeloviRetka[10].replace(',', '.')),
+                Double.parseDouble(dijeloviRetka[11].replace(',', '.')), dijeloviRetka[12],
+                Integer.valueOf(dijeloviRetka[13]));
+            ZeljeznickiSustav.dohvatiInstancu().dodajStanicu(stanica);
+          } catch (NumberFormatException e) {
+            System.out.println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka);
+            ukupanBrojGresakaUDatoteci++;
+            ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+          }
+        } else {
+          ukupanBrojGresakaUDatoteci++;
+          prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
+        }
+      }
+      brojRetka++;
     }
   }
 

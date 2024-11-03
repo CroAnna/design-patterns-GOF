@@ -41,60 +41,64 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
   @Override
   public void ucitaj(String datoteka) {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
-
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
-      String redak;
-      int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
-
-      while ((redak = citac.readLine()) != null) {
-        boolean preskociPrvog = false;
-        if (brojRetka == 1) {
-          preskociPrvog = prviRedakJeInformativan(redak.split(";"), citac);
-        }
-
-        if (!preskociPrvog) {
-          Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
-
-          if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
-            System.out.println("Preskočen redak: " + redak);
-            brojRetka++;
-            continue;
-          }
-
-          List<String> greske = validirajRedak(redak);
-
-          if (greske.isEmpty()) {
-            String[] dijeloviRetka = redak.split(";");
-            try {
-              VoziloBuilder builder = new VoziloConcreteBuilder();
-              VoziloDirector voziloDirector = new VoziloDirector(builder);
-              Vozilo vozilo = konstruirajVozilo(brojRetka, dijeloviRetka, voziloDirector);
-
-              if (vozilo != null) {
-                ZeljeznickiSustav.dohvatiInstancu().dodajVozilo(vozilo);
-              }
-            } catch (NumberFormatException e) {
-              ukupanBrojGresakaUDatoteci++;
-              ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-              System.out.println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka
-                  + ": " + e.getMessage());
-            } catch (Exception e) {
-              ukupanBrojGresakaUDatoteci++;
-              ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-              System.out.println(
-                  "Greška pri konstruiranju vozila u retku " + brojRetka + ": " + e.getMessage());
-            }
-          } else {
-            ukupanBrojGresakaUDatoteci++;
-            prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
-          }
-        }
-        brojRetka++;
-      }
+      obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
       System.out.println("Vozila uspješno učitana.");
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
+    }
+  }
+
+  private void obradiSadrzajDatoteke(BufferedReader citac, Pattern predlozakPrazanRedak)
+      throws Exception {
+    String redak;
+    int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
+
+    while ((redak = citac.readLine()) != null) {
+      boolean preskociPrvog = false;
+      if (brojRetka == 1) {
+        preskociPrvog = prviRedakJeInformativan(redak.split(";"), citac);
+      }
+
+      if (!preskociPrvog) {
+        Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
+
+        if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
+          System.out.println("Preskočen redak: " + redak);
+          brojRetka++;
+          continue;
+        }
+
+        List<String> greske = validirajRedak(redak);
+
+        if (greske.isEmpty()) {
+          String[] dijeloviRetka = redak.split(";");
+          try {
+            VoziloBuilder builder = new VoziloConcreteBuilder();
+            VoziloDirector voziloDirector = new VoziloDirector(builder);
+            Vozilo vozilo = konstruirajVozilo(brojRetka, dijeloviRetka, voziloDirector);
+
+            if (vozilo != null) {
+              ZeljeznickiSustav.dohvatiInstancu().dodajVozilo(vozilo);
+            }
+          } catch (NumberFormatException e) {
+            ukupanBrojGresakaUDatoteci++;
+            ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+            System.out.println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka
+                + ": " + e.getMessage());
+          } catch (Exception e) {
+            ukupanBrojGresakaUDatoteci++;
+            ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+            System.out.println(
+                "Greška pri konstruiranju vozila u retku " + brojRetka + ": " + e.getMessage());
+          }
+        } else {
+          ukupanBrojGresakaUDatoteci++;
+          prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
+        }
+      }
+      brojRetka++;
     }
   }
 
