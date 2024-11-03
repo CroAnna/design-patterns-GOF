@@ -44,8 +44,7 @@ public class CsvCitacVozilaProduct extends CsvCitacProduct {
 
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       String redak;
-      int brojRetka = 1;
-      int ukupanBrojGresakaUDatoteci = 0;
+      int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
 
       while ((redak = citac.readLine()) != null) {
         boolean preskociPrvog = false;
