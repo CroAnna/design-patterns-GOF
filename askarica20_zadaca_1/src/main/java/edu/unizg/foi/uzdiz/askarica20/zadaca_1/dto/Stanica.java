@@ -14,6 +14,7 @@ public class Stanica {
   private String kategorijaPruge;
   private int brojPerona;
   private String vrstaPruge;
+  private String vrstaStanice;
   private int brojKolosjeka;
   private double doPoOsovini;
   private double doPoDuznomM;
@@ -31,6 +32,7 @@ public class Stanica {
     super();
     this.id = id;
     this.nazivStanice = nazivStanice;
+    this.vrstaStanice = vrstaStanice;
     this.oznakaPruge = oznakaPruge;
     this.statusStanice = statusStanice;
     this.putniciUlIz = putniciUlIz;
@@ -59,6 +61,14 @@ public class Stanica {
 
   public void setNazivStanice(String nazivStanice) {
     this.nazivStanice = nazivStanice;
+  }
+
+  public String getVrstaStanice() {
+    return vrstaStanice;
+  }
+
+  public void setVrstaStanice(String vrstaStanice) {
+    this.vrstaStanice = vrstaStanice;
   }
 
   public String getOznakaPruge() {
