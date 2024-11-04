@@ -19,5 +19,6 @@ java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_1/target/askarica20_zadaca_1-1.0.
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_1/target/askarica20_zadaca_1-1.0.0.jar --zs DZ_1_stanice_greska.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije.csv
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_1/target/askarica20_zadaca_1-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila_greska.csv --zk DZ_1_kompozicije.csv
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_1/target/askarica20_zadaca_1-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije_greska.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_1/target/askarica20_zadaca_1-1.0.0.jar --zk DZ_1_kompozicije_greska.csv --zs DZ_1_stanice_greska.csv --zps DZ_1_vozila_greska.csv
 
 ISI2S Mursko Središće - Mala Subotica

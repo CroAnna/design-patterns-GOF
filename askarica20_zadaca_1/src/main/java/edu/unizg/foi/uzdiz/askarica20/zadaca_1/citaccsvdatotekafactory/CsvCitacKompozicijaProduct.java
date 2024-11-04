@@ -21,6 +21,8 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
 
   private Kompozicija trenutnaKompozicija = null;
   private boolean imaPogon = false;
+  private boolean imaVagon = false;
+  int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
 
   @Override
   public void ucitaj(String datoteka) {
@@ -37,8 +39,6 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
   private void obradiSadrzajDatoteke(BufferedReader citac, Pattern predlozakPrazanRedak)
       throws IOException {
     String redak;
-    int brojRetka = 1, ukupanBrojGresakaUDatoteci = 0;
-
     while ((redak = citac.readLine()) != null) {
       boolean preskociPrvog = false;
       if (brojRetka == 1) {
@@ -54,25 +54,32 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
         }
 
         if (poklapanjePraznogRetka.matches()) {
-          if (trenutnaKompozicija != null && imaPogon) {
-            ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
-          }
+          provjeriIspravnostKompozicije();
           trenutnaKompozicija = null;
           imaPogon = false;
+          imaVagon = false;
           brojRetka++;
           continue;
         }
-        obradiRedak(redak, brojRetka, ukupanBrojGresakaUDatoteci);
+        obradiRedak(redak);
       }
       brojRetka++;
     }
+    provjeriIspravnostKompozicije();
+  }
 
-    if (trenutnaKompozicija != null && imaPogon) {
+  private void provjeriIspravnostKompozicije() {
+    if (trenutnaKompozicija != null && imaPogon && imaVagon) {
       ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
+    } else if ((!imaPogon || !imaVagon)) {
+      ukupanBrojGresakaUDatoteci++;
+      ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+      System.out.println("Kompozicija - Greška u retku " + brojRetka
+          + ": Prijevozno sredstvo mora imati bar 1 pogon i 1 vagon.");
     }
   }
 
-  private void obradiRedak(String redak, int brojRetka, int ukupanBrojGresakaUDatoteci) {
+  private void obradiRedak(String redak) {
     List<String> greske = validirajRedak(redak);
 
     if (greske.isEmpty()) {
@@ -80,11 +87,12 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
       try {
         if (trenutnaKompozicija == null
             || trenutnaKompozicija.getOznaka() != Integer.valueOf(dijeloviRetka[0])) {
-          if (trenutnaKompozicija != null && imaPogon) {
+          if (trenutnaKompozicija != null && imaPogon && imaVagon) {
             ZeljeznickiSustav.dohvatiInstancu().dodajKompoziciju(trenutnaKompozicija);
           }
           trenutnaKompozicija = new Kompozicija(brojRetka, Integer.valueOf(dijeloviRetka[0]));
           imaPogon = false;
+          imaVagon = false;
         }
 
         Vozilo vozilo = ZeljeznickiSustav.dohvatiInstancu().dohvatiVoziloPoOznaci(dijeloviRetka[1]);
@@ -92,13 +100,9 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
         if ("P".equals(dijeloviRetka[2])) {
           imaPogon = true;
           trenutnaKompozicija.addVozilo(vozilo);
-        } else if (imaPogon) {
+        } else if (imaPogon && "V".equals(dijeloviRetka[2])) {
+          imaVagon = true;
           trenutnaKompozicija.addVozilo(vozilo);
-        } else {
-          ukupanBrojGresakaUDatoteci++;
-          ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
-          System.out.println("Kompozicija - Greška u retku " + brojRetka
-              + ": Prvo prijevozno sredstvo mora imati pogon.");
         }
       } catch (Exception e) {
         ukupanBrojGresakaUDatoteci++;
@@ -107,11 +111,11 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
       }
     } else {
       ukupanBrojGresakaUDatoteci++;
-      prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
+      prikaziGreske(greske);
     }
   }
 
-  private void prikaziGreske(List<String> greske, int brojRetka, int ukupanBrojGresakaUDatoteci) {
+  private void prikaziGreske(List<String> greske) {
     ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
 
     System.out.println("Kompozicije - Greške u retku " + brojRetka + ":");
