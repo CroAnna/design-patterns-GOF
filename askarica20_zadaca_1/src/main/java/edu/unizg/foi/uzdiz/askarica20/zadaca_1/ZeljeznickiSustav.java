@@ -57,6 +57,7 @@ public class ZeljeznickiSustav {
       provjeraVrsteUnosa(unos);
     } while (!unos.equalsIgnoreCase("Q"));
 
+    skener.close();
     System.out.println("Gasenje sustava FOI Zeljeznice...\n");
   }
 
