@@ -38,3 +38,13 @@ ISI2S Novo Selo Rok - Turčin
 
 ISI2S Pojatno - Gajnice
 15
+
+IP
+
+IK 8001
+IK 8002
+IK 8003
+IK 8004
+
+ISP M501 N
+ISP M501 O
