@@ -18,7 +18,7 @@ public class ZeljeznickiSustav {
   private final List<Stanica> listaStanica = new ArrayList();
   private final List<Kompozicija> listaKompozicija = new ArrayList();
   private int ukupanBrojGresakaUSustavu = 0;
-  private IspisnikPodataka ispis = new IspisnikPodataka();
+  private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
   private ZeljeznickiSustav() {};
 
@@ -52,7 +52,7 @@ public class ZeljeznickiSustav {
   public void zapocniRadSustava() {
     String unos = "";
     Scanner skener = new Scanner(System.in);
-    nacrtajVlak();
+    ispisnik.nacrtajVlak();
     System.out.println("-- Dobrodosli u FOI Zeljeznice! --");
 
     do {
@@ -95,7 +95,7 @@ public class ZeljeznickiSustav {
       Kompozicija kompozicija = dohvatiPodatkeKompozicije(oznaka);
 
       if (kompozicija != null) {
-        ispis.ispisKompozicije(kompozicija);
+        ispisnik.ispisKompozicije(kompozicija);
       } else {
         System.out.println("Ne postoji kompozicija s tom oznakom.");
       }
@@ -112,7 +112,7 @@ public class ZeljeznickiSustav {
     } else {
       List<Stanica> stanicePruge = dohvatiStanicePruge(poklapanjePredlozakISP.group("oznakaPruge"));
       if (stanicePruge.size() > 0) {
-        ispis.ispisStanicaPruge(stanicePruge, poklapanjePredlozakISP.group("redoslijed"));
+        ispisnik.ispisStanicaPruge(stanicePruge, poklapanjePredlozakISP.group("redoslijed"));
       } else {
         System.out.println("Ne postoji pruga s tom oznakom.");
       }
@@ -126,7 +126,7 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIP.matches()) {
       System.out.println("Neispravna komanda - format IP");
     } else {
-      ispis.ispisiPruge(listaStanica);
+      ispisnik.ispisiPruge(listaStanica);
     }
   }
 
@@ -142,14 +142,8 @@ public class ZeljeznickiSustav {
           dohvatiMedustanice(poklapanjePredlozakISI2S.group("polaznaStanica"),
               poklapanjePredlozakISI2S.group("odredisnaStanica"));
 
-      /*
-       * List<Stanica> medustanice =
-       * dohvatiMedustanice(poklapanjePredlozakISI2S.group("polaznaStanica"),
-       * poklapanjePredlozakISI2S.group("odredisnaStanica"));
-       */
-
       if (stanicaUdaljenostMapa.size() > 0) {
-        ispis.ispisListeStanica(stanicaUdaljenostMapa);
+        ispisnik.ispisListeStanica(stanicaUdaljenostMapa);
       } else {
         System.out.println("Ne postoji pruga s tom oznakom.");
       }
@@ -166,26 +160,12 @@ public class ZeljeznickiSustav {
     return null;
   }
 
-
   private LinkedHashMap<Stanica, Integer> dohvatiMedustanice(String polaznaStanica,
       String odredisnaStanica) {
-    System.out.print("Traženje rute: " + polaznaStanica + " -> " + odredisnaStanica);
-
     LinkedHashMap<Stanica, Integer> medustaniceMap = new LinkedHashMap<Stanica, Integer>();
     List<Stanica> listaSvihPresjedalista = dohvatiPresjedalista();
-
-    /*
-     * System.out.println("presjedalista------------------");
-     * 
-     * for (Stanica pres : listaSvihPresjedalista) { System.out.println(pres); }
-     * System.out.println("------------------\n\n");
-     */
-
-
-    // Oznaka pruge polazne stanice
     String oznakaPruge = null;
 
-    // Prvo provjerimo da li polazna stanica postoji i dohvatimo oznaku pruge
     for (Stanica stanica : listaStanica) {
       if (stanica.getNazivStanice().equals(polaznaStanica)) {
         oznakaPruge = stanica.getOznakaPruge();
@@ -193,13 +173,10 @@ public class ZeljeznickiSustav {
         break;
       }
     }
-
     if (polaznaStanica.equals(odredisnaStanica)) {
       System.out.print("Polazna i zavrsna su jednake.");
       return medustaniceMap;
     }
-
-    // Ako oznaka pruge nije pronađena, vraćamo prazan popis
     if (oznakaPruge == null) {
       System.out.print("Polazna stanica nije pronađena.");
       return medustaniceMap;
@@ -214,49 +191,33 @@ public class ZeljeznickiSustav {
       System.out.println(
           "Provjeravam stanicu: " + nazivStanice + ", Oznaka pruge: " + stanica.getOznakaPruge());
 
-      // Počnimo s prikupljanjem stanica kada pronađemo polaznu stanicu
       if (nazivStanice.equals(polaznaStanica)) {
         nadenPocetak = true;
-        System.out.println("pronaden pocetak!");
       }
 
-      // Ako smo započeli prikupljanje, dodaj trenutnu stanicu na popis
       if (nadenPocetak) {
-
         if (oznakaPruge.equals(stanica.getOznakaPruge())) {
           if (!stanica.getNazivStanice().equals(polaznaStanica)) {
             trenutnaUdaljenost = trenutnaUdaljenost + stanica.getDuzina();
-            System.out.println("povecavam udaljenost na " + trenutnaUdaljenost);
           }
-
-
-
           System.out.println(
               "--> stanica se dodaje " + stanica.getNazivStanice() + " " + trenutnaUdaljenost);
           medustaniceMap.put(stanica, trenutnaUdaljenost);
         }
       }
 
-      // Provjerite je li trenutna stanica krajnja stanica
       if (nazivStanice.equals(odredisnaStanica)) {
         nadenKraj = true;
-        System.out.println("pronaden kraj!");
-
-        // Ako je krajnja stanica na drugoj pruzi, provjerite za presjedališta
         if (!stanica.getOznakaPruge().equals(oznakaPruge)) {
-          // Provjerite postoje li presjedališta između polazne i krajnje stanice
           List<Stanica> listaPresjedalistaNaPruzi =
               pronadiPresjedalistaNaPruzi(listaSvihPresjedalista, oznakaPruge, odredisnaStanica);
           System.out
               .print("Krajnja stanica nije na istoj pruzi kao polazna, ali postoje presjedališta: "
                   + listaPresjedalistaNaPruzi + "\n\n");
-
           List<Stanica> ostalePrugePresjedalista =
               dohvatiOstalePrugePresjedalista(listaPresjedalistaNaPruzi);
-
           System.out
               .print("Ta presjedalista vode do drugih pruga: " + ostalePrugePresjedalista + "\n\n");
-
           LinkedHashMap<Stanica, Integer> noveMedustaniceMap = null;
 
           if (listaPresjedalistaNaPruzi.size() > 0 && ostalePrugePresjedalista.size() > 0) {
@@ -265,44 +226,24 @@ public class ZeljeznickiSustav {
               pronadenoOdredisteNaPruzi =
                   provjeriJeLiOdredisteNaNovojPruzi(p.getOznakaPruge(), odredisnaStanica);
               if (pronadenoOdredisteNaPruzi) {
-                System.out.print("!!!!!Pronadeno odrediste " + odredisnaStanica + " na pruzi "
-                    + p.getOznakaPruge());
                 noveMedustaniceMap = dodajUdaljenost(p.getOznakaPruge(), odredisnaStanica, p,
                     medustaniceMap, trenutnaUdaljenost);
-                /*
-                 * System.out.print("------------------------------------");
-                 * System.out.print(medustaniceMap);
-                 * System.out.print("------------------------------------");
-                 */
-
-              } else {
-                System.out.print("Nije ronadeno odrediste " + odredisnaStanica + " na pruzi "
-                    + p.getOznakaPruge());
               }
             }
           }
-          System.out.print("\n1-vracam" + noveMedustaniceMap);
           return noveMedustaniceMap;
-
         } else {
-          System.out.print("2-vracam");
-          // Ako su na istoj pruzi, završavamo
-          break; // Pronađena je krajnja stanica na istoj pruzi
+          break;
         }
       }
     }
-
     System.out.print("Pronađena početna: " + nadenPocetak + ", Pronađena završna: " + nadenKraj);
-    System.out.print("3-vracam");
     return medustaniceMap;
   }
 
   private LinkedHashMap<Stanica, Integer> dodajUdaljenost(String oznakaPruge,
       String odredisnaStanica, Stanica presjedaliste,
       LinkedHashMap<Stanica, Integer> medustaniceMap, int posljednjaUdaljenost) {
-
-    System.out.print("\nposljednjaUdaljenost = " + posljednjaUdaljenost + " \n");
-
     List<Stanica> stanicePruge = dohvatiStanicePruge(oznakaPruge);
     int udaljenost = posljednjaUdaljenost;
     int udaljenostOdPresjedalista = 0;
@@ -315,7 +256,6 @@ public class ZeljeznickiSustav {
       }
       if (nadenoPresjedaliste) {
         if (!s.getNazivStanice().equals(presjedaliste.getNazivStanice())) {
-          // ne dodaj udaljenost od tog istog stajalista jer je to nula i dalje
           udaljenost = udaljenost + s.getDuzina();
         }
         medustaniceMap.put(s, udaljenost);
@@ -323,10 +263,6 @@ public class ZeljeznickiSustav {
       }
 
       if (s.getNazivStanice().equals(odredisnaStanica)) {
-        /*
-         * System.out.print("\n-Finalno:"); System.out.print(medustaniceMap);
-         * System.out.print("\n-------\n");
-         */
         return medustaniceMap;
       }
     }
@@ -334,27 +270,20 @@ public class ZeljeznickiSustav {
   }
 
   private List<Stanica> dohvatiOstalePrugePresjedalista(List<Stanica> listaPresjedalistaNaPruzi) {
-    List<Stanica> svePresjedalistaUSustavu = dohvatiPresjedalista(); // dohvaćamo sve presjedališta
-                                                                     // u sustavu
-    List<Stanica> ostalePrugePresjedalista = new ArrayList<>(); // lista za pohranu stanica s drugim
-                                                                // prugama
+    List<Stanica> svePresjedalistaUSustavu = dohvatiPresjedalista();
+    List<Stanica> ostalePrugePresjedalista = new ArrayList<>();
 
     for (Stanica presjedalisteNaPruzi : listaPresjedalistaNaPruzi) {
       for (Stanica presjedalisteUSustavu : svePresjedalistaUSustavu) {
-        // Provjeravamo je li naziv isti, ali pruga različita
         if (presjedalisteNaPruzi.getNazivStanice().equals(presjedalisteUSustavu.getNazivStanice())
             && !presjedalisteNaPruzi.getOznakaPruge()
                 .equals(presjedalisteUSustavu.getOznakaPruge())) {
-
-          // Dodajemo stanicu u rezultirajuću listu
           ostalePrugePresjedalista.add(presjedalisteUSustavu);
         }
       }
     }
-
     return ostalePrugePresjedalista;
   }
-
 
   private boolean provjeriJeLiOdredisteNaNovojPruzi(String oznaka, String odredisnaStanica) {
     List<Stanica> stanicePruge = dohvatiStanicePruge(oznaka);
@@ -368,10 +297,8 @@ public class ZeljeznickiSustav {
 
   private List<Stanica> pronadiPresjedalistaNaPruzi(List<Stanica> listaPresjedalista,
       String oznakaPruge, String nazivOdredista) {
-
     List<Stanica> presjedalistaNaTojPruzi = new ArrayList<Stanica>();
     for (Stanica presjedaliste : listaPresjedalista) {
-
       if (presjedaliste.getOznakaPruge().equals(oznakaPruge)) {
         System.out.println(
             "Pronađeno presjedalište: " + presjedaliste.getNazivStanice() + " " + oznakaPruge);
@@ -381,32 +308,23 @@ public class ZeljeznickiSustav {
     return presjedalistaNaTojPruzi;
   }
 
-
   private List<Stanica> dohvatiPresjedalista() {
     List<Stanica> listaPresjedalista = new ArrayList<>();
     Map<String, List<Stanica>> brojacStanica = new HashMap<>();
-
     Stanica prethodnaStanica = null;
 
     for (Stanica stanica : listaStanica) {
       String nazivStanice = stanica.getNazivStanice();
-
-      // Avoid counting consecutive duplicates on the same railway line
       if (prethodnaStanica != null && nazivStanice.equals(prethodnaStanica.getNazivStanice())
           && stanica.getOznakaPruge().equals(prethodnaStanica.getOznakaPruge())) {
-        // Skip if it’s the same station consecutively on the same line
         continue;
       }
-
-      // Get or initialize the list of occurrences for the current station
-      List<Stanica> occurrences = brojacStanica.getOrDefault(nazivStanice, new ArrayList<>());
-      occurrences.add(stanica); // Add the current station occurrence
-      brojacStanica.put(nazivStanice, occurrences);
-
+      List<Stanica> brojPojavljivanja = brojacStanica.getOrDefault(nazivStanice, new ArrayList<>());
+      brojPojavljivanja.add(stanica);
+      brojacStanica.put(nazivStanice, brojPojavljivanja);
       prethodnaStanica = stanica;
     }
 
-    // Add all stations that appear two or more times (each occurrence)
     for (List<Stanica> stanice : brojacStanica.values()) {
       if (stanice.size() >= 2) {
         listaPresjedalista.addAll(stanice);
@@ -432,13 +350,5 @@ public class ZeljeznickiSustav {
       }
     }
     return stanicePruge;
-  }
-
-
-
-  private void nacrtajVlak() {
-    String train =
-        "       ___\n" + "  __[__|__]__[__|__]__[__|__]__\n" + "   O-O---O-O---O-O---O-O---O-O\n";
-    System.out.println(train);
   }
 }

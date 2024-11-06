@@ -60,7 +60,7 @@ public class IspisnikPodataka {
     System.out.println(
         "\n------------------------------------ ISPIS STANICA  ------------------------------------");
     System.out.printf("%-30s %-15s %-10s %s%n", "Naziv stanice", "Vrsta stanice", "Udaljenost",
-        "Od početne stanice");
+        "od početne stanice");
     System.out.println(
         "----------------------------------------------------------------------------------------");
 
@@ -107,7 +107,7 @@ public class IspisnikPodataka {
     System.out.println(
         "\n\n--------------------------------------------------------- ISPIS KOMPOZICIJE ---------------------------------------------------------\n");
     System.out.printf("%-10s %-5s %-60s %-10s %-15s %-15s %-10s\n", "Oznaka", "Uloga", "Opis",
-        "Godina", "Namjena", "Vrsta Pogona", "Max Brzina");
+        "Godina", "Namjena", "Vrsta pogona", "Max brzina");
     System.out.println(
         "-------------------------------------------------------------------------------------------------"
             + "------------------------------------");
@@ -122,4 +122,9 @@ public class IspisnikPodataka {
         "\n-------------------------------------------------------------------------------------------------------------------------------------\n");
   }
 
+  public void nacrtajVlak() {
+    String train =
+        "       ___\n" + "  __[__|__]__[__|__]__[__|__]__\n" + "   O-O---O-O---O-O---O-O---O-O\n";
+    System.out.println(train);
+  }
 }
