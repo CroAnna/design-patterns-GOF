@@ -1,9 +1,5 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto;
 
-/**
- *
- * @author Ana Skarica
- */
 public class Stanica {
   private int id;
   private String nazivStanice;

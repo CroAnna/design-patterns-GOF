@@ -89,7 +89,7 @@ public class GlavniProgram {
   }
 
   private static void processFile(String file, CsvCitacCreator creator) {
-    CsvCitacProduct concreteProduct = creator.kreirajCitac(); // factory method
+    CsvCitacProduct concreteProduct = creator.kreirajCitac();
     concreteProduct.ucitaj(file);
   }
 

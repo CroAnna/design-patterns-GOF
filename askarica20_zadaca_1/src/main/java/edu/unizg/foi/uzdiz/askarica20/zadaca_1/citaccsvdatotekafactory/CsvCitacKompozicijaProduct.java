@@ -11,7 +11,6 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_1.ZeljeznickiSustav;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Kompozicija;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Vozilo;
 
-// ConcreteProduct
 public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
   private static final String[] NAZIVI_STUPACA =
       {"Oznaka kompozicije", "Oznaka prijevoznog sredstva", "Uloga"};
@@ -29,7 +28,6 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
-      System.out.println("Kompozicije uspjesno ucitane.");
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
@@ -165,10 +163,8 @@ public class CsvCitacKompozicijaProduct extends CsvCitacProduct {
     if ("Oznaka".equals(dijeloviRetkaBezBOM[0])
         && "Oznaka prijevoznog sredstva".equals(dijeloviRetkaBezBOM[1])
         && "Uloga".equals(dijeloviRetkaBezBOM[2])) {
-      System.out.println("Prvi redak kompozicija je informativan.");
       return true;
     } else {
-      System.out.println("Prvi redak kompozicija nije informativan.");
       return false;
     }
   }

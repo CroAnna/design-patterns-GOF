@@ -14,28 +14,18 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
       "Status stanice", "Putnici ul/iz", "Roba ut/ist", "Kategorija pruge", "Broj perona",
       "Vrsta pruge", "Broj kolosjeka", "DO po osovini", "DO po duznom m", "Status pruge", "Dužina"};
 
-  private static final Pattern[] UZORCI_STUPACA = {Pattern.compile("[^;]+"), // Naziv stanice
-      Pattern.compile("[^;]+"), // Oznaka pruge
-      Pattern.compile("(kol\\.|staj\\.)"), // Vrsta stanice
-      Pattern.compile("[^;]+"), // Status stanice
-      Pattern.compile("DA|NE"), // Putnici ul/iz
-      Pattern.compile("DA|NE"), // Roba ut/ist
-      Pattern.compile("[LRM];?+"), // Kategorija pruge
-      Pattern.compile("\\d+"), // Broj perona
-      Pattern.compile("[KE];?+"), // Vrsta pruge
-      Pattern.compile("\\d+"), // Broj kolosjeka
-      Pattern.compile("\\d+[.,]\\d+"), // DO po osovini
-      Pattern.compile("\\d+[.,]\\d+"), // DO po duznom m
-      Pattern.compile("[IKZ];?+"), // Status pruge
-      Pattern.compile("\\d+") // Duzina
-  };
+  private static final Pattern[] UZORCI_STUPACA =
+      {Pattern.compile("[^;]+"), Pattern.compile("[^;]+"), Pattern.compile("(kol\\.|staj\\.)"),
+          Pattern.compile("[^;]+"), Pattern.compile("DA|NE"), Pattern.compile("DA|NE"),
+          Pattern.compile("[LRM];?+"), Pattern.compile("\\d+"), Pattern.compile("[KE];?+"),
+          Pattern.compile("\\d+"), Pattern.compile("\\d+[.,]\\d+"), Pattern.compile("\\d+[.,]\\d+"),
+          Pattern.compile("[IKZ];?+"), Pattern.compile("\\d+")};
 
   @Override
   public void ucitaj(String datoteka) {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
-      System.out.println("Stanice uspješno učitane.");
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
@@ -56,7 +46,6 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
       if (!preskociPrvog) {
         Matcher poklapanjePraznogRetka = predlozakPrazanRedak.matcher(redak);
         if (poklapanjePraznogRetka.matches() || redak.startsWith("#")) {
-          // System.out.println("Preskočen redak: " + redak);
           brojRetka++;
           continue;
         }
@@ -126,13 +115,9 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
 
     for (int i = 0; i < NAZIVI_STUPACA.length; i++) {
       if (i >= dijeloviRetkaBezBOM.length || !NAZIVI_STUPACA[i].equals(dijeloviRetkaBezBOM[i])) {
-        System.out
-            .println("Prvi redak stanica nije informativan - ne odgovara očekivanoj strukturi.");
         return false;
       }
     }
-
-    System.out.println("Prvi redak stanica je informativan.");
     return true;
   }
 

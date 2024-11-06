@@ -14,9 +14,9 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_1.dto.Vozilo;
 
 public class ZeljeznickiSustav {
   private static ZeljeznickiSustav instanca;
-  private final List<Vozilo> listaVozila = new ArrayList();
-  private final List<Stanica> listaStanica = new ArrayList();
-  private final List<Kompozicija> listaKompozicija = new ArrayList();
+  private final List<Vozilo> listaVozila = new ArrayList<Vozilo>();
+  private final List<Stanica> listaStanica = new ArrayList<Stanica>();
+  private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
   private int ukupanBrojGresakaUSustavu = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
@@ -142,16 +142,15 @@ public class ZeljeznickiSustav {
           dohvatiMedustanice(poklapanjePredlozakISI2S.group("polaznaStanica"),
               poklapanjePredlozakISI2S.group("odredisnaStanica"));
 
-      if (stanicaUdaljenostMapa.size() > 0) {
+      if (stanicaUdaljenostMapa != null && stanicaUdaljenostMapa.size() > 0) {
         ispisnik.ispisListeStanica(stanicaUdaljenostMapa);
       } else {
-        System.out.println("Ne postoji pruga s tom oznakom.");
+        System.out.println("Pokusajte s nekim drugim stanicama.");
       }
     }
   }
 
   private Kompozicija dohvatiPodatkeKompozicije(int oznaka) {
-    Kompozicija kompozicija = null;
     for (Kompozicija k : listaKompozicija) {
       if (k.getOznaka() == oznaka) {
         return k;
@@ -165,8 +164,6 @@ public class ZeljeznickiSustav {
     for (Stanica stanica : listaStanica) {
       if (stanica.getNazivStanice().equals(nazivPolazneStanice)) {
         oznakePruge.add(stanica.getOznakaPruge());
-        System.out
-            .println("Polazna stanica: " + nazivPolazneStanice + ", Oznake pruge: " + oznakePruge);
       }
     }
     return oznakePruge;
@@ -178,7 +175,7 @@ public class ZeljeznickiSustav {
       System.out.print("Greska: polazna i zavrsna stanica su jednake.");
       return false;
     } else if (oznakePruge.size() == 0) {
-      System.out.println("Greska: ni jedna polazna stanica nije pronađena.");
+      System.out.println("Greska: ni jedna pruga nije pronađena.");
       return false;
     } else
       return true;
@@ -194,7 +191,6 @@ public class ZeljeznickiSustav {
       return medustaniceMap;
     }
 
-    boolean nadenKraj = false;
     int trenutnaUdaljenost = 0;
     String oznakaIstePruge = "";
 
@@ -203,57 +199,41 @@ public class ZeljeznickiSustav {
       if (nazivStanice.equals(polaznaStanica)) {
         oznakaIstePruge = provjeriJeLiOdredisteNaNekojOdTihPruga(oznakePruge, odredisnaStanica);
         if (!oznakaIstePruge.equals("")) {
-          System.out.print("Oboje postoji na istoj");
           medustaniceMap = izracunajUdaljenostStanicaNaIstojPruzi(oznakaIstePruge, polaznaStanica,
               odredisnaStanica);
-        } else {
-          System.out.print("Nije na istoj");
         }
       }
     }
 
     if (oznakaIstePruge.equals("")) {
-      System.out.print("u nisu na istoj");
       boolean nadenPocetak = false;
 
       for (Stanica stanica : listaStanica) {
         String nazivStanice = stanica.getNazivStanice();
         String oznakaPruge = oznakePruge.get(0); // radi samo za prvu dohvacenu prugu
 
-
         if (nazivStanice.equals(polaznaStanica)) {
           nadenPocetak = true;
         }
 
         if (nadenPocetak) {
-          System.out.println("u naden pocetak - 1");
           if (oznakaPruge.equals(stanica.getOznakaPruge())) {
-            System.out.println(
-                "oznake su jednake - to mislim da nije moguce vise opce osim ak je neka naknadna stanica");
             if (!stanica.getNazivStanice().equals(polaznaStanica)) {
-              System.out.println("nije pocetna pa se dodaje udaljenost");
               trenutnaUdaljenost = trenutnaUdaljenost + stanica.getDuzina();
             }
-            System.out.println(
-                "--> stanica se dodaje " + stanica.getNazivStanice() + " " + trenutnaUdaljenost);
+
             medustaniceMap.put(stanica, trenutnaUdaljenost);
           }
         }
 
         if (nadenPocetak && nazivStanice.equals(odredisnaStanica)) {
-          nadenKraj = true;
           if (!stanica.getOznakaPruge().equals(oznakaPruge)) {
             List<Stanica> listaPresjedalistaNaPruzi =
                 pronadiPresjedalistaNaPruzi(listaSvihPresjedalista, oznakaPruge, odredisnaStanica);
-            System.out.print(
-                "Krajnja stanica nije na istoj pruzi kao polazna, ali postoje presjedališta: "
-                    + listaPresjedalistaNaPruzi + "\n\n");
             List<Stanica> ostalePrugePresjedalista =
                 dohvatiOstalePrugePresjedalista(listaPresjedalistaNaPruzi);
-            System.out.print(
-                "Ta presjedalista vode do drugih pruga: " + ostalePrugePresjedalista + "\n\n");
-            LinkedHashMap<Stanica, Integer> noveMedustaniceMap = null;
 
+            LinkedHashMap<Stanica, Integer> noveMedustaniceMap = null;
             if (listaPresjedalistaNaPruzi.size() > 0 && ostalePrugePresjedalista.size() > 0) {
               boolean pronadenoOdredisteNaNovojPruzi = false;
               for (Stanica p : ostalePrugePresjedalista) {
@@ -277,12 +257,8 @@ public class ZeljeznickiSustav {
 
   private LinkedHashMap<Stanica, Integer> izracunajUdaljenostStanicaNaIstojPruzi(String oznakaPruge,
       String polaznaStanica, String odredisnaStanica) {
-    System.out.print("u izracunajUdaljenostStanicaNaIstojPruzi");
-
     List<Stanica> listaStanicaNaTojPruzi = dohvatiStanicePruge(oznakaPruge);
-    int udaljenost = 0;
     boolean silazniSmjer = false, polaznaNadenaZaSmjer = false, trajeUnosStanica = false;
-    LinkedHashMap<Stanica, Integer> medustaniceMap = new LinkedHashMap<Stanica, Integer>();
 
     for (Stanica s : listaStanicaNaTojPruzi) {
       if (polaznaStanica.equals(s.getNazivStanice())) {
@@ -292,20 +268,26 @@ public class ZeljeznickiSustav {
         silazniSmjer = true;
       }
     }
+    LinkedHashMap<Stanica, Integer> medustaniceMap = unesiMedustaniceIstePrugePremaSmjeru(
+        silazniSmjer, listaStanicaNaTojPruzi, trajeUnosStanica, polaznaStanica, odredisnaStanica);
+    return medustaniceMap;
+  }
+
+  private LinkedHashMap<Stanica, Integer> unesiMedustaniceIstePrugePremaSmjeru(boolean silazniSmjer,
+      List<Stanica> listaStanicaNaTojPruzi, boolean trajeUnosStanica, String polaznaStanica,
+      String odredisnaStanica) {
+    int udaljenost = 0;
+    LinkedHashMap<Stanica, Integer> medustaniceMap = new LinkedHashMap<Stanica, Integer>();
 
     if (silazniSmjer) {
       for (Stanica s : listaStanicaNaTojPruzi) {
         if (!trajeUnosStanica && polaznaStanica.equals(s.getNazivStanice())) {
-          System.out.print("\ndodavanje pocetne " + s.getNazivStanice() + " " + 0);
           medustaniceMap.put(s, 0);
           trajeUnosStanica = true;
         } else if (trajeUnosStanica && !odredisnaStanica.equals(s.getNazivStanice())) {
-          System.out.print("\ndodavanje medu " + s.getNazivStanice() + " " + s.getDuzina() + " "
-              + udaljenost + "\n");
           udaljenost = udaljenost + s.getDuzina();
           medustaniceMap.put(s, udaljenost);
         } else if (trajeUnosStanica && odredisnaStanica.equals(s.getNazivStanice())) {
-          System.out.print("\ndodavanje zadnje " + s.getNazivStanice() + " " + s.getDuzina());
           trajeUnosStanica = false;
           udaljenost = udaljenost + s.getDuzina();
           medustaniceMap.put(s, udaljenost);
@@ -318,27 +300,20 @@ public class ZeljeznickiSustav {
       for (int i = listaStanicaNaTojPruzi.size() - 1; i >= 0; i--) {
         Stanica s = listaStanicaNaTojPruzi.get(i);
         if (!startAdding && polaznaStanica.equals(s.getNazivStanice())) {
-          System.out.print("\ndodavanje pocetne " + s.getNazivStanice() + " " + 0);
           medustaniceMap.put(s, 0);
           startAdding = true;
           previousStation = s;
         } else if (startAdding && !odredisnaStanica.equals(s.getNazivStanice())) {
           udaljenost = udaljenost + previousStation.getDuzina();
-          System.out.print("\ndodavanje medu " + s.getNazivStanice() + " "
-              + previousStation.getDuzina() + " " + udaljenost + "\n");
           medustaniceMap.put(s, udaljenost);
           previousStation = s;
         } else if (startAdding && odredisnaStanica.equals(s.getNazivStanice())) {
           udaljenost = udaljenost + previousStation.getDuzina();
-          System.out.print(
-              "\ndodavanje zadnje " + s.getNazivStanice() + " " + previousStation.getDuzina());
           medustaniceMap.put(s, udaljenost);
           break;
         }
       }
     }
-    System.out.print("\n------~n " + medustaniceMap);
-
     return medustaniceMap;
   }
 
@@ -358,9 +333,7 @@ public class ZeljeznickiSustav {
           udaljenost = udaljenost + s.getDuzina();
         }
         medustaniceMap.put(s, udaljenost);
-        System.out.print("Dodano stajaliste " + s.getNazivStanice() + "\n");
       }
-
       if (s.getNazivStanice().equals(odredisnaStanica)) {
         return medustaniceMap;
       }
@@ -413,8 +386,6 @@ public class ZeljeznickiSustav {
     List<Stanica> presjedalistaNaTojPruzi = new ArrayList<Stanica>();
     for (Stanica presjedaliste : listaPresjedalista) {
       if (presjedaliste.getOznakaPruge().equals(oznakaPruge)) {
-        System.out.println(
-            "Pronađeno presjedalište: " + presjedaliste.getNazivStanice() + " " + oznakaPruge);
         presjedalistaNaTojPruzi.add(presjedaliste);
       }
     }
