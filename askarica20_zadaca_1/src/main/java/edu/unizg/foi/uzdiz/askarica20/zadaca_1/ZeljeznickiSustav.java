@@ -174,7 +174,7 @@ public class ZeljeznickiSustav {
   private void ispisStanicaPruge(List<Stanica> stanicePruge, String redoslijed) {
     System.out.println(
         "\n\n-------------------------- ISPIS STANICA PRUGE ---------------------------\n");
-    System.out.printf("%-30s %-20s %-20s\n", "Naziv stanice", "Vrsta pruge",
+    System.out.printf("%-30s %-20s %-20s\n", "Naziv stanice", "Vrsta stanice",
         "Udaljenost od početne");
     System.out
         .println("--------------------------------------------------------------------------");
@@ -184,18 +184,15 @@ public class ZeljeznickiSustav {
     if ("N".equals(redoslijed)) {
       for (Stanica s : stanicePruge) {
         udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
-        System.out.printf("%-30s %-20s %-20d\n", s.getNazivStanice(), s.getVrstaPruge(),
+        System.out.printf("%-30s %-20s %-20d\n", s.getNazivStanice(), s.getVrstaStanice(),
             udaljenostOdPocetne);;
       }
     } else if ("O".equals(redoslijed)) {
-      for (Stanica s : stanicePruge) {
-        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
-      }
       for (int i = stanicePruge.size() - 1; i >= 0; i--) {
         Stanica s = stanicePruge.get(i);
-        System.out.printf("%-30s %-20s %-20d\n", s.getNazivStanice(), s.getVrstaPruge(),
+        System.out.printf("%-30s %-20s %-20d\n", s.getNazivStanice(), s.getVrstaStanice(),
             udaljenostOdPocetne);
-        udaljenostOdPocetne = udaljenostOdPocetne - s.getDuzina();
+        udaljenostOdPocetne = udaljenostOdPocetne + s.getDuzina();
       }
     }
     System.out.println(
