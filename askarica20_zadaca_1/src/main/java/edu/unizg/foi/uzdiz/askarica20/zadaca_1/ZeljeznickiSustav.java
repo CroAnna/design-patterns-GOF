@@ -76,12 +76,6 @@ public class ZeljeznickiSustav {
       provjeriISI2S(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IK")) {
       provjeriIK(dijeloviKomande, unos);
-    } else if (glavniDioKomande.equals("SVAVOZILA")) {
-      ispisSvihVozilaUSustavu();
-    } else if (glavniDioKomande.equals("SVESTANICE")) {
-      ispisSvihStanicaUSustavu();
-    } else if (glavniDioKomande.equals("SVEKOMP")) {
-      ispisSvihKompozicijaUSustavu();
     } else {
       if (!unos.equalsIgnoreCase("Q")) {
         System.out.println("Neispravna komanda.");
@@ -510,11 +504,8 @@ public class ZeljeznickiSustav {
         listaPresjedalista.addAll(stanice);
       }
     }
-
     return listaPresjedalista;
   }
-
-
 
   public Vozilo dohvatiVoziloPoOznaci(String oznaka) {
     for (Vozilo v : listaVozila) {
@@ -567,7 +558,6 @@ public class ZeljeznickiSustav {
     System.out.println(
         "----------------------------------------------------------------------------------------");
 
-
     for (Stanica s : listaStanica) {
       if (prethodnaOznakaPruge == null) {
         prethodnaOznakaPruge = s.getOznakaPruge();
@@ -578,7 +568,6 @@ public class ZeljeznickiSustav {
         zavrsnaStanica = prethodnaStanica;
         System.out.printf("%-15s %-30s %-30s %-10d\n", prethodnaOznakaPruge,
             pocetnaStanica.getNazivStanice(), zavrsnaStanica.getNazivStanice(), udaljenost);
-
 
         prethodnaStanica = s;
         udaljenost = 0;
@@ -621,38 +610,6 @@ public class ZeljeznickiSustav {
     }
     System.out.println(
         "\n----------------------------------------------------------------------------------------\n");
-  }
-
-
-  private void ispisSvihVozilaUSustavu() {
-    System.out.println("\n--- Ispis svih vozila u sustavu ---");
-    for (Vozilo v : listaVozila) {
-      System.out.println(v);
-    }
-    if (listaVozila.isEmpty()) {
-      System.out.println("Lista vozila je prazna.");
-    }
-  }
-
-  private void ispisSvihStanicaUSustavu() {
-    System.out.println("\n--- Ispis svih stanica u sustavu ---");
-    for (Stanica s : listaStanica) {
-      System.out.println(s);
-    }
-    if (listaStanica.isEmpty()) {
-      System.out.println("Lista stanica je prazna.");
-    }
-  }
-
-
-  private void ispisSvihKompozicijaUSustavu() {
-    System.out.println("\n--- Ispis svih kompozicija u sustavu ---");
-    for (Kompozicija k : listaKompozicija) {
-      System.out.println(k);
-    }
-    if (listaKompozicija.isEmpty()) {
-      System.out.println("Lista kompozicija je prazna.");
-    }
   }
 
   private void nacrtajVlak() {
