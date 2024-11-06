@@ -22,7 +22,7 @@ public class GlavniProgram {
   }
 
   public static boolean provjeriSastavArgumenata(String[] args) {
-    int zsFlag = 0, zpsFlag = 0, zkFlag = 0;
+    int zsZastavica = 0, zpsZastavica = 0, zkZastavica = 0;
 
     if (args.length != 6) {
       throw new IllegalArgumentException("Broj argumenata nije dobar.");
@@ -33,13 +33,13 @@ public class GlavniProgram {
 
       switch (zastavica) {
         case "--zs":
-          zsFlag++;
+          zsZastavica++;
           break;
         case "--zps":
-          zpsFlag++;
+          zpsZastavica++;
           break;
         case "--zk":
-          zkFlag++;
+          zkZastavica++;
           break;
         default:
           return false;
@@ -50,7 +50,7 @@ public class GlavniProgram {
       }
     }
 
-    if (zsFlag == 1 && zpsFlag == 1 && zkFlag == 1) {
+    if (zsZastavica == 1 && zpsZastavica == 1 && zkZastavica == 1) {
       return true;
     } else {
       throw new IllegalArgumentException("Nema po jedan dokument za svaku zastavicu.");
@@ -58,7 +58,7 @@ public class GlavniProgram {
   }
 
   public static void ucitajDatoteke(String[] args) {
-    String stanicaFile = null, vozilaFile = null, kompozicijaFile = null;
+    String stanicaDatoteka = null, vozilaDatoteka = null, kompozicijaDatoteka = null;
 
     for (int i = 0; i < args.length; i += 2) {
       String zastavica = args[i];
@@ -66,31 +66,31 @@ public class GlavniProgram {
 
       switch (zastavica) {
         case "--zs":
-          stanicaFile = datoteka;
+          stanicaDatoteka = datoteka;
           break;
         case "--zps":
-          vozilaFile = datoteka;
+          vozilaDatoteka = datoteka;
           break;
         case "--zk":
-          kompozicijaFile = datoteka;
+          kompozicijaDatoteka = datoteka;
           break;
       }
     }
 
-    if (stanicaFile != null) {
-      processFile(stanicaFile, new CsvCitacStanicaCreator());
+    if (stanicaDatoteka != null) {
+      procesirajDatoteku(stanicaDatoteka, new CsvCitacStanicaCreator());
     }
-    if (vozilaFile != null) {
-      processFile(vozilaFile, new CsvCitacVozilaCreator());
+    if (vozilaDatoteka != null) {
+      procesirajDatoteku(vozilaDatoteka, new CsvCitacVozilaCreator());
     }
-    if (kompozicijaFile != null) {
-      processFile(kompozicijaFile, new CsvCitacKompozicijaCreator());
+    if (kompozicijaDatoteka != null) {
+      procesirajDatoteku(kompozicijaDatoteka, new CsvCitacKompozicijaCreator());
     }
   }
 
-  private static void processFile(String file, CsvCitacCreator creator) {
-    CsvCitacProduct concreteProduct = creator.kreirajCitac();
-    concreteProduct.ucitaj(file);
+  private static void procesirajDatoteku(String datoteka, CsvCitacCreator kreator) {
+    CsvCitacProduct konkretanCitac = kreator.kreirajCitac();
+    konkretanCitac.ucitaj(datoteka);
   }
 
 }
