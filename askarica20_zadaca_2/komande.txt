@@ -1,0 +1,56 @@
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije.csv
+
+obrnuti redoslijed, ali mora raditi ok:
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zps DZ_1_vozila.csv --zs DZ_1_stanice.csv --zk DZ_1_kompozicije.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zps DZ_1_vozila.csv --zk DZ_1_kompozicije.csv --zs DZ_1_stanice.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zk DZ_1_kompozicije.csv --zps DZ_1_vozila.csv --zs DZ_1_stanice.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zk DZ_1_kompozicije.csv --zs DZ_1_stanice.csv --zps DZ_1_vozila.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zk DZ_1_kompozicije.csv --zps DZ_1_vozila.csv
+
+testiranje gresaka:
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zs DZ_1_vozila.csv --zk DZ_1_kompozicije.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zs DZ_1_vozila.csv --zk
+
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila_s_#.csv --zk DZ_1_kompozicije.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice_s_#.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije_s_#.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice_s_#.csv --zps DZ_1_vozila_s_#.csv --zk DZ_1_kompozicije_s_#.csv
+
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice_greska.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila_greska.csv --zk DZ_1_kompozicije.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_1_stanice.csv --zps DZ_1_vozila.csv --zk DZ_1_kompozicije_greska.csv
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zk DZ_1_kompozicije_greska.csv --zs DZ_1_stanice_greska.csv --zps DZ_1_vozila_greska.csv
+
+ISI2S Mursko Središće - Mala Subotica
+ISI2S Donji Kraljevec - Zagreb glavni kolodvor 
+
+ISI2S Čakovec - Donji Kraljevec
+ISI2S Donji Kraljevec - Čakovec
+17
+
+ISI2S Donji Kraljevec - Macinec
+24
+
+ISI2S Vratišinec - Čakovec-Buzovec
+ISI2S Čakovec-Buzovec - Vratišinec
+10
+
+ISI2S Cerje Tužno - Lepoglava
+ISI2S Lepoglava - Cerje Tužno
+14
+
+ISI2S Novo Selo Rok - Turčin
+24
+
+ISI2S Pojatno - Gajnice
+15
+
+IP
+
+IK 8001
+IK 8002
+IK 8003
+IK 8004
+
+ISP M501 N
+ISP M501 O
