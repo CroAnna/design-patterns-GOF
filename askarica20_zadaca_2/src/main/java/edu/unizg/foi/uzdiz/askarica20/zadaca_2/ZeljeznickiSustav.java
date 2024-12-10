@@ -92,6 +92,26 @@ public class ZeljeznickiSustav {
       provjeriIK(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("OD")) {
       ispisiOznakeDana(); // moja komanda koja nije trazena
+    } else if (glavniDioKomande.equals("IV")) {
+      provjeriIV(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IEV")) {
+      provjeriIEV(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IEVD")) {
+      provjeriIEVD(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IV")) {
+      provjeriIVRV(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IVRV")) {
+      provjeriIVRV(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IVI2S")) {
+      provjeriIVI2S(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("DK")) {
+      provjeriDK(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("PK")) {
+      provjeriPK(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("DPK")) {
+      provjeriDPK(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("SVV")) {
+      provjeriSVV(dijeloviKomande, unos);
     } else {
       if (!unos.equalsIgnoreCase("Q")) {
         System.out.println("Neispravna komanda.");
@@ -102,6 +122,109 @@ public class ZeljeznickiSustav {
   private void ispisiOznakeDana() { // moja komanda koja nije trazena
     for (OznakaDana o : listaOznakaDana) {
       System.out.println(o.toString());
+    }
+  }
+
+  private void provjeriIV(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIV = Pattern.compile("^IV$");
+    Matcher poklapanjePredlozakIV = predlozakIV.matcher(unos);
+
+    if (!poklapanjePredlozakIV.matches()) {
+      System.out.println("Neispravna komanda - format IV");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriIEV(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIEV = Pattern.compile("^IEV (?<oznaka>\\d+)$");
+    Matcher poklapanjePredlozakIEV = predlozakIEV.matcher(unos);
+
+    if (!poklapanjePredlozakIEV.matches()) {
+      System.out.println("Neispravna komanda - format IEV oznaka");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriIEVD(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIEVD = Pattern.compile("^IEVD (?<dani>[A-Za-z]+)$");
+    Matcher poklapanjePredlozakIEVD = predlozakIEVD.matcher(unos);
+
+    if (!poklapanjePredlozakIEVD.matches()) {
+      System.out.println("Neispravna komanda - format IEVD dani");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriIVRV(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIVRV = Pattern.compile("^IVRV (?<oznaka>\\d+)$");
+    Matcher poklapanjePredlozakIVRV = predlozakIVRV.matcher(unos);
+
+    if (!poklapanjePredlozakIVRV.matches()) {
+      System.out.println("Neispravna komanda - format IVRV oznaka");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriIVI2S(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIVI2S = Pattern.compile(
+        "^IVI2S (?<polaznaStanica>[\\p{L}- ]+) - (?<odredisnaStanica>[\\p{L}- ]+) - (?<dan>[A-Za-z]+) - (?<odVr>\\d{1,2}:\\d{2}) - (?<doVr>\\d{1,2}:\\d{2}) - (?<prikaz>[A-Z]+)$");
+    Matcher poklapanjePredlozakIVI2S = predlozakIVI2S.matcher(unos);
+
+    if (!poklapanjePredlozakIVI2S.matches()) {
+      System.out.println(
+          "Neispravna komanda - format IVI2S polaznaStanica - odredišnaStanica - dan - odVr - doVr - prikaz ");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriDK(String[] dijeloviKomande, String unos) {
+    Pattern predlozakDK = Pattern.compile("^DK (?<ime>[A-Za-z]+) (?<prezime>[A-Za-z]+)$");
+    Matcher poklapanjePredlozakDK = predlozakDK.matcher(unos);
+
+    if (!poklapanjePredlozakDK.matches()) {
+      System.out.println("Neispravna komanda - format DK ime prezime");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriPK(String[] dijeloviKomande, String unos) {
+    Pattern predlozakPK = Pattern.compile("^PK$");
+    Matcher poklapanjePredlozakPK = predlozakPK.matcher(unos);
+
+    if (!poklapanjePredlozakPK.matches()) {
+      System.out.println("Neispravna komanda - format PK");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriDPK(String[] dijeloviKomande, String unos) {
+    Pattern predlozakDPK = Pattern.compile(
+        "^DPK (?<ime>[A-Za-z]+) (?<prezime>[A-Za-z]+) - (?<oznakaVlaka>\\d+)(?:\\s*-\\s*(?<stanica>[\\p{L}- ]+))?$");
+    Matcher poklapanjePredlozakDPK = predlozakDPK.matcher(unos);
+
+    if (!poklapanjePredlozakDPK.matches()) {
+      System.out.println("Neispravna komanda - format DPK ime prezime - oznakaVlaka [- stanica]");
+    } else {
+      // TODO
+    }
+  }
+
+  private void provjeriSVV(String[] dijeloviKomande, String unos) {
+    Pattern predlozakSVV =
+        Pattern.compile("^SVV (?<oznaka>\\d+) - (?<dan>[A-Za-z]+) - (?<koeficijent>\\d+)$");
+    Matcher poklapanjePredlozakSVV = predlozakSVV.matcher(unos);
+
+    if (!poklapanjePredlozakSVV.matches()) {
+      System.out.println("Neispravna komanda - format SVV oznaka - dan - koeficijent");
+    } else {
+      // TODO
     }
   }
 
