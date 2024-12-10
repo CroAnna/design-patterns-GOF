@@ -3,10 +3,13 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 
 public class CsvCitacStanicaProduct extends CsvCitacProduct {
@@ -24,14 +27,23 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
           Pattern.compile("\\d+([.,]\\d+)?"), Pattern.compile("[IKZ];?+"), Pattern.compile("\\d+"),
           Pattern.compile("\\d*"), Pattern.compile("\\d*"), Pattern.compile("\\d*")};
 
+  private Map<String, Pruga> prugeMap = new HashMap<>();
+
   @Override
   public void ucitaj(String datoteka) {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
+      dodajStaniceUListuPruga();
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
+    }
+  }
+
+  private void dodajStaniceUListuPruga() {
+    for (Pruga pruga : prugeMap.values()) {
+      ZeljeznickiSustav.dohvatiInstancu().dohvatiListuPruga().add(pruga);
     }
   }
 
@@ -57,8 +69,6 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
         if (greske.isEmpty()) {
           String[] dijeloviRetka = redak.split(";");
           try {
-            boolean imaObavezneRetke = dijeloviRetka.length > 14;
-
             Integer vrijednost14 = null;
             Integer vrijednost15 = null;
             Integer vrijednost16 = null;
@@ -81,7 +91,10 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
                 Double.parseDouble(dijeloviRetka[10].replace(',', '.')),
                 Double.parseDouble(dijeloviRetka[11].replace(',', '.')), dijeloviRetka[12],
                 Integer.valueOf(dijeloviRetka[13]), vrijednost14, vrijednost15, vrijednost16);
+
             ZeljeznickiSustav.dohvatiInstancu().dodajStanicu(stanica);
+            stvoriIliDodajStanicePruga(dijeloviRetka[1], stanica);
+
           } catch (NumberFormatException e) {
             System.out.println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka);
             ukupanBrojGresakaUDatoteci++;
@@ -94,6 +107,12 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
       }
       brojRetka++;
     }
+  }
+
+
+  private void stvoriIliDodajStanicePruga(String oznakaPruge, Stanica stanica) {
+    Pruga pruga = prugeMap.computeIfAbsent(oznakaPruge, k -> new Pruga(k));
+    pruga.dodajStanicu(stanica);
   }
 
   private void prikaziGreske(List<String> greske, int brojRetka, int ukupanBrojGresakaUDatoteci) {

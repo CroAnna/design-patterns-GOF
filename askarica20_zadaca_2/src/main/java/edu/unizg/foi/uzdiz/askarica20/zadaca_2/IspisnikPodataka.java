@@ -4,15 +4,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
 
 public class IspisnikPodataka {
 
-  public void ispisiPruge(List<Stanica> listaStanica) {
-    int udaljenost = 0;
-    String prethodnaOznakaPruge = null;
-    Stanica pocetnaStanica = null, zavrsnaStanica = null, prethodnaStanica = null;
+  public void ispisiPruge(List<Pruga> pruge) {
+    if (pruge.isEmpty()) {
+      System.out.println("Nema unesenih pruga u sustavu.");
+      return;
+    }
 
     System.out.println(
         "\n\n------------------------------------- ISPIS PRUGA --------------------------------------\n");
@@ -21,34 +23,19 @@ public class IspisnikPodataka {
     System.out.println(
         "----------------------------------------------------------------------------------------");
 
-    for (Stanica s : listaStanica) {
-      if (prethodnaOznakaPruge == null) {
-        prethodnaOznakaPruge = s.getOznakaPruge();
-        pocetnaStanica = s;
-        prethodnaStanica = s;
-        udaljenost = udaljenost + s.getDuzina();
-      } else if (!prethodnaOznakaPruge.equals(s.getOznakaPruge())) {
-        zavrsnaStanica = prethodnaStanica;
-        System.out.printf("%-15s %-30s %-30s %-10d\n", prethodnaOznakaPruge,
-            pocetnaStanica.getNazivStanice(), zavrsnaStanica.getNazivStanice(), udaljenost);
+    for (Pruga pruga : pruge) {
+      Stanica pocetnaStanica = pruga.dohvatiPocetnuStanicu();
+      Stanica zavrsnaStanica = pruga.dohvatiZavrsnuStanicu();
 
-        prethodnaStanica = s;
-        udaljenost = 0;
-        pocetnaStanica = s;
-        prethodnaOznakaPruge = s.getOznakaPruge();
+      String pocetna = (pocetnaStanica != null) ? pocetnaStanica.getNazivStanice() : "N/A";
+      String zavrsna = (zavrsnaStanica != null) ? zavrsnaStanica.getNazivStanice() : "N/A";
 
-      } else if (listaStanica.getLast().getId() == s.getId()) {
-        udaljenost = udaljenost + s.getDuzina();
-        System.out.printf("%-15s %-30s %-30s %-10d\n", prethodnaOznakaPruge,
-            pocetnaStanica.getNazivStanice(), zavrsnaStanica.getNazivStanice(), udaljenost);
-
-        System.out.println(
-            "\n----------------------------------------------------------------------------------------\n");
-      } else {
-        udaljenost = udaljenost + s.getDuzina();
-        prethodnaStanica = s;
-      }
+      System.out.printf("%-15s %-30s %-30s %-10d\n", pruga.getOznaka(), pocetna, zavrsna,
+          pruga.dohvatiUkupnuUdaljenost());
     }
+
+    System.out.println(
+        "\n----------------------------------------------------------------------------------------\n");
   }
 
   public void ispisListeStanica(LinkedHashMap<Stanica, Integer> stanice) {

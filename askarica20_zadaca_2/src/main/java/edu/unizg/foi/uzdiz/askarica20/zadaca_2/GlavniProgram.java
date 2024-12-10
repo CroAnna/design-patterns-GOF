@@ -1,5 +1,6 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2;
 
+import java.io.File;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacCreator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacKompozicijaCreator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacOznakaDanaCreator;
@@ -33,6 +34,8 @@ public class GlavniProgram {
     for (int i = 0; i < args.length; i += 2) {
       String zastavica = args[i], datoteka = args[i + 1];
 
+
+
       switch (zastavica) {
         case "--zs":
           zsZastavica++;
@@ -53,11 +56,15 @@ public class GlavniProgram {
           return false;
       }
 
-      // TODO dodat provjeru jel ta datoteka postoji
+      File file = new File(datoteka);
+      if (!file.exists()) {
+        throw new IllegalArgumentException("Datoteka ne postoji: " + datoteka);
+      }
 
       if (datoteka.isEmpty()) {
         throw new IllegalArgumentException("Datoteka u argumentima je prazna.");
       }
+
     }
 
     if (zsZastavica == 1 && zpsZastavica == 1 && zkZastavica == 1 && zvrZastavica == 1

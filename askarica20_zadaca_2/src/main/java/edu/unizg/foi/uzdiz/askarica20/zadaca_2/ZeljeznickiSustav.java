@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
 
@@ -19,6 +20,8 @@ public class ZeljeznickiSustav {
   private final List<Stanica> listaStanica = new ArrayList<Stanica>();
   private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
   private final List<OznakaDana> listaOznakaDana = new ArrayList<OznakaDana>();
+  private final List<Pruga> listaPruga = new ArrayList<Pruga>();
+
   private int ukupanBrojGresakaUSustavu = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
@@ -53,6 +56,10 @@ public class ZeljeznickiSustav {
 
   public int dohvatiGreskeUSustavu() {
     return this.ukupanBrojGresakaUSustavu;
+  }
+
+  public List<Pruga> dohvatiListuPruga() {
+    return listaPruga;
   }
 
   public void zapocniRadSustava() {
@@ -140,7 +147,7 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIP.matches()) {
       System.out.println("Neispravna komanda - format IP");
     } else {
-      ispisnik.ispisiPruge(listaStanica);
+      ispisnik.ispisiPruge(listaPruga);
     }
   }
 
@@ -449,4 +456,6 @@ public class ZeljeznickiSustav {
     }
     return stanicePruge;
   }
+
+
 }

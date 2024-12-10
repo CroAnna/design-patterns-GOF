@@ -13,6 +13,7 @@ public class Pruga {
   }
 
   public Pruga(String oznaka) {
+    super();
     this.oznaka = oznaka;
     this.stanice = new ArrayList<>();
   }
@@ -25,7 +26,7 @@ public class Pruga {
     return new ArrayList<Stanica>(stanice);
   }
 
-  public Stanica getPocetnaStanica() {
+  public Stanica dohvatiPocetnuStanicu() {
     if (stanice.isEmpty())
       return null;
 
@@ -37,7 +38,7 @@ public class Pruga {
     return null;
   }
 
-  public Stanica getZavrsnaStanica() {
+  public Stanica dohvatiZavrsnuStanicu() {
     if (stanice.isEmpty())
       return null;
 
@@ -61,7 +62,7 @@ public class Pruga {
     return obrnuto;
   }
 
-  public int getUkupnoKilometara() {
+  public int dohvatiUkupnuUdaljenost() {
     int uk = 0;
     for (Stanica stanica : stanice) {
       uk += stanica.getDuzina();
@@ -69,7 +70,7 @@ public class Pruga {
     return uk;
   }
 
-  public List<Stanica> getStaniceIzmedu(String pocetnaStanica, String zavrsnaStanica) {
+  public List<Stanica> dohvatiMedustanice(String pocetnaStanica, String zavrsnaStanica) {
     int pocIndex = -1, zavIndex = -1;
 
     for (int i = 0; i < stanice.size(); i++) {
