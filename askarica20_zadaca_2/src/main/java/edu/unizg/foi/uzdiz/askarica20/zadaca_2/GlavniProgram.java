@@ -2,9 +2,11 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacCreator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacKompozicijaCreator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacOznakaDanaCreator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacProduct;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacStanicaCreator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacVozilaCreator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory.CsvCitacVoznogRedaCreator;
 
 public class GlavniProgram {
 
@@ -22,9 +24,9 @@ public class GlavniProgram {
   }
 
   public static boolean provjeriSastavArgumenata(String[] args) {
-    int zsZastavica = 0, zpsZastavica = 0, zkZastavica = 0;
+    int zsZastavica = 0, zpsZastavica = 0, zkZastavica = 0, zvrZastavica = 0, zodZastavica = 0;
 
-    if (args.length != 6) {
+    if (args.length != 10) {
       throw new IllegalArgumentException("Broj argumenata nije dobar.");
     }
 
@@ -41,16 +43,25 @@ public class GlavniProgram {
         case "--zk":
           zkZastavica++;
           break;
+        case "--zvr":
+          zvrZastavica++;
+          break;
+        case "--zod":
+          zodZastavica++;
+          break;
         default:
           return false;
       }
+
+      // TODO dodat provjeru jel ta datoteka postoji
 
       if (datoteka.isEmpty()) {
         throw new IllegalArgumentException("Datoteka u argumentima je prazna.");
       }
     }
 
-    if (zsZastavica == 1 && zpsZastavica == 1 && zkZastavica == 1) {
+    if (zsZastavica == 1 && zpsZastavica == 1 && zkZastavica == 1 && zvrZastavica == 1
+        && zodZastavica == 1) {
       return true;
     } else {
       throw new IllegalArgumentException("Nema po jedan dokument za svaku zastavicu.");
@@ -58,7 +69,8 @@ public class GlavniProgram {
   }
 
   public static void ucitajDatoteke(String[] args) {
-    String stanicaDatoteka = null, vozilaDatoteka = null, kompozicijaDatoteka = null;
+    String stanicaDatoteka = null, vozilaDatoteka = null, kompozicijaDatoteka = null,
+        vozniRedDatoteka = null, oznakaDanaDatoteka = null;
 
     for (int i = 0; i < args.length; i += 2) {
       String zastavica = args[i];
@@ -74,6 +86,12 @@ public class GlavniProgram {
         case "--zk":
           kompozicijaDatoteka = datoteka;
           break;
+        case "--zvr":
+          vozniRedDatoteka = datoteka;
+          break;
+        case "--zod":
+          oznakaDanaDatoteka = datoteka;
+          break;
       }
     }
 
@@ -86,6 +104,13 @@ public class GlavniProgram {
     if (kompozicijaDatoteka != null) {
       procesirajDatoteku(kompozicijaDatoteka, new CsvCitacKompozicijaCreator());
     }
+    if (oznakaDanaDatoteka != null) {
+      procesirajDatoteku(oznakaDanaDatoteka, new CsvCitacOznakaDanaCreator());
+    }
+    if (vozniRedDatoteka != null) {
+      procesirajDatoteku(vozniRedDatoteka, new CsvCitacVoznogRedaCreator());
+    }
+
   }
 
   private static void procesirajDatoteku(String datoteka, CsvCitacCreator kreator) {

@@ -7,22 +7,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 
-public class CsvCitacStanicaProduct extends CsvCitacProduct {
-  private static final String[] NAZIVI_STUPACA = {"Stanica", "Oznaka pruge", "Vrsta stanice",
-      "Status stanice", "Putnici ul/iz", "Roba ut/ist", "Kategorija pruge", "Broj perona",
-      "Vrsta pruge", "Broj kolosjeka", "DO po osovini", "DO po duznom m", "Status pruge", "Dužina",
-      "Vrijeme normalni vlak", "Vrijeme ubrzani vlak", "Vrijeme brzi vlak"};
+public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
+  private static final String[] NAZIVI_STUPACA =
+      {"Oznaka pruge", "Smjer", "Polazna stanica", "Odredišna stanica", "Oznaka vlaka",
+          "Vrsta vlaka", "Vrijeme polaska", "Trajanje vožnje", "Oznaka dana"};
 
-  // TODO jel osim kol i staj sad moze bit i rasp i otpr ili je to greska?
-  private static final Pattern[] UZORCI_STUPACA =
-      {Pattern.compile("[^;]+"), Pattern.compile("[^;]+"), Pattern.compile("(kol\\.|staj\\.)"),
-          Pattern.compile("[^;]+"), Pattern.compile("DA|NE"), Pattern.compile("DA|NE"),
-          Pattern.compile("[LRM];?+"), Pattern.compile("\\d+"), Pattern.compile("[KE];?+"),
-          Pattern.compile("\\d+"), Pattern.compile("\\d+([.,]\\d+)?"),
-          Pattern.compile("\\d+([.,]\\d+)?"), Pattern.compile("[IKZ];?+"), Pattern.compile("\\d+"),
-          Pattern.compile("\\d*"), Pattern.compile("\\d*"), Pattern.compile("\\d*")};
+  private static final Pattern[] UZORCI_STUPACA = {Pattern.compile("[^;]+"),
+      Pattern.compile("[NO]"), Pattern.compile(".*"), Pattern.compile(".*"),
+      Pattern.compile("[^;]+"), Pattern.compile("(B|U)?"), Pattern.compile("\\d{1,2}:\\d{2}"),
+      Pattern.compile("\\d{1,2}:\\d{2}"), Pattern.compile("\\d*")};
+  // format vremena (1-2 znamenke za sate, : i dvije znamenke za minute)
 
   @Override
   public void ucitaj(String datoteka) {
@@ -57,36 +52,27 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
         if (greske.isEmpty()) {
           String[] dijeloviRetka = redak.split(";");
           try {
-            boolean imaObavezneRetke = dijeloviRetka.length > 14;
+            // TODO slozi ispravno spremanje podataka
+            String oznakaPruge = dijeloviRetka[0];
+            String smjer = dijeloviRetka[1];
+            String polaznaStanica = dijeloviRetka.length > 2 ? dijeloviRetka[2] : null;
+            String odredisnaStanica = dijeloviRetka.length > 3 ? dijeloviRetka[3] : null;
+            String oznakaVlaka = dijeloviRetka[4];
+            String vrstaVlaka = dijeloviRetka.length > 5 ? dijeloviRetka[5] : null;
+            String vrijemePolaska = dijeloviRetka[6];
+            String trajanjeVoznje = dijeloviRetka[7];
+            String oznakaDana = dijeloviRetka.length > 8 ? dijeloviRetka[8] : null;
 
-            Integer vrijednost14 = null;
-            Integer vrijednost15 = null;
-            Integer vrijednost16 = null;
+            System.out.printf("%s; %s; %s; %s; %s; %s; %s; %s; %s%n", oznakaPruge, smjer,
+                polaznaStanica, odredisnaStanica, oznakaVlaka, vrstaVlaka, vrijemePolaska,
+                trajanjeVoznje, oznakaDana);
 
-            if (dijeloviRetka.length > 14 && !dijeloviRetka[14].isEmpty()) {
-              vrijednost14 = Integer.valueOf(dijeloviRetka[14]);
-            }
-            if (dijeloviRetka.length > 15 && !dijeloviRetka[15].isEmpty()) {
-              vrijednost15 = Integer.valueOf(dijeloviRetka[15]);
-            }
-            if (dijeloviRetka.length > 16 && !dijeloviRetka[16].isEmpty()) {
-              vrijednost16 = Integer.valueOf(dijeloviRetka[16]);
-            }
-
-            Stanica stanica = new Stanica(brojRetka, dijeloviRetka[0], dijeloviRetka[1],
-                dijeloviRetka[2], dijeloviRetka[3], Boolean.valueOf(dijeloviRetka[4].equals("DA")),
-                Boolean.valueOf(dijeloviRetka[5].equals("DA")), dijeloviRetka[6],
-                Integer.valueOf(dijeloviRetka[7]), dijeloviRetka[8],
-                Integer.valueOf(dijeloviRetka[9]),
-                Double.parseDouble(dijeloviRetka[10].replace(',', '.')),
-                Double.parseDouble(dijeloviRetka[11].replace(',', '.')), dijeloviRetka[12],
-                Integer.valueOf(dijeloviRetka[13]), vrijednost14, vrijednost15, vrijednost16);
-            ZeljeznickiSustav.dohvatiInstancu().dodajStanicu(stanica);
           } catch (NumberFormatException e) {
             System.out.println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka);
             ukupanBrojGresakaUDatoteci++;
             ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
           }
+
         } else {
           ukupanBrojGresakaUDatoteci++;
           prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
@@ -94,25 +80,29 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
       }
       brojRetka++;
     }
+
   }
 
   private void prikaziGreske(List<String> greske, int brojRetka, int ukupanBrojGresakaUDatoteci) {
     ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
 
-    System.out.println("Stanice - Greške u retku " + brojRetka + ":");
+    System.out.println("Vozni red - Greške u retku " + brojRetka + ":");
     for (String greska : greske) {
       System.out.println("- " + greska);
     }
-    System.out.println("Ukupno grešaka u datoteci stanica: " + ukupanBrojGresakaUDatoteci);
+    System.out.println("Ukupno grešaka u datoteci voznog reda: " + ukupanBrojGresakaUDatoteci);
     System.out.println(
         "Ukupno grešaka u sustavu: " + ZeljeznickiSustav.dohvatiInstancu().dohvatiGreskeUSustavu());
   }
+
 
   private List<String> validirajRedak(String redak) {
     List<String> greske = new ArrayList<>();
     String[] dijeloviRetka = redak.split(";");
 
-    if (dijeloviRetka.length <= NAZIVI_STUPACA.length - 3) { // TODO ovo popravit da bolje radi
+    var minimalniBrojObaveznihStupaca = 6; // TODO ovo nije bas najsretnija implementacija
+
+    if (dijeloviRetka.length <= minimalniBrojObaveznihStupaca) {
       greske.add("Neispravan broj stupaca. Očekivano: " + NAZIVI_STUPACA.length + ", dobiveno: "
           + dijeloviRetka.length);
       return greske;
@@ -148,4 +138,5 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
     }
     return dijeloviRetka;
   }
+
 }

@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
 
@@ -17,6 +18,7 @@ public class ZeljeznickiSustav {
   private final List<Vozilo> listaVozila = new ArrayList<Vozilo>();
   private final List<Stanica> listaStanica = new ArrayList<Stanica>();
   private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
+  private final List<OznakaDana> listaOznakaDana = new ArrayList<OznakaDana>();
   private int ukupanBrojGresakaUSustavu = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
@@ -39,6 +41,10 @@ public class ZeljeznickiSustav {
 
   public void dodajKompoziciju(Kompozicija kompozicija) {
     listaKompozicija.add(kompozicija);
+  }
+
+  public void dodajOznakuDana(OznakaDana oznakaDana) {
+    listaOznakaDana.add(oznakaDana);
   }
 
   public void dodajGreskuUSustav() {
@@ -77,10 +83,18 @@ public class ZeljeznickiSustav {
       provjeriISI2S(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IK")) {
       provjeriIK(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("OD")) {
+      ispisiOznakeDana(); // moja komanda koja nije trazena
     } else {
       if (!unos.equalsIgnoreCase("Q")) {
         System.out.println("Neispravna komanda.");
       }
+    }
+  }
+
+  private void ispisiOznakeDana() { // moja komanda koja nije trazena
+    for (OznakaDana o : listaOznakaDana) {
+      System.out.println(o.toString());
     }
   }
 

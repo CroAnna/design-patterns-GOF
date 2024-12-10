@@ -16,6 +16,9 @@ public class Stanica {
   private double doPoDuznomM;
   private String statusPruge;
   private int duzina;
+  private Integer vrNorm; // da moze biti int ili null
+  private Integer vrUbrz;
+  private Integer vrBrzi;
 
   public Stanica() {
     super();
@@ -24,7 +27,7 @@ public class Stanica {
   public Stanica(int id, String nazivStanice, String oznakaPruge, String vrstaStanice,
       String statusStanice, boolean putniciUlIz, boolean robaUtIst, String kategorijaPruge,
       int brojPerona, String vrstaPruge, int brojKolosjeka, double doPoOsovini, double doPoDuznomM,
-      String statusPruge, int duzina) {
+      String statusPruge, int duzina, Integer vrNorm, Integer vrUbrz, Integer vrBrzi) {
     super();
     this.id = id;
     this.nazivStanice = nazivStanice;
@@ -41,6 +44,9 @@ public class Stanica {
     this.doPoDuznomM = doPoDuznomM;
     this.statusPruge = statusPruge;
     this.duzina = duzina;
+    this.vrNorm = vrNorm;
+    this.vrUbrz = vrUbrz;
+    this.vrBrzi = vrBrzi;
   }
 
   public int getId() {
@@ -161,6 +167,30 @@ public class Stanica {
 
   public void setDuzina(int duzina) {
     this.duzina = duzina;
+  }
+
+  public int getVrNorm() {
+    return vrNorm;
+  }
+
+  public void setVrNorm(int vrNorm) {
+    this.vrNorm = vrNorm;
+  }
+
+  public int getVrUbrz() {
+    return vrUbrz;
+  }
+
+  public void setVrUbrz(int vrUbrz) {
+    this.vrUbrz = vrUbrz;
+  }
+
+  public int getVrBrzi() {
+    return vrBrzi;
+  }
+
+  public void setVrBrzi(int vrBrzi) {
+    this.vrBrzi = vrBrzi;
   }
 
   @Override
