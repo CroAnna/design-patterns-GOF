@@ -1,31 +1,17 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
-import java.util.ArrayList;
-import java.util.List;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
 
-public class VozniRedComposite extends VozniRedComponent {
-  public List<VozniRedComponent> vlakovi = new ArrayList<>();
+public class VozniRedComposite extends VozniRedBaseComposite {
 
   @Override
   public void prikaziDetalje() {
-    ZeljeznickiSustav.dohvatiInstancu().dohvatiIspisnik().ispisiVlakove(vlakovi);
-  }
-
-  @Override
-  public boolean dodaj(VozniRedComponent component) {
-    this.vlakovi.add(component);
-    return true;
-  }
-
-  @Override
-  public VozniRedComponent dohvatiDijete(int index) {
-    return vlakovi.get(index);
+    ZeljeznickiSustav.dohvatiInstancu().dohvatiIspisnik().ispisiVlakove(djeca);
   }
 
   @Override
   public VozniRedComponent dohvatiDijete(String oznaka) {
-    for (VozniRedComponent vlak : vlakovi) {
+    for (VozniRedComponent vlak : djeca) {
       if (vlak instanceof VlakComposite && ((VlakComposite) vlak).getOznakaVlaka().equals(oznaka)) {
         return vlak;
       }
