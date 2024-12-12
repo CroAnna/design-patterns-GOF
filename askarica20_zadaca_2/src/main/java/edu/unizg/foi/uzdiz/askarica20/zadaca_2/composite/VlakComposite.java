@@ -13,8 +13,6 @@ public class VlakComposite extends VozniRedBaseComposite {
     this.vrstaVlaka = vrstaVlaka;
   }
 
-  // u GOF Composite (VlakComposite) treba imati kolekciju komponenti (etapa) --> etapa = dijete
-
   public VlakComposite(String oznakaVlaka, String vrstaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
     this.vrstaVlaka = vrstaVlaka;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class EtapaLeaf extends VozniRedComponent {
   private Map<Integer, List<Stanica>> mapaStanicaEtape = new HashMap<>();
@@ -19,6 +20,11 @@ public class EtapaLeaf extends VozniRedComponent {
   private int udaljenost; // ukupan br. km od polazne stanice do zavrsne na toj etapi
   private String smjer; // O ili N
   private String oznakaDana; // nez kaj ce mi ovo iskreno
+
+  @Override
+  public void prihvati(VozniRedVisitor visitor) {
+    visitor.posjetiElement(this); // TODO
+  }
 
   @Override
   public void prikaziDetalje() {
