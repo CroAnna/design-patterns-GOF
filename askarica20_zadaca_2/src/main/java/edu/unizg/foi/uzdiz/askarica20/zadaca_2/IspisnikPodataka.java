@@ -3,6 +3,7 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
@@ -109,8 +110,25 @@ public class IspisnikPodataka {
         "\n-------------------------------------------------------------------------------------------------------------------------------------\n");
   }
 
-  public void ispisiVlakove() {
+  public void ispisiVlakove(List<VozniRedComponent> vlakovi) {
+    if (vlakovi.isEmpty()) {
+      System.out.println("Nema vlakova u voznom redu.");
+      return;
+    }
 
+    System.out.println(
+        "\n\n------------------------------------ ISPIS VOZNOG REDA ------------------------------------\n");
+    System.out.printf("%-10s %-20s %-20s %-10s %-10s %-10s%n", "Vlak", "Polazna stanica",
+        "Odredišna stanica", "Polazak", "Dolazak", "Km");
+    System.out.println(
+        "----------------------------------------------------------------------------------------");
+
+    for (VozniRedComponent vlak : vlakovi) {
+      vlak.prikaziDetalje();
+    }
+
+    System.out.println(
+        "\n----------------------------------------------------------------------------------------\n");
   }
 
   public void nacrtajVlak() {

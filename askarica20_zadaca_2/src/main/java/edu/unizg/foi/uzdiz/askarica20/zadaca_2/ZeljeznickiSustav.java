@@ -79,6 +79,10 @@ public class ZeljeznickiSustav {
     return this.ukupanBrojGresakaUSustavu;
   }
 
+  public IspisnikPodataka dohvatiIspisnik() {
+    return this.ispisnik;
+  }
+
   public List<Pruga> dohvatiListuPruga() {
     return listaPruga; // TODO di se ovo koristi - makni to...
   }
