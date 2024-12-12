@@ -9,8 +9,8 @@ public class EtapaLeaf extends VozniRedComponent {
   private Map<Integer, List<Stanica>> mapaStanicaEtape = new HashMap<>();
 
   private String oznakaPruge; // etapa je poddio pruge
-  // private String oznakaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
-  // private String vrstaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
+  private String oznakaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
+  private String vrstaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
   private String pocetnaStanica; // ak nije definirano = pocetna stanica pruge (po oznaci pruge)
   private String zavrsnaStanica; // ak nije definirano = zavrsna stanica pruge (po oznaci pruge)
   private int trajanjeVoznjeUMinutama;
@@ -26,12 +26,19 @@ public class EtapaLeaf extends VozniRedComponent {
   }
 
   public EtapaLeaf(String oznakaPruge, String oznakaVlaka, String vrstaVlaka, String pocetnaStanica,
-      String zavrsnaStanica) {
+      String zavrsnaStanica, int trajanjeVoznjeUMinutama, int vrijemePolaskaUMinutama,
+      int vrijemeDolaskaUMinutama, int udaljenost, String smjer, String oznakaDana) {
     this.oznakaPruge = oznakaPruge;
-    // this.oznakaVlaka = oznakaVlaka;
-    // this.vrstaVlaka = vrstaVlaka;
+    this.oznakaVlaka = oznakaVlaka;
+    this.vrstaVlaka = vrstaVlaka;
     this.pocetnaStanica = pocetnaStanica;
     this.zavrsnaStanica = zavrsnaStanica;
+    this.trajanjeVoznjeUMinutama = trajanjeVoznjeUMinutama;
+    this.vrijemePolaskaUMinutama = vrijemePolaskaUMinutama;
+    this.vrijemeDolaskaUMinutama = vrijemeDolaskaUMinutama;
+    this.udaljenost = udaljenost;
+    this.smjer = smjer;
+    this.oznakaDana = oznakaDana;
   }
 
   public Map<Integer, List<Stanica>> getMapaStanicaEtape() {
@@ -49,15 +56,23 @@ public class EtapaLeaf extends VozniRedComponent {
   public void setOznakaPruge(String oznakaPruge) {
     this.oznakaPruge = oznakaPruge;
   }
-  /*
-   * public String getOznakaVlaka() { return oznakaVlaka; }
-   * 
-   * public void setOznakaVlaka(String oznakaVlaka) { this.oznakaVlaka = oznakaVlaka; }
-   * 
-   * public String getVrstaVlaka() { return vrstaVlaka; }
-   * 
-   * public void setVrstaVlaka(String vrstaVlaka) { this.vrstaVlaka = vrstaVlaka; }
-   */
+
+  public String getOznakaVlaka() {
+    return oznakaVlaka;
+  }
+
+  public void setOznakaVlaka(String oznakaVlaka) {
+    this.oznakaVlaka = oznakaVlaka;
+  }
+
+  public String getVrstaVlaka() {
+    return vrstaVlaka;
+  }
+
+  public void setVrstaVlaka(String vrstaVlaka) {
+    this.vrstaVlaka = vrstaVlaka;
+  }
+
 
   public String getPocetnaStanica() {
     return pocetnaStanica;

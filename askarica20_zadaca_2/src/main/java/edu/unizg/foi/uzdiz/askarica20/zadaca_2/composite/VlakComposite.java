@@ -8,11 +8,20 @@ public class VlakComposite extends VozniRedComponent {
   private String vrstaVlaka; // U, B ili prazno - prazno bi mogla pretvorit u npr slovo N (normalan
                              // pri citanju retka)
 
+  public String getVrstaVlaka() {
+    return vrstaVlaka;
+  }
+
+  public void setVrstaVlaka(String vrstaVlaka) {
+    this.vrstaVlaka = vrstaVlaka;
+  }
+
   public List<VozniRedComponent> etape = new ArrayList<>();
   // u GOF Composite (VlakComposite) treba imati kolekciju komponenti (etapa) --> etapa = dijete
 
-  public VlakComposite(String oznakaVlaka) {
+  public VlakComposite(String oznakaVlaka, String vrstaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
+    this.vrstaVlaka = vrstaVlaka;
   }
 
   @Override

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
@@ -21,17 +22,42 @@ public class ZeljeznickiSustav {
   private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
   private final List<OznakaDana> listaOznakaDana = new ArrayList<OznakaDana>();
   private final List<Pruga> listaPruga = new ArrayList<Pruga>();
+  private final VlakComposite vozniRed;
+  private Map<String, VlakComposite> mapaVlakova = new HashMap<>();
 
   private int ukupanBrojGresakaUSustavu = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
-  private ZeljeznickiSustav() {};
+  private ZeljeznickiSustav() {
+    vozniRed = new VlakComposite("root", "");
+  }
 
   public static ZeljeznickiSustav dohvatiInstancu() {
     if (instanca == null) {
       instanca = new ZeljeznickiSustav();
     }
     return instanca;
+  }
+
+  public VlakComposite dohvatiVozniRed() {
+    return this.vozniRed;
+  }
+
+  public Map<String, VlakComposite> dohvatiMapuVlakova() {
+    return this.mapaVlakova;
+  }
+
+  public VlakComposite dohvatiVlak(String oznakaVlaka) {
+    return mapaVlakova.get(oznakaVlaka);
+  }
+
+  public void dodajVlak(VlakComposite vlak) {
+    vozniRed.dodaj(vlak);
+    mapaVlakova.put(vlak.getOznakaVlaka(), vlak);
+  }
+
+  public void ispisiVozniRed() {
+    vozniRed.prikaziDetalje();
   }
 
   public void dodajVozilo(Vozilo vozilo) {
@@ -59,7 +85,7 @@ public class ZeljeznickiSustav {
   }
 
   public List<Pruga> dohvatiListuPruga() {
-    return listaPruga;
+    return listaPruga; // TODO di se ovo koristi - makni to...
   }
 
   public void zapocniRadSustava() {
@@ -98,8 +124,6 @@ public class ZeljeznickiSustav {
       provjeriIEV(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IEVD")) {
       provjeriIEVD(dijeloviKomande, unos);
-    } else if (glavniDioKomande.equals("IV")) {
-      provjeriIVRV(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IVRV")) {
       provjeriIVRV(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IVI2S")) {
@@ -132,7 +156,7 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIV.matches()) {
       System.out.println("Neispravna komanda - format IV");
     } else {
-      // TODO
+      ispisnik.ispisiVlakove();
     }
   }
 
@@ -399,7 +423,7 @@ public class ZeljeznickiSustav {
     return medustaniceMap;
   }
 
-  private LinkedHashMap<Stanica, Integer> izracunajUdaljenostStanicaNaIstojPruzi(String oznakaPruge,
+  public LinkedHashMap<Stanica, Integer> izracunajUdaljenostStanicaNaIstojPruzi(String oznakaPruge,
       String polaznaStanica, String odredisnaStanica) {
     List<Stanica> listaStanicaNaTojPruzi = dohvatiStanicePruge(oznakaPruge);
     boolean silazniSmjer = false, polaznaNadenaZaSmjer = false, trajeUnosStanica = false;
@@ -580,5 +604,43 @@ public class ZeljeznickiSustav {
     return stanicePruge;
   }
 
+  private Pruga pronadiPruguPremaOznaci(String oznakaPruge) {
+    Pruga trazena = null;
+    for (Pruga p : listaPruga) {
+      if (p.getOznaka().equals(oznakaPruge)) {
+        trazena = p;
+        break;
+      }
+    }
+    return trazena;
+  }
+
+  public String dohvatiPrvuStanicuPrugeSmjer(String oznakaPruge, String smjer) {
+    Pruga trazena = pronadiPruguPremaOznaci(oznakaPruge);
+    if (trazena == null) {
+      return null;
+    }
+
+    Stanica prva = trazena.dohvatiPrvuStanicuSmjer(smjer);
+    return prva != null ? prva.getNazivStanice() : null;
+  }
+
+  public String dohvatiZadnjuStanicuPrugeSmjer(String oznakaPruge, String smjer) {
+    Pruga trazena = pronadiPruguPremaOznaci(oznakaPruge);
+    if (trazena == null) {
+      return null;
+    }
+    Stanica zadnja = trazena.dohvatiZadnjuStanicuSmjer(smjer);
+    return zadnja != null ? zadnja.getNazivStanice() : null;
+  }
+
+  public String dohvatiNazivOznakeDanaPoOznaci(Integer oznakaDana) {
+    for (OznakaDana od : listaOznakaDana) {
+      if (od.getOznakaDana() == oznakaDana) {
+        return od.getDaniVoznje();
+      }
+    }
+    return "PoUSrČPeSuN";
+  }
 
 }

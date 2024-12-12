@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pruga {
-  // ne znam jel mi ova klasa uopce treba
   private String oznaka;
   private List<Stanica> stanice;
 
@@ -46,6 +45,30 @@ public class Pruga {
       if (i == stanice.size() - 1) {
         return stanice.get(i);
       }
+    }
+    return null;
+  }
+
+  public Stanica dohvatiPrvuStanicuSmjer(String smjer) {
+    if (stanice.isEmpty())
+      return null;
+
+    if (smjer.equals("N")) {
+      return stanice.get(0);
+    } else if (smjer.equals("O")) {
+      return stanice.get(stanice.size() - 1);
+    }
+    return null;
+  }
+
+  public Stanica dohvatiZadnjuStanicuSmjer(String smjer) {
+    if (stanice.isEmpty())
+      return null;
+
+    if (smjer.equals("N")) {
+      return stanice.get(stanice.size() - 1);
+    } else if (smjer.equals("O")) {
+      return stanice.get(0);
     }
     return null;
   }
