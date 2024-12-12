@@ -36,6 +36,16 @@ public class VlakComposite extends VozniRedComponent {
   }
 
   @Override
+  public VozniRedComponent dohvatiDijete(String oznakaPruge) {
+    for (VozniRedComponent etapa : etape) {
+      if (etapa instanceof EtapaLeaf && ((EtapaLeaf) etapa).getOznakaPruge().equals(oznakaPruge)) {
+        return etapa;
+      }
+    }
+    return null;
+  }
+
+  @Override
   public void prikaziDetalje() {
     System.out.println("Vlak broj: " + oznakaVlaka);
     System.out.println("Etape vlaka:");

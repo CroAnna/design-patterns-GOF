@@ -22,7 +22,15 @@ public class EtapaLeaf extends VozniRedComponent {
 
   @Override
   public void prikaziDetalje() {
-    System.out.println("Etapa vlaka na pruzi " + oznakaPruge);
+    System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5d%n", oznakaPruge, pocetnaStanica,
+        zavrsnaStanica, pretvoriMinuteUVrijeme(vrijemePolaskaUMinutama),
+        pretvoriMinuteUVrijeme(vrijemeDolaskaUMinutama), udaljenost);
+  }
+
+  private String pretvoriMinuteUVrijeme(int minute) {
+    int sati = minute / 60;
+    int preostaleMinute = minute % 60;
+    return String.format("%02d:%02d", sati, preostaleMinute);
   }
 
   public EtapaLeaf(String oznakaPruge, String oznakaVlaka, String vrstaVlaka, String pocetnaStanica,

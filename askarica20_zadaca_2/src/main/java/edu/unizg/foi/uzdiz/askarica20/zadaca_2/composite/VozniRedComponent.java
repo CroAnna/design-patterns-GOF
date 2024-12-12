@@ -1,9 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
 public abstract class VozniRedComponent {
-  public abstract void prikaziDetalje(); // Operation()S
-
-  // jel component moze imati listu composita?
+  public abstract void prikaziDetalje(); // Operation()
 
   public boolean dodaj(VozniRedComponent component) { // Add(Component)
     if (!(this instanceof VozniRedComponent)) {
@@ -13,9 +11,16 @@ public abstract class VozniRedComponent {
   }
 
   public VozniRedComponent dohvatiDijete(int i) { // GetChild(int)
-    if (!(this instanceof VlakComposite)) {
+    if (!(this instanceof VozniRedComposite)) {
       return null;
     }
     return this.dohvatiDijete(i);
+  }
+
+  public VozniRedComponent dohvatiDijete(String oznaka) { // GetChild(String) - ja dodala
+    if (!(this instanceof VozniRedComposite)) {
+      return null;
+    }
+    return this.dohvatiDijete(oznaka);
   }
 }

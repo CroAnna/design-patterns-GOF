@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
@@ -22,14 +23,13 @@ public class ZeljeznickiSustav {
   private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
   private final List<OznakaDana> listaOznakaDana = new ArrayList<OznakaDana>();
   private final List<Pruga> listaPruga = new ArrayList<Pruga>();
-  private final VlakComposite vozniRed;
-  private Map<String, VlakComposite> mapaVlakova = new HashMap<>();
+  private final VozniRedComposite vozniRed;
 
   private int ukupanBrojGresakaUSustavu = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
   private ZeljeznickiSustav() {
-    vozniRed = new VlakComposite("root", "");
+    vozniRed = new VozniRedComposite();
   }
 
   public static ZeljeznickiSustav dohvatiInstancu() {
@@ -39,21 +39,16 @@ public class ZeljeznickiSustav {
     return instanca;
   }
 
-  public VlakComposite dohvatiVozniRed() {
+  public VozniRedComposite dohvatiVozniRed() {
     return this.vozniRed;
-  }
-
-  public Map<String, VlakComposite> dohvatiMapuVlakova() {
-    return this.mapaVlakova;
-  }
-
-  public VlakComposite dohvatiVlak(String oznakaVlaka) {
-    return mapaVlakova.get(oznakaVlaka);
   }
 
   public void dodajVlak(VlakComposite vlak) {
     vozniRed.dodaj(vlak);
-    mapaVlakova.put(vlak.getOznakaVlaka(), vlak);
+  }
+
+  public void dohvatiVlak(String oznakaVlaka) {
+    vozniRed.dohvatiDijete(oznakaVlaka);
   }
 
   public void ispisiVozniRed() {
@@ -156,7 +151,8 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIV.matches()) {
       System.out.println("Neispravna komanda - format IV");
     } else {
-      ispisnik.ispisiVlakove();
+      // ispisnik.ispisiVlakove();
+      ispisiVozniRed();
     }
   }
 

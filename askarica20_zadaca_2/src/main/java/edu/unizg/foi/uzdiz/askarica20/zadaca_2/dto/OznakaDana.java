@@ -40,7 +40,6 @@ public class OznakaDana {
     this.daniVoznje = daniVoznje;
   }
 
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

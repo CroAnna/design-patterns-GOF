@@ -31,7 +31,7 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
 
-      ispisiUcitanePodatke();
+      // ispisiUcitanePodatke();
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
@@ -60,6 +60,7 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         if (greske.isEmpty()) {
           String[] dijeloviRetka = redak.split(";");
           try {
+            // ovo tu se sve moze izbrisat
             String oznakaPruge = dijeloviRetka[0];
             String smjer = dijeloviRetka[1];
             String polaznaStanica = dijeloviRetka.length > 2 ? dijeloviRetka[2] : null;
@@ -129,7 +130,10 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         smjer, oznakaDana);
 
     // Pronađi ili kreiraj vlak i dodaj etapu
-    VozniRedComponent vlak = ZeljeznickiSustav.dohvatiInstancu().dohvatiVlak(oznakaVlaka);
+    VozniRedComponent vlak =
+        ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(oznakaVlaka);
+
+    System.out.println(vlak);
     if (vlak == null) {
       vlak = new VlakComposite(oznakaVlaka, vrstaVlaka);
       ZeljeznickiSustav.dohvatiInstancu().dodajVlak((VlakComposite) vlak);
@@ -180,36 +184,28 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     return greske;
   }
 
-  public void ispisiUcitanePodatke() {
-    System.out.println("=== ISPIS SVIH UČITANIH VLAKOVA ===");
-    if (ZeljeznickiSustav.dohvatiInstancu().dohvatiMapuVlakova().isEmpty()) {
-      System.out.println("Nema učitanih podataka!");
-      return;
-    }
-
-    for (VlakComposite vlak : ZeljeznickiSustav.dohvatiInstancu().dohvatiMapuVlakova().values()) {
-      System.out.println("\nVLAK " + vlak.getOznakaVlaka());
-      System.out.println("----------------------------------------");
-
-      for (int i = 0; i < vlak.etape.size(); i++) {
-        EtapaLeaf etapa = (EtapaLeaf) vlak.dohvatiDijete(i);
-        System.out.printf("Etapa %d:%n", i + 1);
-        System.out.printf("  Pruga: %s%n", etapa.getOznakaPruge());
-        System.out.printf("  Smjer: %s%n", etapa.getSmjer());
-        System.out.printf("  Od: %s%n", etapa.getPocetnaStanica());
-        System.out.printf("  Do: %s%n", etapa.getZavrsnaStanica());
-        System.out.printf("  Polazak: %d min%n", etapa.getVrijemePolaskaUMinutama());
-        System.out.printf("  Trajanje: %d min%n", etapa.getTrajanjeVoznjeUMinutama());
-        System.out.printf("  Dolazak: %d min%n", etapa.getVrijemeDolaskaUMinutama());
-        System.out.printf("  Udaljenost: %d%n", etapa.getUdaljenost());
-        System.out.printf("  Vrsta vlaka: %s%n", vlak.getVrstaVlaka());
-        System.out.printf("  Oznaka dana: %s%n", etapa.getOznakaDana());
-        System.out.println();
-      }
-    }
-    System.out.println("=== KRAJ ISPISA ===\n");
-  }
-
+  /*
+   * public void ispisiUcitanePodatke() { System.out.println("=== ISPIS SVIH UČITANIH VLAKOVA ===");
+   * if (ZeljeznickiSustav.dohvatiInstancu().dohvatiMapuVlakova().isEmpty()) {
+   * System.out.println("Nema učitanih podataka!"); return; }
+   * 
+   * for (VlakComposite vlak : ZeljeznickiSustav.dohvatiInstancu().dohvatiMapuVlakova().values()) {
+   * System.out.println("\nVLAK " + vlak.getOznakaVlaka());
+   * System.out.println("----------------------------------------");
+   * 
+   * for (int i = 0; i < vlak.etape.size(); i++) { EtapaLeaf etapa = (EtapaLeaf)
+   * vlak.dohvatiDijete(i); System.out.printf("Etapa %d:%n", i + 1);
+   * System.out.printf("  Pruga: %s%n", etapa.getOznakaPruge()); System.out.printf("  Smjer: %s%n",
+   * etapa.getSmjer()); System.out.printf("  Od: %s%n", etapa.getPocetnaStanica());
+   * System.out.printf("  Do: %s%n", etapa.getZavrsnaStanica());
+   * System.out.printf("  Polazak: %d min%n", etapa.getVrijemePolaskaUMinutama());
+   * System.out.printf("  Trajanje: %d min%n", etapa.getTrajanjeVoznjeUMinutama());
+   * System.out.printf("  Dolazak: %d min%n", etapa.getVrijemeDolaskaUMinutama());
+   * System.out.printf("  Udaljenost: %d%n", etapa.getUdaljenost());
+   * System.out.printf("  Vrsta vlaka: %s%n", vlak.getVrstaVlaka());
+   * System.out.printf("  Oznaka dana: %s%n", etapa.getOznakaDana()); System.out.println(); } }
+   * System.out.println("=== KRAJ ISPISA ===\n"); }
+   */
   private boolean prviRedakJeInformativan(String[] dijeloviRetka, BufferedReader citac) {
     String[] dijeloviRetkaBezBOM = ukloniBOM(dijeloviRetka);
 
