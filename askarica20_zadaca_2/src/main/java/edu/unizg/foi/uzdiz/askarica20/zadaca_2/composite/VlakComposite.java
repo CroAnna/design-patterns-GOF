@@ -24,6 +24,29 @@ public class VlakComposite extends VozniRedBaseComposite {
   }
 
   @Override
+  public boolean dodaj(VozniRedComponent component) {
+    if (component instanceof EtapaLeaf) {
+      int index = 0;
+      for (VozniRedComponent postojecaEtapa : djeca) {
+        if (postojecaEtapa instanceof EtapaLeaf) {
+          EtapaLeaf etapa = (EtapaLeaf) postojecaEtapa;
+          if (((EtapaLeaf) component).getVrijemePolaskaUMinutama() < etapa
+              .getVrijemePolaskaUMinutama()) {
+            break;
+          }
+        }
+        index++;
+      }
+
+      djeca.add(index, component);
+      return true;
+    } else {
+      djeca.add(component);
+      return true;
+    }
+  }
+
+  @Override
   public VozniRedComponent dohvatiDijete(String oznakaPruge) {
     for (VozniRedComponent etapa : djeca) {
       if (etapa instanceof EtapaLeaf && ((EtapaLeaf) etapa).getOznakaPruge().equals(oznakaPruge)) {
