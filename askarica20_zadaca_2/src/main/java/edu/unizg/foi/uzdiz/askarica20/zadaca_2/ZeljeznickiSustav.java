@@ -27,14 +27,12 @@ public class ZeljeznickiSustav {
   private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
   private final List<OznakaDana> listaOznakaDana = new ArrayList<OznakaDana>();
   private final List<Pruga> listaPruga = new ArrayList<Pruga>();
-  private final VozniRedComposite vozniRed;
+  private final VozniRedComposite vozniRed = new VozniRedComposite();
 
   private int ukupanBrojGresakaUSustavu = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
-  private ZeljeznickiSustav() {
-    vozniRed = new VozniRedComposite();
-  }
+  private ZeljeznickiSustav() {}
 
   public static ZeljeznickiSustav dohvatiInstancu() {
     if (instanca == null) {

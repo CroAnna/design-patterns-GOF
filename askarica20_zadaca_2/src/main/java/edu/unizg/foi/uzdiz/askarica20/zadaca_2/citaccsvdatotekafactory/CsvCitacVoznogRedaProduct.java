@@ -24,7 +24,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
       Pattern.compile("\\d{1,2}:\\d{2}"), Pattern.compile("\\d*")};
   // format vremena (1-2 znamenke za sate, : i dvije znamenke za minute)
 
-
   @Override
   public void ucitaj(String datoteka) {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
@@ -60,29 +59,12 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         if (greske.isEmpty()) {
           String[] dijeloviRetka = redak.split(";");
           try {
-            // ovo tu se sve moze izbrisat
-            String oznakaPruge = dijeloviRetka[0];
-            String smjer = dijeloviRetka[1];
-            String polaznaStanica = dijeloviRetka.length > 2 ? dijeloviRetka[2] : null;
-            String odredisnaStanica = dijeloviRetka.length > 3 ? dijeloviRetka[3] : null;
-            String oznakaVlaka = dijeloviRetka[4];
-            String vrstaVlaka = dijeloviRetka.length > 5 ? dijeloviRetka[5] : null;
-            String vrijemePolaska = dijeloviRetka[6];
-            String trajanjeVoznje = dijeloviRetka[7];
-            String oznakaDana = dijeloviRetka.length > 8 ? dijeloviRetka[8] : null;
-
-            System.out.printf("%s; %s; %s; %s; %s; %s; %s; %s; %s%n", oznakaPruge, smjer,
-                polaznaStanica, odredisnaStanica, oznakaVlaka, vrstaVlaka, vrijemePolaska,
-                trajanjeVoznje, oznakaDana);
-
             spremiPodatke(dijeloviRetka);
-
           } catch (NumberFormatException e) {
             System.out.println("Greška pri konverziji brojčanih vrijednosti u retku " + brojRetka);
             ukupanBrojGresakaUDatoteci++;
             ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
           }
-
         } else {
           ukupanBrojGresakaUDatoteci++;
           prikaziGreske(greske, brojRetka, ukupanBrojGresakaUDatoteci);
@@ -99,7 +81,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     String polaznaStanica =
         (dijeloviRetka.length > 2 && !dijeloviRetka[2].trim().isEmpty()) ? dijeloviRetka[2]
             : ZeljeznickiSustav.dohvatiInstancu().dohvatiPrvuStanicuPrugeSmjer(oznakaPruge, smjer);
-
     String odredisnaStanica = (dijeloviRetka.length > 3 && !dijeloviRetka[3].trim().isEmpty())
         ? dijeloviRetka[3]
         : ZeljeznickiSustav.dohvatiInstancu().dohvatiZadnjuStanicuPrugeSmjer(oznakaPruge, smjer);
@@ -184,28 +165,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     return greske;
   }
 
-  /*
-   * public void ispisiUcitanePodatke() { System.out.println("=== ISPIS SVIH UČITANIH VLAKOVA ===");
-   * if (ZeljeznickiSustav.dohvatiInstancu().dohvatiMapuVlakova().isEmpty()) {
-   * System.out.println("Nema učitanih podataka!"); return; }
-   * 
-   * for (VlakComposite vlak : ZeljeznickiSustav.dohvatiInstancu().dohvatiMapuVlakova().values()) {
-   * System.out.println("\nVLAK " + vlak.getOznakaVlaka());
-   * System.out.println("----------------------------------------");
-   * 
-   * for (int i = 0; i < vlak.etape.size(); i++) { EtapaLeaf etapa = (EtapaLeaf)
-   * vlak.dohvatiDijete(i); System.out.printf("Etapa %d:%n", i + 1);
-   * System.out.printf("  Pruga: %s%n", etapa.getOznakaPruge()); System.out.printf("  Smjer: %s%n",
-   * etapa.getSmjer()); System.out.printf("  Od: %s%n", etapa.getPocetnaStanica());
-   * System.out.printf("  Do: %s%n", etapa.getZavrsnaStanica());
-   * System.out.printf("  Polazak: %d min%n", etapa.getVrijemePolaskaUMinutama());
-   * System.out.printf("  Trajanje: %d min%n", etapa.getTrajanjeVoznjeUMinutama());
-   * System.out.printf("  Dolazak: %d min%n", etapa.getVrijemeDolaskaUMinutama());
-   * System.out.printf("  Udaljenost: %d%n", etapa.getUdaljenost());
-   * System.out.printf("  Vrsta vlaka: %s%n", vlak.getVrstaVlaka());
-   * System.out.printf("  Oznaka dana: %s%n", etapa.getOznakaDana()); System.out.println(); } }
-   * System.out.println("=== KRAJ ISPISA ===\n"); }
-   */
   private boolean prviRedakJeInformativan(String[] dijeloviRetka, BufferedReader citac) {
     String[] dijeloviRetkaBezBOM = ukloniBOM(dijeloviRetka);
 
