@@ -6,10 +6,8 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisEtapaVisitor implements VozniRedVisitor {
-  // za IEV - pregled etapa vlaka
-
   private String oznakaVlaka;
-  private boolean pronadenVlak = false;
+  private boolean zaglavljeIspisano = false;
 
   public IspisEtapaVisitor(String oznakaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
@@ -17,32 +15,35 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
 
   @Override
   public void posjetiElement(VozniRedComposite vozniRedComposite) {
-    // System.out.println("posjetiElement VozniRedComposite u IspisEtapaVisitor");
-    // TODO: implementirati za IEV
-
+    // Ne ispisujemo ništa na razini voznog reda
   }
 
   @Override
   public void posjetiElement(VlakComposite vlakComposite) {
     if (vlakComposite.getOznakaVlaka().equals(oznakaVlaka)) {
-      if (!pronadenVlak) { // Zaglavlje ispišemo samo jednom
-        pronadenVlak = true;
-        System.out.println("ETAPE VLAKA " + oznakaVlaka + ":");
-        System.out.printf("%-10s %-10s %-20s %-20s %-8s %-8s %-5s%n", "Oznaka vlaka",
+      if (!zaglavljeIspisano) {
+        zaglavljeIspisano = true;
+        System.out.println("\n\n------------------------------------ ETAPE VLAKA " + oznakaVlaka
+            + " ------------------------------------\n");
+        System.out.printf("%-12s %-12s %-22s %-22s %-7s %-7s %-3s%n", "Oznaka vlaka",
             "Oznaka pruge", "Polazna stanica", "Odredišna stanica", "Polazak", "Dolazak", "Km");
-        System.out.println("-".repeat(75));
+        System.out.println(
+            "------------------------------------------------------------------------------------------");
       }
-
+      // Prosljeđujemo visitor samo etapama ovog vlaka
       for (VozniRedComponent dijete : vlakComposite.djeca) {
         dijete.prihvati(this);
       }
+      System.out.println(
+          "\n------------------------------------------------------------------------------------------\n");
     }
+    // TODO dodat provjeru ak uopce ne postoji vlak s tom oznakom
   }
 
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
-    if (pronadenVlak && etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
-      System.out.printf("%-10s %-10s %-20s %-20s %-8s %-8s %-5d%n", etapaLeaf.getOznakaVlaka(),
+    if (etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
+      System.out.printf("%-12s %-12s %-22s %-22s %-7s %-7s %-3s%n", etapaLeaf.getOznakaVlaka(),
           etapaLeaf.getOznakaPruge(), etapaLeaf.getPocetnaStanica(), etapaLeaf.getZavrsnaStanica(),
           pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama()),
           pretvoriMinuteUVrijeme(etapaLeaf.getVrijemeDolaskaUMinutama()),
@@ -56,4 +57,7 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
     return String.format("%02d:%02d", sati, preostaleMinute);
   }
 
+  public String getOznakaVlaka() {
+    return oznakaVlaka;
+  }
 }

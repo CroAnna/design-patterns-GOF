@@ -114,12 +114,21 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     VozniRedComponent vlak =
         ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(oznakaVlaka);
 
-    // System.out.println(vlak);
-    if (vlak == null) {
-      vlak = new VlakComposite(oznakaVlaka, vrstaVlaka);
-      ZeljeznickiSustav.dohvatiInstancu().dodajVlak((VlakComposite) vlak);
+    if (oznakaVlaka.trim().replace("\uFEFF", "").equals("3609")) {
+      System.out.println("Nađen 3609"); // ispisuje 3 puta ovo kaj znaci da su 3 etape za taj vlak
+                                        // nadene - dobro
     }
-    vlak.dodaj(etapa);
+
+
+    if (vlak == null) {
+      VlakComposite noviVlak = new VlakComposite(oznakaVlaka, vrstaVlaka);
+
+      noviVlak.dodaj(etapa);
+      ZeljeznickiSustav.dohvatiInstancu().dodajVlak(noviVlak);
+    } else {
+      vlak.dodaj(etapa);
+    }
+
   }
 
   private int pretvoriVrijemeUMinute(String vrijeme) {

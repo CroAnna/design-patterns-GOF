@@ -33,9 +33,9 @@ public class EtapaLeaf extends VozniRedComponent {
 
   @Override
   public void prihvati(IspisEtapaVisitor visitor) {
-    System.out.println("prihvati IspisEtapaVisitor u EtapaLeaf");
-
-    visitor.posjetiElement(this);
+    if (this.oznakaVlaka.equals(visitor.getOznakaVlaka())) {
+      visitor.posjetiElement(this);
+    }
   }
 
   @Override

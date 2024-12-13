@@ -28,7 +28,7 @@ public abstract class VozniRedComponent implements VozniRedVisitorElement {
     if (!(this instanceof VozniRedComposite)) {
       return null;
     }
-    return this.dohvatiDijete(i);
+    return this.dohvatiDijete(i); // ovo stvara stackoverflow, a s preze je...
   }
 
   public VozniRedComponent dohvatiDijete(String oznaka) { // GetChild(String) - ja dodala

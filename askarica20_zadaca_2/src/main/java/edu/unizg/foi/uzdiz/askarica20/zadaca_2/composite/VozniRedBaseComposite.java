@@ -16,4 +16,5 @@ public abstract class VozniRedBaseComposite extends VozniRedComponent {
   public VozniRedComponent dohvatiDijete(int index) {
     return djeca.get(index);
   }
+
 }

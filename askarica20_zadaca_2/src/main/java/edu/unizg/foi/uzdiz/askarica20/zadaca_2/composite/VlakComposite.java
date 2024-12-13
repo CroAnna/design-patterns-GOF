@@ -36,11 +36,6 @@ public class VlakComposite extends VozniRedBaseComposite {
   @Override
   public void prikaziDetalje() {
     System.out.println("stara metoda prikaziDetalje");
-    // System.out.println("Vlak broj: " + oznakaVlaka);
-    // System.out.println("Etape vlaka:");
-    // for (VozniRedComponent etapa : djeca) {
-    // etapa.prikaziDetalje();
-    // }
   }
 
   public String getOznakaVlaka() { // ne znam jel tu trebaju getteri i setteri...
@@ -63,11 +58,10 @@ public class VlakComposite extends VozniRedBaseComposite {
 
   @Override
   public void prihvati(IspisEtapaVisitor visitor) {
-    System.out.println("prihvati IspisEtapaVisitor u VlakComposite");
-
-    visitor.posjetiElement(this);
-    for (VozniRedComponent dijete : djeca) {
-      dijete.prihvati(visitor);
+    // samo vlak koji nas zanima
+    if (this.oznakaVlaka.equals(visitor.getOznakaVlaka())) {
+      visitor.posjetiElement(this);
+      // tu ne ide petlja jer onda dobijem 2 ispisa
     }
   }
 

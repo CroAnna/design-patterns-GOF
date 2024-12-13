@@ -7,8 +7,10 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
 
 public class VozniRedComposite extends VozniRedBaseComposite {
 
+
   @Override
   public VozniRedComponent dohvatiDijete(String oznaka) {
+    // da se ne overridea dobil bi se stack overflow od roditelja
     for (VozniRedComponent vlak : djeca) {
       if (vlak instanceof VlakComposite && ((VlakComposite) vlak).getOznakaVlaka().equals(oznaka)) {
         return vlak;
@@ -38,11 +40,12 @@ public class VozniRedComposite extends VozniRedBaseComposite {
 
   @Override
   public void prihvati(IspisEtapaVisitor visitor) {
-    System.out.println("prihvati IspisEtapaVisitor u VozniRedComposite");
-
-    visitor.posjetiElement(this);
-    for (VozniRedComponent dijete : djeca) {
-      dijete.prihvati(visitor);
+    visitor.posjetiElement(this); // Ispiše zaglavlje
+    // Posjećujemo samo vlakove
+    for (VozniRedComponent dijete : djeca) { // zakej tu sad ipak ide petlja, a u vlakcomposite ne
+      if (dijete instanceof VlakComposite) {
+        dijete.prihvati(visitor);
+      }
     }
   }
 

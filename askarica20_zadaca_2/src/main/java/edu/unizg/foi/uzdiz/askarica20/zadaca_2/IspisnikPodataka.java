@@ -18,7 +18,7 @@ public class IspisnikPodataka {
     }
 
     System.out.println(
-        "\n\n------------------------------------- ISPIS PRUGA --------------------------------------\n");
+        "\n\n----------------------------------- ISPIS PRUGA ------------------------------------\n");
     System.out.printf("%-15s %-30s %-30s %-10s\n", "Oznaka pruge", "Početna stanica",
         "Završna stanica", "Udaljenost");
     System.out.println(
