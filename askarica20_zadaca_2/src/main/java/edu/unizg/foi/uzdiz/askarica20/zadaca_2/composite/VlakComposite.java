@@ -1,9 +1,6 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class VlakComposite extends VozniRedBaseComposite {
   private String oznakaVlaka;
@@ -56,11 +53,6 @@ public class VlakComposite extends VozniRedBaseComposite {
     return null;
   }
 
-  @Override
-  public void prikaziDetalje() {
-    System.out.println("stara metoda prikaziDetalje");
-  }
-
   public String getOznakaVlaka() { // ne znam jel tu trebaju getteri i setteri...
     return oznakaVlaka;
   }
@@ -69,41 +61,20 @@ public class VlakComposite extends VozniRedBaseComposite {
     this.oznakaVlaka = oznakaVlaka;
   }
 
-  @Override
-  public void prihvati(IspisVlakovaVisitor visitor) {
-    System.out.println("prihvati IspisVlakovaVisitor u VlakComposite");
-
-    visitor.posjetiElement(this);
-    for (VozniRedComponent dijete : djeca) {
-      dijete.prihvati(visitor);
+  public boolean postojiLi(String oznakaVlaka) {
+    for (VozniRedComponent komponenta : djeca) {
+      if (komponenta instanceof VlakComposite) {
+        VlakComposite vlak = (VlakComposite) komponenta;
+        if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
+          return true;
+        }
+      }
     }
+    return false;
   }
 
   @Override
-  public void prihvati(IspisEtapaVisitor visitor) {
-    // samo vlak koji nas zanima
-    if (this.oznakaVlaka.equals(visitor.getOznakaVlaka())) {
-      visitor.posjetiElement(this);
-      // tu ne ide petlja jer onda dobijem 2 ispisa
-    }
-  }
-
-  @Override
-  public void prihvati(IspisVlakovaPoDanimaVisitor visitor) {
-    System.out.println("prihvati IspisVlakovaPoDanimaVisitor u VlakComposite");
-
+  public void prihvati(VozniRedVisitor visitor) {
     visitor.posjetiElement(this);
-    for (VozniRedComponent dijete : djeca) {
-      dijete.prihvati(visitor);
-    }
-  }
-
-  @Override
-  public void prihvati(IspisVoznogRedaVisitor visitor) {
-    System.out.println("prihvati IspisVoznogRedaVisitor u VlakComposite");
-    visitor.posjetiElement(this);
-    for (VozniRedComponent dijete : djeca) {
-      dijete.prihvati(visitor);
-    }
   }
 }

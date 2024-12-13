@@ -1,8 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
 
 public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   // za IVRV - pregled voznog reda vlaka
@@ -14,14 +13,8 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   }
 
   @Override
-  public void posjetiElement(VozniRedComposite vozniRedComposite) {
-    System.out.println("posjetiElement VozniRedComposite u IspisVoznogRedaVisitor");
-    // TODO: implementirati za IVRV
-  }
-
-  @Override
-  public void posjetiElement(VlakComposite vlakComposite) {
-    System.out.println("posjetiElement VlakComposite u IspisVoznogRedaVisitor");
+  public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
+    System.out.println("posjetiElement PomocniBazniComposite u IspisVoznogRedaVisitor");
     // TODO: implementirati za IVRV
   }
 

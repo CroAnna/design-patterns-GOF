@@ -2,6 +2,7 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
@@ -14,32 +15,33 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
   }
 
   @Override
-  public void posjetiElement(VozniRedComposite vozniRedComposite) {
-    if (!vozniRedComposite.postojiVlak(oznakaVlaka)) {
-      System.out.println("\nVlak s oznakom " + oznakaVlaka + " ne postoji u voznom redu.");
-      return;
-    }
-  }
-
-  @Override
-  public void posjetiElement(VlakComposite vlakComposite) {
-    if (vlakComposite.getOznakaVlaka().equals(oznakaVlaka)) {
-      System.out.println("\n\n---------------------------------------------- ETAPE VLAKA "
-          + oznakaVlaka + " ----------------------------------------------\n");
-      System.out.printf("%-13s %-13s %-23s %-23s %-8s %-8s %-4s %-12s%n", "Oznaka vlaka",
-          "Oznaka pruge", "Polazna stanica", "Odredišna stanica", "Polazak", "Dolazak", "Km",
-          "Dani");
-      System.out.println(
-          "--------------------------------------------------------------------------------------------------------------");
-      // TODO dodaj da se brisu etape ako nisu dobre - pitanje s foruma
-
-      for (VozniRedComponent dijete : vlakComposite.djeca) {
-        dijete.prihvati(this);
+  public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
+    if (vozniRedBaseComposite instanceof VozniRedComposite) {
+      if (!vozniRedBaseComposite.postojiLi(oznakaVlaka)) {
+        System.out.println("\nVlak s oznakom " + oznakaVlaka + " ne postoji u voznom redu.");
+        return;
       }
-      System.out.println(
-          "\n--------------------------------------------------------------------------------------------------------------\n");
     }
-    // TODO dodat provjeru ak uopce ne postoji vlak s tom oznakom
+
+    if (vozniRedBaseComposite instanceof VlakComposite) {
+      VlakComposite vlak = (VlakComposite) vozniRedBaseComposite;
+      if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
+        System.out.println("\n\n---------------------------------------------- ETAPE VLAKA "
+            + oznakaVlaka + " ----------------------------------------------\n");
+        System.out.printf("%-13s %-13s %-23s %-23s %-8s %-8s %-4s %-12s%n", "Oznaka vlaka",
+            "Oznaka pruge", "Polazna stanica", "Odredišna stanica", "Polazak", "Dolazak", "Km",
+            "Dani");
+        System.out.println(
+            "--------------------------------------------------------------------------------------------------------------");
+        // TODO dodaj da se brisu etape ako nisu dobre - pitanje s foruma
+
+        for (VozniRedComponent dijete : vlak.djeca) {
+          dijete.prihvati(this);
+        }
+        System.out.println(
+            "\n--------------------------------------------------------------------------------------------------------------\n");
+      }
+    }
   }
 
   @Override

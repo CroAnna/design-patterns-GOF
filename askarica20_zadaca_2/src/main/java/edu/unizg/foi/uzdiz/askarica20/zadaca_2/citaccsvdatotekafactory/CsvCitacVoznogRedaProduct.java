@@ -105,24 +105,15 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
       udaljenost = vrijed; // na kraju će ostati zadnja vrijednost
     }
 
-    // Kreiranje komponenti
     EtapaLeaf etapa = new EtapaLeaf(oznakaPruge, oznakaVlaka, vrstaVlaka, polaznaStanica,
         odredisnaStanica, trajanjeVoznjeUMin, vrijemePolaskaUMin, vrijemeDolaskaUMin, udaljenost,
         smjer, oznakaDana);
 
-    // Pronađi ili kreiraj vlak i dodaj etapu
     VozniRedComponent vlak =
         ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(oznakaVlaka);
 
-    if (oznakaVlaka.trim().replace("\uFEFF", "").equals("3609")) {
-      System.out.println("Nađen 3609"); // ispisuje 3 puta ovo kaj znaci da su 3 etape za taj vlak
-                                        // nadene - dobro
-    }
-
-
     if (vlak == null) {
       VlakComposite noviVlak = new VlakComposite(oznakaVlaka, vrstaVlaka);
-
       noviVlak.dodaj(etapa);
       ZeljeznickiSustav.dohvatiInstancu().dodajVlak(noviVlak);
     } else {

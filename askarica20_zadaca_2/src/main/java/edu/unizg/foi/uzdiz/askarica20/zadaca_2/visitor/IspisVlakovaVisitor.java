@@ -1,26 +1,21 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaVisitor implements VozniRedVisitor {
   // za IV - pregled vlakova
 
   @Override
-  public void posjetiElement(VozniRedComposite vozniRedComposite) {
-    System.out.println("posjetiElement VozniRedComposite u IspisVlakovaVisitor");
-    System.out.println("PREGLED VLAKOVA:");
-    System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5s%n", "Oznaka", "Polazna stanica",
-        "Odredišna stanica", "Polazak", "Dolazak", "Km");
-    System.out.println("-".repeat(75));
-  }
-
-
-  @Override
-  public void posjetiElement(VlakComposite vlakComposite) {
-    // Vlak se ne ispisuje direktno, nego kroz svoje etape
-    System.out.println("posjetiElement VlakComposite u IspisVlakovaVisitor");
+  public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
+    if (vozniRedBaseComposite instanceof VozniRedComposite) {
+      System.out.println("posjetiElement VozniRedComposite u IspisVlakovaVisitor");
+      System.out.println("PREGLED VLAKOVA:");
+      System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5s%n", "Oznaka", "Polazna stanica",
+          "Odredišna stanica", "Polazak", "Dolazak", "Km");
+      System.out.println("-".repeat(75));
+    }
   }
 
   @Override

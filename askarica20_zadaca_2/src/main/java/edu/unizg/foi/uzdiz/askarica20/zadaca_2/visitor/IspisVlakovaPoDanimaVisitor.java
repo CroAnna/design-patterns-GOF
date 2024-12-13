@@ -1,8 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
 
 public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   // za IEVD - pregled vlakova za određene dane
@@ -14,14 +13,8 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   }
 
   @Override
-  public void posjetiElement(VozniRedComposite vozniRedComposite) {
-    System.out.println("posjetiElement VozniRedComposite u IspisVlakovaPoDanimaVisitor");
-    // TODO: implementirati za IEVD
-  }
-
-  @Override
-  public void posjetiElement(VlakComposite vlakComposite) {
-    System.out.println("posjetiElement VlakComposite u IspisVlakovaPoDanimaVisitor");
+  public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
+    System.out.println("posjetiElement VozniRedBaseComposite u IspisVlakovaPoDanimaVisitor");
     // TODO: implementirati za IEVD
   }
 

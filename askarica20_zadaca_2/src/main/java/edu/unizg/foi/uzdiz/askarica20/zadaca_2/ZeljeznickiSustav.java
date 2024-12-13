@@ -53,10 +53,6 @@ public class ZeljeznickiSustav {
     vozniRed.dohvatiDijete(oznakaVlaka);
   }
 
-  public void ispisiVozniRed() {
-    vozniRed.prikaziDetalje();
-  }
-
   public void dodajVozilo(Vozilo vozilo) {
     listaVozila.add(vozilo);
   }
@@ -604,7 +600,7 @@ public class ZeljeznickiSustav {
   }
 
   private List<Stanica> dohvatiStanicePruge(String oznakaPruge) {
-    List<Stanica> stanicePruge = new ArrayList();
+    List<Stanica> stanicePruge = new ArrayList<>();
     for (Stanica s : listaStanica) {
       if (s.getOznakaPruge().equals(oznakaPruge)) {
         stanicePruge.add(s);

@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class EtapaLeaf extends VozniRedComponent {
   private Map<Integer, List<Stanica>> mapaStanicaEtape = new HashMap<>();
@@ -25,44 +22,8 @@ public class EtapaLeaf extends VozniRedComponent {
   private String oznakaDana; // nez kaj ce mi ovo iskreno
 
   @Override
-  public void prihvati(IspisVlakovaVisitor visitor) {
-    System.out.println("prihvati IspisVlakovaVisitor u EtapaLeaf");
-
+  public void prihvati(VozniRedVisitor visitor) {
     visitor.posjetiElement(this);
-  }
-
-  @Override
-  public void prihvati(IspisEtapaVisitor visitor) {
-    if (this.oznakaVlaka.equals(visitor.getOznakaVlaka())) {
-      visitor.posjetiElement(this);
-    }
-  }
-
-  @Override
-  public void prihvati(IspisVlakovaPoDanimaVisitor visitor) {
-    System.out.println("prihvati IspisVlakovaPoDanimaVisitor u EtapaLeaf");
-
-    visitor.posjetiElement(this);
-  }
-
-  @Override
-  public void prihvati(IspisVoznogRedaVisitor visitor) {
-    System.out.println("prihvati IspisVoznogRedaVisitor u EtapaLeaf");
-
-    visitor.posjetiElement(this);
-  }
-
-  @Override
-  public void prikaziDetalje() {
-    System.out.printf("%-10s %-10s %-20s %-20s %-8s %-8s %-5d%n", oznakaVlaka, oznakaPruge,
-        pocetnaStanica, zavrsnaStanica, pretvoriMinuteUVrijeme(vrijemePolaskaUMinutama),
-        pretvoriMinuteUVrijeme(vrijemeDolaskaUMinutama), udaljenost);
-  }
-
-  private String pretvoriMinuteUVrijeme(int minute) {
-    int sati = minute / 60;
-    int preostaleMinute = minute % 60;
-    return String.format("%02d:%02d", sati, preostaleMinute);
   }
 
   public EtapaLeaf(String oznakaPruge, String oznakaVlaka, String vrstaVlaka, String pocetnaStanica,
@@ -112,7 +73,6 @@ public class EtapaLeaf extends VozniRedComponent {
   public void setVrstaVlaka(String vrstaVlaka) {
     this.vrstaVlaka = vrstaVlaka;
   }
-
 
   public String getPocetnaStanica() {
     return pocetnaStanica;
@@ -177,7 +137,5 @@ public class EtapaLeaf extends VozniRedComponent {
   public void setOznakaDana(String oznakaDana) {
     this.oznakaDana = oznakaDana;
   }
-
-
 
 }
