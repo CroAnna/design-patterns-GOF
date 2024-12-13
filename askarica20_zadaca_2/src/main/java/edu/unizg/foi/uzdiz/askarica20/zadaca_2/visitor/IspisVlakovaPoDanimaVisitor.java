@@ -15,16 +15,19 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
 
   @Override
   public void posjetiElement(VozniRedComposite vozniRedComposite) {
+    System.out.println("posjetiElement VozniRedComposite u IspisVlakovaPoDanimaVisitor");
     // TODO: implementirati za IEVD
   }
 
   @Override
   public void posjetiElement(VlakComposite vlakComposite) {
+    System.out.println("posjetiElement VlakComposite u IspisVlakovaPoDanimaVisitor");
     // TODO: implementirati za IEVD
   }
 
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
+    System.out.println("posjetiElement EtapaLeaf u IspisVlakovaPoDanimaVisitor");
     // TODO: implementirati za IEVD
   }
 }

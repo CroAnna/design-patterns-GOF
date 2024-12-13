@@ -26,28 +26,36 @@ public class EtapaLeaf extends VozniRedComponent {
 
   @Override
   public void prihvati(IspisVlakovaVisitor visitor) {
+    System.out.println("prihvati IspisVlakovaVisitor u EtapaLeaf");
+
     visitor.posjetiElement(this);
   }
 
   @Override
   public void prihvati(IspisEtapaVisitor visitor) {
+    System.out.println("prihvati IspisEtapaVisitor u EtapaLeaf");
+
     visitor.posjetiElement(this);
   }
 
   @Override
   public void prihvati(IspisVlakovaPoDanimaVisitor visitor) {
+    System.out.println("prihvati IspisVlakovaPoDanimaVisitor u EtapaLeaf");
+
     visitor.posjetiElement(this);
   }
 
   @Override
   public void prihvati(IspisVoznogRedaVisitor visitor) {
+    System.out.println("prihvati IspisVoznogRedaVisitor u EtapaLeaf");
+
     visitor.posjetiElement(this);
   }
 
   @Override
   public void prikaziDetalje() {
-    System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5d%n", oznakaPruge, pocetnaStanica,
-        zavrsnaStanica, pretvoriMinuteUVrijeme(vrijemePolaskaUMinutama),
+    System.out.printf("%-10s %-10s %-20s %-20s %-8s %-8s %-5d%n", oznakaVlaka, oznakaPruge,
+        pocetnaStanica, zavrsnaStanica, pretvoriMinuteUVrijeme(vrijemePolaskaUMinutama),
         pretvoriMinuteUVrijeme(vrijemeDolaskaUMinutama), udaljenost);
   }
 

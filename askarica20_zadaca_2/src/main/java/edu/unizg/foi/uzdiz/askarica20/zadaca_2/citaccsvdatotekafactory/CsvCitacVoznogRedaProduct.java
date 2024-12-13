@@ -114,7 +114,7 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     VozniRedComponent vlak =
         ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(oznakaVlaka);
 
-    System.out.println(vlak);
+    // System.out.println(vlak);
     if (vlak == null) {
       vlak = new VlakComposite(oznakaVlaka, vrstaVlaka);
       ZeljeznickiSustav.dohvatiInstancu().dodajVlak((VlakComposite) vlak);

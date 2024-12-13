@@ -9,6 +9,7 @@ public class IspisVlakovaVisitor implements VozniRedVisitor {
 
   @Override
   public void posjetiElement(VozniRedComposite vozniRedComposite) {
+    System.out.println("posjetiElement VozniRedComposite u IspisVlakovaVisitor");
     System.out.println("PREGLED VLAKOVA:");
     System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5s%n", "Oznaka", "Polazna stanica",
         "Odredišna stanica", "Polazak", "Dolazak", "Km");
@@ -19,10 +20,12 @@ public class IspisVlakovaVisitor implements VozniRedVisitor {
   @Override
   public void posjetiElement(VlakComposite vlakComposite) {
     // Vlak se ne ispisuje direktno, nego kroz svoje etape
+    System.out.println("posjetiElement VlakComposite u IspisVlakovaVisitor");
   }
 
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
+    System.out.println("posjetiElement EtapaLeaf u IspisVlakovaVisitor");
     System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5d%n", etapaLeaf.getOznakaVlaka(),
         etapaLeaf.getPocetnaStanica(), etapaLeaf.getZavrsnaStanica(),
         pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama()),
