@@ -1,10 +1,19 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitorElement;
 
 public abstract class VozniRedComponent implements VozniRedVisitorElement {
-  public abstract void prihvati(VozniRedVisitor visitor); // za visitora
+  public abstract void prihvati(IspisVlakovaVisitor visitor); // za visitora
+
+  public abstract void prihvati(IspisEtapaVisitor visitor); // za visitora
+
+  public abstract void prihvati(IspisVlakovaPoDanimaVisitor visitor); // za visitora
+
+  public abstract void prihvati(IspisVoznogRedaVisitor visitor); // za visitora
 
   public abstract void prikaziDetalje(); // Operation()
 

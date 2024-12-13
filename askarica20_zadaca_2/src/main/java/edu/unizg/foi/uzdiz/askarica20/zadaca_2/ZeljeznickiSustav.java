@@ -15,6 +15,10 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
 
 public class ZeljeznickiSustav {
   private static ZeljeznickiSustav instanca;
@@ -155,8 +159,9 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIV.matches()) {
       System.out.println("Neispravna komanda - format IV");
     } else {
-      // ispisnik.ispisiVlakove();
-      ispisiVozniRed();
+      // double dispatch - odabire se prava metoda za izvrsavanje na temelju konkretnog tipa
+      // visitora i konkretnog tipa elementa koji se posjecuje
+      vozniRed.prihvati(new IspisVlakovaVisitor());
     }
   }
 
@@ -168,6 +173,8 @@ public class ZeljeznickiSustav {
       System.out.println("Neispravna komanda - format IEV oznaka");
     } else {
       // TODO
+      String oznakaVlaka = poklapanjePredlozakIEV.group("oznaka");
+      vozniRed.prihvati(new IspisEtapaVisitor(oznakaVlaka));
     }
   }
 
@@ -179,6 +186,8 @@ public class ZeljeznickiSustav {
       System.out.println("Neispravna komanda - format IEVD dani");
     } else {
       // TODO
+      String dani = poklapanjePredlozakIEVD.group("dani");
+      vozniRed.prihvati(new IspisVlakovaPoDanimaVisitor(dani));
     }
   }
 
@@ -190,6 +199,8 @@ public class ZeljeznickiSustav {
       System.out.println("Neispravna komanda - format IVRV oznaka");
     } else {
       // TODO
+      String oznakaVlaka = poklapanjePredlozakIVRV.group("oznaka");
+      vozniRed.prihvati(new IspisVoznogRedaVisitor(oznakaVlaka));
     }
   }
 

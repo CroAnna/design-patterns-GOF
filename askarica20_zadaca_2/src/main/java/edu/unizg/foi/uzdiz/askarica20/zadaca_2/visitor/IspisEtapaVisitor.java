@@ -2,7 +2,7 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisEtapaVisitor implements VozniRedVisitor {
   // za IEV - pregled etapa vlaka
@@ -14,20 +14,18 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
   }
 
   @Override
-  public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
-    // TODO Auto-generated method stub
-    if (vozniRedBaseComposite instanceof VlakComposite) {
-      VlakComposite vlak = (VlakComposite) vozniRedBaseComposite;
-      if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
-        // ispis podataka o etapama vlaka
-      }
-    }
+  public void posjetiElement(VozniRedComposite vozniRedComposite) {
+    // TODO: implementirati za IEV
+  }
+
+  @Override
+  public void posjetiElement(VlakComposite vlakComposite) {
+    // TODO: implementirati za IEV
   }
 
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
-    // TODO Auto-generated method stub
-    // ispis podataka o etapi
+    // TODO: implementirati za IEV
   }
 
 }

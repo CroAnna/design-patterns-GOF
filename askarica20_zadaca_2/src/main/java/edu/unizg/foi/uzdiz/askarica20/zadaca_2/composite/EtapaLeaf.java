@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
 
 public class EtapaLeaf extends VozniRedComponent {
   private Map<Integer, List<Stanica>> mapaStanicaEtape = new HashMap<>();
@@ -22,8 +25,23 @@ public class EtapaLeaf extends VozniRedComponent {
   private String oznakaDana; // nez kaj ce mi ovo iskreno
 
   @Override
-  public void prihvati(VozniRedVisitor visitor) {
-    visitor.posjetiElement(this); // TODO
+  public void prihvati(IspisVlakovaVisitor visitor) {
+    visitor.posjetiElement(this);
+  }
+
+  @Override
+  public void prihvati(IspisEtapaVisitor visitor) {
+    visitor.posjetiElement(this);
+  }
+
+  @Override
+  public void prihvati(IspisVlakovaPoDanimaVisitor visitor) {
+    visitor.posjetiElement(this);
+  }
+
+  @Override
+  public void prihvati(IspisVoznogRedaVisitor visitor) {
+    visitor.posjetiElement(this);
   }
 
   @Override
