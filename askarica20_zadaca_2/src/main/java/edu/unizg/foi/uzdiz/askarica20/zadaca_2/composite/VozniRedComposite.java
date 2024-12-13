@@ -68,4 +68,16 @@ public class VozniRedComposite extends VozniRedBaseComposite {
       dijete.prihvati(visitor);
     }
   }
+
+  public boolean postojiVlak(String oznakaVlaka) {
+    for (VozniRedComponent komponenta : djeca) {
+      if (komponenta instanceof VlakComposite) {
+        VlakComposite vlak = (VlakComposite) komponenta;
+        if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
