@@ -1,11 +1,14 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
@@ -83,6 +86,10 @@ public class ZeljeznickiSustav {
 
   public List<Pruga> dohvatiListuPruga() {
     return listaPruga; // TODO di se ovo koristi - makni to...
+  }
+
+  public List<OznakaDana> dohvatiListuOznakaDana() {
+    return listaOznakaDana;
   }
 
   public void zapocniRadSustava() {
@@ -173,16 +180,21 @@ public class ZeljeznickiSustav {
   }
 
   private void provjeriIEVD(String[] dijeloviKomande, String unos) {
-    Pattern predlozakIEVD = Pattern.compile("^IEVD (?<dani>[A-Za-z]+)$");
+    Pattern predlozakIEVD = Pattern.compile("^IEVD (Po|U|Sr|Č|Pe|Su|N)+$");
     Matcher poklapanjePredlozakIEVD = predlozakIEVD.matcher(unos);
-
     if (!poklapanjePredlozakIEVD.matches()) {
-      System.out.println("Neispravna komanda - format IEVD dani");
-    } else {
-      // TODO
-      String dani = poklapanjePredlozakIEVD.group("dani");
-      vozniRed.prihvati(new IspisVlakovaPoDanimaVisitor(dani));
+      System.out
+          .println("Neispravna komanda - format IEVD dani (Po U Sr Č Pe Su N ili kombinacija)");
+      return;
     }
+
+    String daniBezIEVD = unos.substring(5);
+    String sortiraniDani = sortirajDane(daniBezIEVD);
+    if (sortiraniDani.isEmpty()) {
+      System.out.println("Neispravan dan u tjednu!");
+      return;
+    }
+    vozniRed.prihvati(new IspisVlakovaPoDanimaVisitor(sortiraniDani));
   }
 
   private void provjeriIVRV(String[] dijeloviKomande, String unos) {
@@ -648,4 +660,48 @@ public class ZeljeznickiSustav {
     return "PoUSrČPeSuN";
   }
 
+  private boolean parsirajValidirajDane(String dani, Set<String> daniSet) {
+    int pozicija = 0;
+    while (pozicija < dani.length()) {
+      if (pozicija + 2 <= dani.length()) {
+        String dvoslovniDan = dani.substring(pozicija, pozicija + 2);
+        if (dvoslovniDan.equals("Po") || dvoslovniDan.equals("Su") || dvoslovniDan.equals("Pe")
+            || dvoslovniDan.equals("Sr")) {
+          if (!daniSet.add(dvoslovniDan)) {
+            return false;
+          }
+          pozicija += 2;
+          continue;
+        }
+      }
+      if (pozicija + 1 <= dani.length()) {
+        String jednoslovniDan = dani.substring(pozicija, pozicija + 1);
+        if (jednoslovniDan.equals("U") || jednoslovniDan.equals("Č")
+            || jednoslovniDan.equals("N")) {
+          if (!daniSet.add(jednoslovniDan)) {
+            return false;
+          }
+          pozicija += 1;
+          continue;
+        }
+      }
+      return false;
+    }
+    return true;
+  }
+
+  private String sortirajDane(String dani) {
+    Set<String> daniSet = new LinkedHashSet<>();
+    if (!parsirajValidirajDane(dani, daniSet)) {
+      return "";
+    }
+    List<String> redoslijedDana = Arrays.asList("Po", "U", "Sr", "Č", "Pe", "Su", "N");
+    StringBuilder sortirano = new StringBuilder();
+    for (String dan : redoslijedDana) {
+      if (daniSet.contains(dan)) {
+        sortirano.append(dan);
+      }
+    }
+    return sortirano.toString();
+  }
 }

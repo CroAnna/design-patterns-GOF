@@ -21,9 +21,14 @@ public abstract class VozniRedBaseComposite extends VozniRedComponent {
   @Override
   public void prihvati(VozniRedVisitor visitor) {
     visitor.posjetiElement(this);
-    for (VozniRedComponent element : djeca) {
-      element.prihvati(visitor);
-    }
+    /*
+     * for (VozniRedComponent element : djeca) { element.prihvati(visitor); // ovo ne bi trebalo
+     * biti tu ja mislim, nego u concrete elementima }
+     */
+  }
+
+  public List<VozniRedComponent> dohvatiDjecu() {
+    return djeca;
   }
 
   public abstract boolean postojiLi(String oznaka);

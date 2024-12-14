@@ -3,6 +3,7 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaVisitor implements VozniRedVisitor {
@@ -20,6 +21,9 @@ public class IspisVlakovaVisitor implements VozniRedVisitor {
             "Odredišna stanica", "Polazak", "Dolazak", "Km");
         System.out.println(
             "----------------------------------------------------------------------------------");
+        for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
+          dijete.prihvati(this);
+        }
       }
     } else if (vozniRedBaseComposite instanceof VlakComposite) {
       VlakComposite vlak = (VlakComposite) vozniRedBaseComposite;
@@ -29,6 +33,10 @@ public class IspisVlakovaVisitor implements VozniRedVisitor {
           vlak.getPocetnaStanica(), vlak.getZavrsnaStanica(),
           pretvoriMinuteUVrijeme(vlak.getVrijemePolaska()),
           pretvoriMinuteUVrijeme(vlak.getVrijemeDolaska()), vlak.getUkupniKilometri());
+
+      for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
+        dijete.prihvati(this);
+      }
 
     }
   }

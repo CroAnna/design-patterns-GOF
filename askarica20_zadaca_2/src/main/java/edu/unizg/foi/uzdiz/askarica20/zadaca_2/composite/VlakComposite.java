@@ -1,5 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class VlakComposite extends VozniRedBaseComposite {
@@ -47,18 +49,6 @@ public class VlakComposite extends VozniRedBaseComposite {
     return null;
   }
 
-  public boolean postojiLi(String oznakaVlaka) {
-    for (VozniRedComponent komponenta : djeca) {
-      if (komponenta instanceof VlakComposite) {
-        VlakComposite vlak = (VlakComposite) komponenta;
-        if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   public void izracunajUkupnePodatke() {
     for (VozniRedComponent komponenta : djeca) {
       if (komponenta instanceof EtapaLeaf) {
@@ -77,6 +67,17 @@ public class VlakComposite extends VozniRedBaseComposite {
         ukupniKilometri += etapa.getUdaljenost();
       }
     }
+  }
+
+  @Override
+  public boolean postojiLi(String oznakaDana) {
+    // provjerava postoji li oznaka dana po toj oznaci
+    for (OznakaDana dan : ZeljeznickiSustav.dohvatiInstancu().dohvatiListuOznakaDana()) {
+      if (dan.getDaniVoznje().equals(oznakaVlaka)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

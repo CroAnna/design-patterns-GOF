@@ -9,7 +9,6 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 public class IspisEtapaVisitor implements VozniRedVisitor {
   private String oznakaVlaka;
 
-
   public IspisEtapaVisitor(String oznakaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
   }
@@ -21,9 +20,10 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
         System.out.println("\nVlak s oznakom " + oznakaVlaka + " ne postoji u voznom redu.");
         return;
       }
-    }
-
-    if (vozniRedBaseComposite instanceof VlakComposite) {
+      for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
+        dijete.prihvati(this);
+      }
+    } else if (vozniRedBaseComposite instanceof VlakComposite) {
       VlakComposite vlak = (VlakComposite) vozniRedBaseComposite;
       if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
         System.out.println("\n\n---------------------------------------------- ETAPE VLAKA "
@@ -34,8 +34,7 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
         System.out.println(
             "--------------------------------------------------------------------------------------------------------------");
         // TODO dodaj da se brisu etape ako nisu dobre - pitanje s foruma
-
-        for (VozniRedComponent dijete : vlak.djeca) {
+        for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
           dijete.prihvati(this);
         }
         System.out.println(
@@ -61,9 +60,8 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
     int preostaleMinute = minute % 60;
     return String.format("%02d:%02d", sati, preostaleMinute);
   }
-
-  public String getOznakaVlaka() {
-    return oznakaVlaka;
-  }
+  /*
+   * public String getOznakaVlaka() { return oznakaVlaka; }
+   */
 
 }
