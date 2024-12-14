@@ -10,7 +10,8 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   private String trazeniDani;
-  private List<VlakComposite> vlakoviKojiVoze = new ArrayList<>();
+  private List<VlakComposite> vlakoviKojiVoze = new ArrayList<>(); // TODO probaj slozit ovo bez
+                                                                   // pomocne liste
 
   public IspisVlakovaPoDanimaVisitor(String dani) {
     this.trazeniDani = dani;

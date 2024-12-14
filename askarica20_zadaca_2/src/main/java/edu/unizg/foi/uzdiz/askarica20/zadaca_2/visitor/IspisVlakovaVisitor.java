@@ -8,13 +8,13 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaVisitor implements VozniRedVisitor {
   // za IV - pregled vlakova
-  private boolean isFirst = true;
+  private boolean jePrviProlaz = true;
 
   @Override
   public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
     if (vozniRedBaseComposite instanceof VozniRedComposite) {
-      if (isFirst) {
-        isFirst = false;
+      if (jePrviProlaz) {
+        jePrviProlaz = false;
         System.out.println("\n\n--------------------------------- ISPIS VLAKOVA "
             + " ---------------------------------\n");
         System.out.printf("%-10s %-23s %-23s %-8s %-8s %-5s%n", "Oznaka", "Polazna stanica",
