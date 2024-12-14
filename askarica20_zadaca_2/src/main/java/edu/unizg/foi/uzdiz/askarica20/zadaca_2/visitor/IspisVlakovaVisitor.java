@@ -1,30 +1,41 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaVisitor implements VozniRedVisitor {
   // za IV - pregled vlakova
+  private boolean isFirst = true;
 
   @Override
   public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
     if (vozniRedBaseComposite instanceof VozniRedComposite) {
-      System.out.println("posjetiElement VozniRedComposite u IspisVlakovaVisitor");
-      System.out.println("PREGLED VLAKOVA:");
-      System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5s%n", "Oznaka", "Polazna stanica",
-          "Odredišna stanica", "Polazak", "Dolazak", "Km");
-      System.out.println("-".repeat(75));
+      if (isFirst) {
+        isFirst = false;
+        System.out.println("\n\n--------------------------------- ISPIS VLAKOVA "
+            + " ---------------------------------\n");
+        System.out.printf("%-10s %-23s %-23s %-8s %-8s %-5s%n", "Oznaka", "Polazna stanica",
+            "Odredišna stanica", "Polazak", "Dolazak", "Km");
+        System.out.println(
+            "----------------------------------------------------------------------------------");
+      }
+    } else if (vozniRedBaseComposite instanceof VlakComposite) {
+      VlakComposite vlak = (VlakComposite) vozniRedBaseComposite;
+      vlak.izracunajUkupnePodatke();
+
+      System.out.printf("%-10s %-23s %-23s %-8s %-8s %-5d%n", vlak.getOznakaVlaka(),
+          vlak.getPocetnaStanica(), vlak.getZavrsnaStanica(),
+          pretvoriMinuteUVrijeme(vlak.getVrijemePolaska()),
+          pretvoriMinuteUVrijeme(vlak.getVrijemeDolaska()), vlak.getUkupniKilometri());
+
     }
   }
 
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
-    System.out.println("posjetiElement EtapaLeaf u IspisVlakovaVisitor");
-    System.out.printf("%-10s %-20s %-20s %-8s %-8s %-5d%n", etapaLeaf.getOznakaVlaka(),
-        etapaLeaf.getPocetnaStanica(), etapaLeaf.getZavrsnaStanica(),
-        pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama()),
-        pretvoriMinuteUVrijeme(etapaLeaf.getVrijemeDolaskaUMinutama()), etapaLeaf.getUdaljenost());
+
   }
 
   private String pretvoriMinuteUVrijeme(int minute) {

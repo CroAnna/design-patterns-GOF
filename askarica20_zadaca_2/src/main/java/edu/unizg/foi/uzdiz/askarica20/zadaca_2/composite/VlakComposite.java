@@ -6,14 +6,8 @@ public class VlakComposite extends VozniRedBaseComposite {
   private String oznakaVlaka;
   private String vrstaVlaka; // U, B ili prazno - prazno bi mogla pretvorit u npr slovo N (normalan
                              // pri citanju retka)
-
-  public String getVrstaVlaka() {
-    return vrstaVlaka;
-  }
-
-  public void setVrstaVlaka(String vrstaVlaka) {
-    this.vrstaVlaka = vrstaVlaka;
-  }
+  private String pocetnaStanica = "", zavrsnaStanica = "";
+  private int vrijemePolaska = Integer.MAX_VALUE, vrijemeDolaska = 0, ukupniKilometri = 0;
 
   public VlakComposite(String oznakaVlaka, String vrstaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
@@ -53,14 +47,6 @@ public class VlakComposite extends VozniRedBaseComposite {
     return null;
   }
 
-  public String getOznakaVlaka() { // ne znam jel tu trebaju getteri i setteri...
-    return oznakaVlaka;
-  }
-
-  public void setOznakaVlaka(String oznakaVlaka) {
-    this.oznakaVlaka = oznakaVlaka;
-  }
-
   public boolean postojiLi(String oznakaVlaka) {
     for (VozniRedComponent komponenta : djeca) {
       if (komponenta instanceof VlakComposite) {
@@ -73,8 +59,64 @@ public class VlakComposite extends VozniRedBaseComposite {
     return false;
   }
 
+  public void izracunajUkupnePodatke() {
+    for (VozniRedComponent komponenta : djeca) {
+      if (komponenta instanceof EtapaLeaf) {
+        EtapaLeaf etapa = (EtapaLeaf) komponenta;
+
+        if (pocetnaStanica.isEmpty() || etapa.getVrijemePolaskaUMinutama() < vrijemePolaska) {
+          vrijemePolaska = etapa.getVrijemePolaskaUMinutama();
+          pocetnaStanica = etapa.getPocetnaStanica();
+        }
+
+        if (zavrsnaStanica.isEmpty() || etapa.getVrijemeDolaskaUMinutama() > vrijemeDolaska) {
+          vrijemeDolaska = etapa.getVrijemeDolaskaUMinutama();
+          zavrsnaStanica = etapa.getZavrsnaStanica();
+        }
+
+        ukupniKilometri += etapa.getUdaljenost();
+      }
+    }
+  }
+
   @Override
   public void prihvati(VozniRedVisitor visitor) {
     visitor.posjetiElement(this);
+  }
+
+  public String getVrstaVlaka() {
+    return vrstaVlaka;
+  }
+
+  public void setVrstaVlaka(String vrstaVlaka) { // nez jel mi treba setter igdje
+    this.vrstaVlaka = vrstaVlaka;
+  }
+
+  public String getOznakaVlaka() {
+    return oznakaVlaka;
+  }
+
+  public void setOznakaVlaka(String oznakaVlaka) {
+    this.oznakaVlaka = oznakaVlaka; // nez jel mi treba setter igdje
+  }
+
+  public String getPocetnaStanica() {
+    return pocetnaStanica;
+  }
+
+  public String getZavrsnaStanica() {
+    return zavrsnaStanica;
+  }
+
+  public int getVrijemePolaska() {
+    return vrijemePolaska;
+  }
+
+  public int getVrijemeDolaska() {
+    return vrijemeDolaska;
+  }
+
+  public int getUkupniKilometri() {
+    return ukupniKilometri;
   }
 }
