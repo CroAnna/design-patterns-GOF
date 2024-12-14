@@ -29,8 +29,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     Pattern predlozakPrazanRedak = Pattern.compile("^;*$");
     try (BufferedReader citac = new BufferedReader(new FileReader(datoteka))) {
       obradiSadrzajDatoteke(citac, predlozakPrazanRedak);
-
-      // ispisiUcitanePodatke();
     } catch (Exception e) {
       System.out.println("Greška pri čitanju datoteke: " + e.getMessage());
       e.printStackTrace();
@@ -72,10 +70,22 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
       }
       brojRetka++;
     }
-
   }
 
   private void spremiPodatke(String[] dijeloviRetka) {
+    EtapaLeaf etapa = pripremiEtapu(dijeloviRetka);
+    VozniRedComponent vlak =
+        ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(etapa.getOznakaVlaka());
+    if (vlak == null) {
+      VlakComposite noviVlak = new VlakComposite(etapa.getOznakaVlaka(), etapa.getVrstaVlaka());
+      noviVlak.dodaj(etapa);
+      ZeljeznickiSustav.dohvatiInstancu().dodajVlak(noviVlak);
+    } else {
+      vlak.dodaj(etapa);
+    }
+  }
+
+  private EtapaLeaf pripremiEtapu(String[] dijeloviRetka) {
     String oznakaPruge = dijeloviRetka[0];
     String smjer = dijeloviRetka[1];
     String polaznaStanica =
@@ -102,24 +112,20 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         .izracunajUdaljenostStanicaNaIstojPruzi(oznakaPruge, polaznaStanica, odredisnaStanica);
     int udaljenost = 0;
     for (Integer vrijed : udaljenostiMapa.values()) {
-      udaljenost = vrijed; // na kraju će ostati zadnja vrijednost
+      udaljenost = vrijed;
     }
 
     EtapaLeaf etapa = new EtapaLeaf(oznakaPruge, oznakaVlaka, vrstaVlaka, polaznaStanica,
         odredisnaStanica, trajanjeVoznjeUMin, vrijemePolaskaUMin, vrijemeDolaskaUMin, udaljenost,
         smjer, oznakaDana);
 
-    VozniRedComponent vlak =
-        ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(oznakaVlaka);
-
-    if (vlak == null) {
-      VlakComposite noviVlak = new VlakComposite(oznakaVlaka, vrstaVlaka);
-      noviVlak.dodaj(etapa);
-      ZeljeznickiSustav.dohvatiInstancu().dodajVlak(noviVlak);
-    } else {
-      vlak.dodaj(etapa);
+    List<Stanica> staniceEtape = ZeljeznickiSustav.dohvatiInstancu()
+        .dohvatiListuMedustanica(polaznaStanica, odredisnaStanica, oznakaPruge);
+    if (staniceEtape.size() > 0) {
+      etapa.setListaStanicaEtape(staniceEtape);
     }
 
+    return etapa;
   }
 
   private int pretvoriVrijemeUMinute(String vrijeme) {
@@ -138,7 +144,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     System.out.println(
         "Ukupno grešaka u sustavu: " + ZeljeznickiSustav.dohvatiInstancu().dohvatiGreskeUSustavu());
   }
-
 
   private List<String> validirajRedak(String redak) {
     List<String> greske = new ArrayList<>();
@@ -161,7 +166,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
             + vrijednost + "' ne odgovara očekivanom formatu: " + UZORCI_STUPACA[i]);
       }
     }
-
     return greske;
   }
 

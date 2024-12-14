@@ -1,13 +1,12 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class EtapaLeaf extends VozniRedComponent {
-  private Map<Integer, List<Stanica>> mapaStanicaEtape = new HashMap<>();
+  private List<Stanica> listaStanicaEtape = new ArrayList<>();
 
   private String oznakaPruge; // etapa je poddio pruge
   private String oznakaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
@@ -42,12 +41,12 @@ public class EtapaLeaf extends VozniRedComponent {
     this.oznakaDana = oznakaDana;
   }
 
-  public Map<Integer, List<Stanica>> getMapaStanicaEtape() {
-    return mapaStanicaEtape;
+  public List<Stanica> getListaStanicaEtape() {
+    return listaStanicaEtape;
   }
 
-  public void setMapaStanicaEtape(Map<Integer, List<Stanica>> mapaStanicaEtape) {
-    this.mapaStanicaEtape = mapaStanicaEtape;
+  public void setListaStanicaEtape(List<Stanica> listaStanicaEtape) {
+    this.listaStanicaEtape = listaStanicaEtape;
   }
 
   public String getOznakaPruge() {

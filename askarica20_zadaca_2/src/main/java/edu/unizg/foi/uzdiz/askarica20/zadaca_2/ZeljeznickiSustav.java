@@ -344,6 +344,26 @@ public class ZeljeznickiSustav {
     return null;
   }
 
+  private Pruga dohvatiPruguPoOznaci(String oznakaPruge) {
+    for (Pruga p : listaPruga) {
+      if (p.getOznaka().equals(oznakaPruge)) {
+        return p;
+      }
+    }
+    return null;
+  }
+
+  public List<Stanica> dohvatiListuMedustanica(String polaznaStanica, String odredisnaStanica,
+      String oznakaPruge) {
+    Pruga pruga = dohvatiPruguPoOznaci(oznakaPruge);
+
+    if (pruga != null)
+      return pruga.dohvatiMedustanice(polaznaStanica, odredisnaStanica);
+
+    return new ArrayList<Stanica>();
+  }
+
+
   private List<String> pronadiOznakePolaznePruge(String nazivPolazneStanice) {
     List<String> oznakePruge = new ArrayList<String>();
     for (Stanica stanica : listaStanica) {
@@ -611,7 +631,7 @@ public class ZeljeznickiSustav {
     return null;
   }
 
-  private List<Stanica> dohvatiStanicePruge(String oznakaPruge) {
+  public List<Stanica> dohvatiStanicePruge(String oznakaPruge) {
     List<Stanica> stanicePruge = new ArrayList<>();
     for (Stanica s : listaStanica) {
       if (s.getOznakaPruge().equals(oznakaPruge)) {

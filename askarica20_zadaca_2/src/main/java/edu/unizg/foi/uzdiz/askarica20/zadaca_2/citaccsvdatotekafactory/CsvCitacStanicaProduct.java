@@ -84,10 +84,9 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
             }
 
             Stanica stanica = new Stanica(brojRetka, dijeloviRetka[0], dijeloviRetka[1],
-                dijeloviRetka[2], dijeloviRetka[3], Boolean.valueOf(dijeloviRetka[4].equals("DA")),
-                Boolean.valueOf(dijeloviRetka[5].equals("DA")), dijeloviRetka[6],
-                Integer.valueOf(dijeloviRetka[7]), dijeloviRetka[8],
-                Integer.valueOf(dijeloviRetka[9]),
+                dijeloviRetka[2], dijeloviRetka[3], dijeloviRetka[4].equals("DA"),
+                dijeloviRetka[5].equals("DA"), dijeloviRetka[6], Integer.valueOf(dijeloviRetka[7]),
+                dijeloviRetka[8], Integer.valueOf(dijeloviRetka[9]),
                 Double.parseDouble(dijeloviRetka[10].replace(',', '.')),
                 Double.parseDouble(dijeloviRetka[11].replace(',', '.')), dijeloviRetka[12],
                 Integer.valueOf(dijeloviRetka[13]), vrijednost14, vrijednost15, vrijednost16);
