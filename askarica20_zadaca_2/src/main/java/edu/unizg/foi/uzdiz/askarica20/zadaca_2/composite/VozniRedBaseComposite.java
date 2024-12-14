@@ -29,12 +29,4 @@ public abstract class VozniRedBaseComposite extends VozniRedComponent {
 
   public abstract boolean postojiLi(String oznaka);
 
-  @Override
-  public void azuriraj(String poruka) {
-    System.out.println("u azuriraj u VozniRedBaseComposite >> poruka: " + poruka);
-    for (VozniRedComponent c : this.djeca) {
-      c.azuriraj(poruka);
-    }
-  }
-
 }

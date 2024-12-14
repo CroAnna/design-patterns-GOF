@@ -153,11 +153,4 @@ public class EtapaLeaf extends VozniRedComponent {
     return true;
   }
 
-  @Override
-  public void azuriraj(String poruka) {
-    System.out.println("Update etapaLeaf>> " + this.getOznakaVlaka() + " stigao na pruzi"
-        + this.getOznakaPruge() + ", poruka: " + poruka);
-  }
-
-
 }
