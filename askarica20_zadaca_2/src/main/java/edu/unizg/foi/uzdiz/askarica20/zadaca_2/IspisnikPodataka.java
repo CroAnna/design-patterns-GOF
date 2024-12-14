@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Korisnik;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
@@ -34,6 +35,25 @@ public class IspisnikPodataka {
           pruga.dohvatiUkupnuUdaljenost());
     }
 
+    System.out.println(
+        "\n----------------------------------------------------------------------------------------\n");
+  }
+
+  public void ispisiKorisnike(List<Korisnik> korisnici) {
+    if (korisnici.isEmpty()) {
+      System.out.println("Nema unesenih korisnika u sustavu.");
+      return;
+    }
+
+    System.out.println(
+        "\n\n----------------------------------- ISPIS KORISNIKA ------------------------------------\n");
+    System.out.printf("%-3s %-12s %-20s\n", "ID", "Ime", "Prezime");
+    System.out.println(
+        "----------------------------------------------------------------------------------------");
+    for (Korisnik korisnik : korisnici) {
+      System.out.printf("%-3s %-12s %-20s \n", korisnik.getId(), korisnik.getIme(),
+          korisnik.getPrezime());
+    }
     System.out.println(
         "\n----------------------------------------------------------------------------------------\n");
   }

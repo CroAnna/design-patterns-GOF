@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Kompozicija;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Korisnik;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
@@ -30,9 +31,10 @@ public class ZeljeznickiSustav {
   private final List<Kompozicija> listaKompozicija = new ArrayList<Kompozicija>();
   private final List<OznakaDana> listaOznakaDana = new ArrayList<OznakaDana>();
   private final List<Pruga> listaPruga = new ArrayList<Pruga>();
+  private final List<Korisnik> listaKorisnika = new ArrayList<Korisnik>();
   private final VozniRedComposite vozniRed = new VozniRedComposite();
 
-  private int ukupanBrojGresakaUSustavu = 0;
+  private int ukupanBrojGresakaUSustavu = 0, brojacKorisnika = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
   private ZeljeznickiSustav() {}
@@ -54,6 +56,14 @@ public class ZeljeznickiSustav {
 
   public void dohvatiVlak(String oznakaVlaka) {
     vozniRed.dohvatiDijete(oznakaVlaka);
+  }
+
+  public void dodajKorisnika(Korisnik korisnik) {
+    listaKorisnika.add(korisnik);
+  }
+
+  public List<Korisnik> dohvatiListuKorisnika(Korisnik korisnik) {
+    return this.listaKorisnika;
   }
 
   public void dodajVozilo(Vozilo vozilo) {
@@ -230,7 +240,12 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakDK.matches()) {
       System.out.println("Neispravna komanda - format DK ime prezime");
     } else {
-      // TODO
+      brojacKorisnika++;
+      String ime = poklapanjePredlozakDK.group("ime");
+      String prezime = poklapanjePredlozakDK.group("prezime");
+      Korisnik korisnik = new Korisnik(brojacKorisnika, ime, prezime);
+      dodajKorisnika(korisnik);
+      System.out.println("Korisnik uspjesno dodan.");
     }
   }
 
@@ -241,7 +256,7 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakPK.matches()) {
       System.out.println("Neispravna komanda - format PK");
     } else {
-      // TODO
+      ispisnik.ispisiKorisnike(listaKorisnika);
     }
   }
 
@@ -723,5 +738,15 @@ public class ZeljeznickiSustav {
       }
     }
     return sortirano.toString();
+  }
+
+  private Korisnik dohvatiKorisnikaPoIdu(int id) {
+    for (Korisnik k : listaKorisnika) {
+      if (k.getId() == id) {
+        return k;
+      }
+    }
+    System.out.println("Korisnik s ID " + id + " ne postoji.");
+    return null;
   }
 }
