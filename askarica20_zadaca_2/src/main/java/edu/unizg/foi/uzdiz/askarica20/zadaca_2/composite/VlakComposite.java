@@ -2,18 +2,34 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class VlakComposite extends VozniRedBaseComposite {
   private String oznakaVlaka;
-  private String vrstaVlaka; // U, B ili prazno - prazno bi mogla pretvorit u npr slovo N (normalan
-                             // pri citanju retka)
+  private String vrstaVlaka; // U, B ili N
   private String pocetnaStanica = "", zavrsnaStanica = "";
   private int vrijemePolaska = Integer.MAX_VALUE, vrijemeDolaska = 0, ukupniKilometri = 0;
 
   public VlakComposite(String oznakaVlaka, String vrstaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
     this.vrstaVlaka = vrstaVlaka;
+  }
+
+  // ne znam jel ove metode moraju tu biti ili u etapi
+  public boolean vlakDosaoNaStanicu(Stanica stanica) {
+    System.out.println("vlakDosaoNaStanicu u VlakComposite 1");
+
+    this.obavijestiObservere("poruka o stanici " + stanica.getNazivStanice());
+    return true;
+  }
+
+  public boolean vlakDosaoNaStanicu(String oznakaVlaka, Stanica stanica) {
+    System.out.println("vlakDosaoNaStanicu u VlakComposite 2");
+
+    this.obavijestiObservere(
+        "poruka o vlaku " + oznakaVlaka + " na stanici " + stanica.getNazivStanice());
+    return true;
   }
 
   @Override

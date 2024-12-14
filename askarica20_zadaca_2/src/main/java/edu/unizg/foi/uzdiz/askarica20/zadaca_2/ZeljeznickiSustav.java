@@ -19,6 +19,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.obavjestavacobserver.KorisnikConcreteObserver;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
@@ -234,7 +235,8 @@ public class ZeljeznickiSustav {
   }
 
   private void provjeriDK(String[] dijeloviKomande, String unos) {
-    Pattern predlozakDK = Pattern.compile("^DK (?<ime>[A-Za-z]+) (?<prezime>[A-Za-z]+)$");
+    Pattern predlozakDK =
+        Pattern.compile("^DK (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+)$");
     Matcher poklapanjePredlozakDK = predlozakDK.matcher(unos);
 
     if (!poklapanjePredlozakDK.matches()) {
@@ -262,13 +264,46 @@ public class ZeljeznickiSustav {
 
   private void provjeriDPK(String[] dijeloviKomande, String unos) {
     Pattern predlozakDPK = Pattern.compile(
-        "^DPK (?<ime>[A-Za-z]+) (?<prezime>[A-Za-z]+) - (?<oznakaVlaka>\\d+)(?:\\s*-\\s*(?<stanica>[\\p{L}- ]+))?$");
+        "^DPK (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) - (?<oznakaVlaka>\\d+)(?:\\s*-\\s*(?<stanica>[\\p{L}- ]+))?$");
     Matcher poklapanjePredlozakDPK = predlozakDPK.matcher(unos);
 
     if (!poklapanjePredlozakDPK.matches()) {
       System.out.println("Neispravna komanda - format DPK ime prezime - oznakaVlaka [- stanica]");
     } else {
       // TODO
+      String ime = poklapanjePredlozakDPK.group("ime");
+      String prezime = poklapanjePredlozakDPK.group("prezime");
+      String oznakaVlaka = poklapanjePredlozakDPK.group("oznakaVlaka");
+      String nazivStanice = poklapanjePredlozakDPK.group("stanica");
+
+      Korisnik korisnik = dohvatiKorisnikaPoImenu(ime, prezime);
+      if (korisnik != null) {
+        zakaciKorisnikaZaPracenje(korisnik, oznakaVlaka, nazivStanice, ime, prezime);
+      }
+    }
+  }
+
+  private void zakaciKorisnikaZaPracenje(Korisnik korisnik, String oznakaVlaka, String nazivStanice,
+      String ime, String prezime) {
+    System.out.println("Tražim vlak s oznakom: " + oznakaVlaka);
+    KorisnikConcreteObserver observer =
+        new KorisnikConcreteObserver(korisnik, oznakaVlaka, nazivStanice);
+
+    VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
+    if (vlak != null) {
+      System.out.println("Pronađen vlak: " + vlak.getClass().getSimpleName());
+      vlak.prikvaciObservera(observer);
+
+      if (nazivStanice != null) {
+        System.out
+            .println("Dodavanje korisnika " + ime + " " + prezime + " za praćenje vlaka s oznakom "
+                + oznakaVlaka + " za željezničku stanicu " + nazivStanice);
+      } else {
+        System.out.println("Dodavanje korisnika " + ime + " " + prezime
+            + " za praćenje vlaka s oznakom " + oznakaVlaka);
+      }
+    } else {
+      System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
     }
   }
 
@@ -280,7 +315,19 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakSVV.matches()) {
       System.out.println("Neispravna komanda - format SVV oznaka - dan - koeficijent");
     } else {
-      // TODO
+      String oznakaVlaka = poklapanjePredlozakSVV.group("oznaka");
+      VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
+
+      if (vlak != null) {
+        Stanica stanica = listaStanica.get(0); // za test
+        String vrijeme = "12:34"; // za test
+        System.out.println("prije");
+        vlak.obavijestiObservere("Vlak " + vlak.getOznakaVlaka() + " stigao u stanicu "
+            + stanica.getNazivStanice() + " u " + vrijeme);
+        System.out.println("poslije");
+      } else {
+        System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
+      }
     }
   }
 
@@ -747,6 +794,16 @@ public class ZeljeznickiSustav {
       }
     }
     System.out.println("Korisnik s ID " + id + " ne postoji.");
+    return null;
+  }
+
+  private Korisnik dohvatiKorisnikaPoImenu(String ime, String prezime) {
+    for (Korisnik k : listaKorisnika) {
+      if (k.getIme().equals(ime) && k.getPrezime().equals(prezime)) {
+        return k;
+      }
+    }
+    System.out.println("Korisnik s imenom " + ime + " " + prezime + " ne postoji.");
     return null;
   }
 }

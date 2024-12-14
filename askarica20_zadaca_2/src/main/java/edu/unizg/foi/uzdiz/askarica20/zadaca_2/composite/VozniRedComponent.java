@@ -1,9 +1,34 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
+import java.util.ArrayList;
+import java.util.List;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.obavjestavacobserver.ZeljeznickiObserver;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.obavjestavacobserver.ZeljeznickiObserverSubject;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitorElement;
 
-public abstract class VozniRedComponent implements VozniRedVisitorElement {
+public abstract class VozniRedComponent
+    implements VozniRedVisitorElement, ZeljeznickiObserver, ZeljeznickiObserverSubject {
+  protected List<ZeljeznickiObserver> observeri = new ArrayList<>();
+
+  public void prikvaciObservera(ZeljeznickiObserver zeljeznickiObserver) {
+    System.out.println("prikvaciObservera u " + this.getClass().getSimpleName());
+    this.observeri.add(zeljeznickiObserver);
+  }
+
+  public void otkvaciObservera(ZeljeznickiObserver zeljeznickiObserver) {
+    System.out.println("otkvaciObservera");
+    this.observeri.remove(zeljeznickiObserver);
+  }
+
+  public void obavijestiObservere(String poruka) {
+    System.out.println("obavijestiObservere u " + this.getClass().getSimpleName() + " - ima "
+        + this.observeri.size() + " observera");;
+    for (ZeljeznickiObserver obs : this.observeri) {
+      System.out.println("obavijestiObservere petlja - " + poruka);
+      obs.azuriraj(poruka);
+    }
+  }
 
   @Override
   public void prihvati(VozniRedVisitor visitor) {
