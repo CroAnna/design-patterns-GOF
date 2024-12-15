@@ -3,8 +3,10 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.citaccsvdatotekafactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
@@ -14,6 +16,8 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 
 public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
+  private Set<String> neispravneOznakeVlakova = new HashSet<>();
+
   private static final String[] NAZIVI_STUPACA =
       {"Oznaka pruge", "Smjer", "Polazna stanica", "Odredišna stanica", "Oznaka vlaka",
           "Vrsta vlaka", "Vrijeme polaska", "Trajanje vožnje", "Oznaka dana"};
@@ -74,6 +78,12 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
 
   private void spremiPodatke(String[] dijeloviRetka) {
     EtapaLeaf etapa = pripremiEtapu(dijeloviRetka);
+
+    if (neispravneOznakeVlakova.contains(etapa.getOznakaVlaka())) {
+      // da ne moze ponovo napravit isti vlak koji je vec oznacen kao invalidan
+      return;
+    }
+
     VozniRedComponent vlak =
         ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed().dohvatiDijete(etapa.getOznakaVlaka());
 
@@ -84,23 +94,23 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         ZeljeznickiSustav.dohvatiInstancu().dodajVlak(noviVlak);
       } else {
         ZeljeznickiSustav.dohvatiInstancu().dodajGreskuVlaka();
+        neispravneOznakeVlakova.add(etapa.getOznakaVlaka());
         List<String> greske = new ArrayList<>();
         greske.add("Neispravne etape vlaka " + etapa.getOznakaVlaka()
             + " - neusklađena vremena ili stanice između etapa");
         prikaziGreske(greske, -1, ZeljeznickiSustav.dohvatiInstancu().dohvatiBrojGresakaVlakova());
       }
-    } else
-
-    {
+    } else {
       boolean uspjeh = vlak.dodaj(etapa);
-      if (uspjeh) {
-        ((VlakComposite) vlak).izracunajUkupnePodatke();
-      } else {
+      if (!uspjeh) {
         ZeljeznickiSustav.dohvatiInstancu().dodajGreskuVlaka();
+        neispravneOznakeVlakova.add(etapa.getOznakaVlaka());
         List<String> greske = new ArrayList<>();
         greske.add("Neispravne etape vlaka " + etapa.getOznakaVlaka()
             + " - neusklađena vremena ili stanice između etapa");
         prikaziGreske(greske, -1, ZeljeznickiSustav.dohvatiInstancu().dohvatiBrojGresakaVlakova());
+      } else {
+        ((VlakComposite) vlak).izracunajUkupnePodatke();
       }
     }
   }
@@ -218,5 +228,4 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     }
     return dijeloviRetka;
   }
-
 }
