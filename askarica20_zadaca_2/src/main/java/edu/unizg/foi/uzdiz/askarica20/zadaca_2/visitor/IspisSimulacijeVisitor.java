@@ -6,15 +6,15 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedBaseComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.SimulatorVremena;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 
 public class IspisSimulacijeVisitor implements VozniRedVisitor {
-  // za SVV - simulaciju voznje vlaka na odredeni dan u tjednu uz koeficijent za sekundu
-
   private String oznakaVlaka;
   private String oznakaDana;
   private int koeficijent;
-  VlakComposite vlak = null;
+  private VlakComposite vlak = null;
+  private SimulatorVremena simulator;
 
   public IspisSimulacijeVisitor(String oznakaVlaka, String oznakaDana, int koeficijent) {
     this.oznakaVlaka = oznakaVlaka;
@@ -24,88 +24,78 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
 
   @Override
   public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
-
     if (vozniRedBaseComposite instanceof VozniRedComposite) {
-      System.out.println("posjetiElement(VozniRedBaseComposite");
       if (!vozniRedBaseComposite.postojiLi(oznakaVlaka)) {
         System.out.println("\nVlak s oznakom " + oznakaVlaka + " ne postoji u voznom redu.");
         return;
       }
 
-      // TODO dodat provjeru jel oznaka dana valjana
+      // Pronađi vlak koji simuliramo
+      for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
+        if (dijete instanceof VlakComposite) {
+          VlakComposite trenutniVlak = (VlakComposite) dijete;
+          if (trenutniVlak.getOznakaVlaka().equals(oznakaVlaka)) {
+            vlak = trenutniVlak;
+            // Dohvati vrijeme polaska iz prve etape
+            EtapaLeaf prvaEtapa = (EtapaLeaf) vlak.dohvatiDjecu().get(0);
+            int pocetnoVrijeme = prvaEtapa.getVrijemePolaskaUMinutama();
+            simulator = new SimulatorVremena(pocetnoVrijeme, koeficijent);
+            break;
+          }
+        }
+      }
 
+      if (vlak != null) {
+        for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
+          if (dijete instanceof VlakComposite
+              && ((VlakComposite) dijete).getOznakaVlaka().equals(oznakaVlaka)) {
+            dijete.prihvati(this);
+          }
+        }
+
+        System.out.println("\nPočetak simulacije vožnje vlaka " + oznakaVlaka);
+        simulator.pokreniSimulaciju();
+      }
+    } else if (vozniRedBaseComposite instanceof VlakComposite) {
+      vlak = (VlakComposite) vozniRedBaseComposite;
       for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
         dijete.prihvati(this);
       }
-    } else if (vozniRedBaseComposite instanceof VlakComposite) {
-      System.out.println("posjetiElement(VlakComposite");
-
-      vlak = (VlakComposite) vozniRedBaseComposite;
-      if (vlak.getOznakaVlaka().equals(oznakaVlaka)) {
-        for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
-          dijete.prihvati(this);
-        }
-      }
-      // TODO trebas nekak slozit da se uzme vrijeme polaska s polazne željezničke stanice
-      // to se spremi u neku varijablu (virtualno vrijeme)
-      // onda se napravi nekakava petlja di se spava svaku sekundu
-      // u etapi se tek ispise ta stanica kad je vrijeme jednako tom vremenu u brojacu - tad se i
-      // salje notifikacija observerima (koji su pretplaceni na tu stanicu ili taj vlak di je)
-      // simulacija se izvrsava dok se ne dode do zadnje stanice ili dok se ne unese X
-      // nez jel se treba ispisivat stanica na kojoj se je trenutno, al za pocetak bolje nek da
-
-
-
     }
-
-  }
-
-  private int dohvatiVrijeme(String tipVlaka, Stanica stanica) {
-    if (tipVlaka.equals("N")) {
-      return stanica.getVrNorm();
-    } else if (tipVlaka.equals("U")) {
-      return stanica.getVrUbrz();
-    } else if (tipVlaka.equals("B")) {
-      return stanica.getVrBrzi();
-    }
-    return 0;
   }
 
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
-    System.out.println("posjetiElement(EtapaLeaf");
-
-    if (etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
-      List<Stanica> staniceEtape = etapaLeaf.getListaStanicaEtape();
-      System.out.println("stanice " + staniceEtape.size());
-      for (Stanica s : staniceEtape) {
-        int vrijeme = dohvatiVrijeme(vlak.getVrstaVlaka(), s);
-        try {
-          System.out.println("ispis");
-          Thread.sleep(1000);
-
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-
-        System.out.printf(" %-13s %-13s %-30s %-8s %-18s%n", "Trenutna stanica: ",
-            etapaLeaf.getOznakaVlaka(), etapaLeaf.getOznakaPruge(), s.getNazivStanice(),
-            pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme));
-      }
+    if (!etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
+      return;
     }
 
+    List<Stanica> staniceEtape = etapaLeaf.getListaStanicaEtape();
+    int virtualnoVrijeme = etapaLeaf.getVrijemePolaskaUMinutama();
 
+    for (int i = 0; i < staniceEtape.size(); i++) {
+      Stanica trenutnaStanica = staniceEtape.get(i);
+
+      simulator.dodajDogadaj(virtualnoVrijeme, vlak, trenutnaStanica.getNazivStanice(),
+          etapaLeaf.getOznakaPruge());
+
+      if (i < staniceEtape.size() - 1) {
+        virtualnoVrijeme += dohvatiVrijeme(vlak.getVrstaVlaka(), trenutnaStanica);
+      }
+    }
   }
 
-  private String pretvoriMinuteUVrijeme(int minute) {
-    int sati = minute / 60;
-    int preostaleMinute = minute % 60;
-    return String.format("%02d:%02d", sati, preostaleMinute);
+  private int dohvatiVrijeme(String tipVlaka, Stanica stanica) {
+    switch (tipVlaka) {
+      case "N":
+        return stanica.getVrNorm();
+      case "U":
+        return stanica.getVrUbrz();
+      case "B":
+        return stanica.getVrBrzi();
+      default:
+        return 0;
+    }
   }
-
-  private void pokreniSimulaciju() {
-
-  }
-
 }
+
