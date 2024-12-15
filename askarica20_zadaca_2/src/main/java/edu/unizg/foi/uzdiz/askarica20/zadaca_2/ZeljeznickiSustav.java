@@ -21,6 +21,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.obavjestavacobserver.KorisnikConcreteObserver;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisSimulacijeVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
@@ -315,18 +316,26 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakSVV.matches()) {
       System.out.println("Neispravna komanda - format SVV oznaka - dan - koeficijent");
     } else {
-      String oznakaVlaka = poklapanjePredlozakSVV.group("oznaka");
-      VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
+      try {
+        String oznakaVlaka = poklapanjePredlozakSVV.group("oznaka");
+        String dan = poklapanjePredlozakSVV.group("dan");
+        int koeficijent = Integer.parseInt(poklapanjePredlozakSVV.group("koeficijent"));
 
-      if (vlak != null) {
-        Stanica stanica = listaStanica.get(0); // za test
-        String vrijeme = "12:34"; // za test
-        System.out.println("prije");
-        vlak.obavijestiObservere("Vlak " + vlak.getOznakaVlaka() + " stigao u stanicu "
-            + stanica.getNazivStanice() + " u " + vrijeme);
-        System.out.println("poslije");
-      } else {
-        System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
+        VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
+        if (vlak != null) {
+          Stanica stanica = listaStanica.get(0); // za test
+          String vrijeme = "12:34"; // za test
+          System.out.println("prije");
+          vlak.obavijestiObservere("Vlak " + vlak.getOznakaVlaka() + " stigao u stanicu "
+              + stanica.getNazivStanice() + " u " + vrijeme);
+          System.out.println("poslije");
+
+          vozniRed.prihvati(new IspisSimulacijeVisitor(oznakaVlaka, dan, koeficijent));
+        } else {
+          System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
+        }
+      } catch (NumberFormatException e) {
+        System.out.println("Koeficijent mora biti cijeli broj.");
       }
     }
   }
