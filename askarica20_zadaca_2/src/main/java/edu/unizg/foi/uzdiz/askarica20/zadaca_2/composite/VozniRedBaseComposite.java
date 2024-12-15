@@ -8,8 +8,14 @@ public abstract class VozniRedBaseComposite extends VozniRedComponent {
   public List<VozniRedComponent> djeca = new ArrayList<>();
 
   @Override
-  public boolean dodaj(VozniRedComponent component) {
-    this.djeca.add(component);
+  public boolean dodaj(VozniRedComponent komponenta) {
+    this.djeca.add(komponenta);
+    return true;
+  }
+
+  @Override
+  public boolean ukloni(VozniRedComponent komponenta) {
+    this.djeca.remove(komponenta);
     return true;
   }
 

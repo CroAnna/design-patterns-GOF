@@ -22,10 +22,10 @@ public abstract class VozniRedComponent
   }
 
   public void obavijestiObservere(String poruka) {
-    System.out.println("obavijestiObservere u " + this.getClass().getSimpleName() + " - ima "
-        + this.observeri.size() + " observera");;
+    // System.out.println("obavijestiObservere u " + this.getClass().getSimpleName() + " - ima "
+    // + this.observeri.size() + " observera");;
     for (ZeljeznickiObserver obs : this.observeri) {
-      System.out.println("obavijestiObservere petlja - " + poruka);
+      // System.out.println("obavijestiObservere petlja - " + poruka);
       obs.azuriraj(poruka);
     }
   }
@@ -39,11 +39,18 @@ public abstract class VozniRedComponent
     }
   }
 
-  public boolean dodaj(VozniRedComponent component) { // Add(Component)
+  public boolean dodaj(VozniRedComponent komponenta) { // Add(Component)
     if (!(this instanceof VozniRedComponent)) {
       return false;
     }
-    return this.dodaj(component);
+    return this.dodaj(komponenta);
+  }
+
+  public boolean ukloni(VozniRedComponent komponenta) {
+    if (!(this instanceof VozniRedComponent)) {
+      return false;
+    }
+    return this.ukloni(komponenta);
   }
 
   public VozniRedComponent dohvatiDijete(int i) { // GetChild(int)

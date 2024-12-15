@@ -36,7 +36,7 @@ public class ZeljeznickiSustav {
   private final List<Korisnik> listaKorisnika = new ArrayList<Korisnik>();
   private final VozniRedComposite vozniRed = new VozniRedComposite();
 
-  private int ukupanBrojGresakaUSustavu = 0, brojacKorisnika = 0;
+  private int ukupanBrojGresakaUSustavu = 0, brojacKorisnika = 0, brojacGresakaVlakova = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
   private ZeljeznickiSustav() {}
@@ -50,6 +50,10 @@ public class ZeljeznickiSustav {
 
   public VozniRedComposite dohvatiVozniRed() {
     return this.vozniRed;
+  }
+
+  public void ukloniVlak(VlakComposite vlak) {
+    vozniRed.ukloni(vlak);
   }
 
   public void dodajVlak(VlakComposite vlak) {
@@ -90,6 +94,14 @@ public class ZeljeznickiSustav {
 
   public int dohvatiGreskeUSustavu() {
     return this.ukupanBrojGresakaUSustavu;
+  }
+
+  public void dodajGreskuVlaka() {
+    brojacGresakaVlakova++;
+  }
+
+  public int dohvatiBrojGresakaVlakova() {
+    return brojacGresakaVlakova;
   }
 
   public IspisnikPodataka dohvatiIspisnik() {
@@ -323,13 +335,6 @@ public class ZeljeznickiSustav {
 
         VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
         if (vlak != null) {
-          Stanica stanica = listaStanica.get(0); // za test
-          String vrijeme = "12:34"; // za test
-          System.out.println("prije");
-          vlak.obavijestiObservere("Vlak " + vlak.getOznakaVlaka() + " stigao u stanicu "
-              + stanica.getNazivStanice() + " u " + vrijeme);
-          System.out.println("poslije");
-
           vozniRed.prihvati(new IspisSimulacijeVisitor(oznakaVlaka, dan, koeficijent));
         } else {
           System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");

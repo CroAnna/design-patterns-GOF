@@ -17,14 +17,15 @@ public class VlakComposite extends VozniRedBaseComposite {
   }
 
   // ne znam jel ove metode moraju tu biti ili u etapi
-  public boolean vlakDosaoNaStanicu(Stanica stanica) {
+  public boolean vlakDosaoNaStanicu(Stanica stanica) {// ovo mislim da se nigde ne koristi opce
     System.out.println("vlakDosaoNaStanicu u VlakComposite 1");
 
     this.obavijestiObservere("poruka o stanici " + stanica.getNazivStanice());
     return true;
   }
 
-  public boolean vlakDosaoNaStanicu(String oznakaVlaka, Stanica stanica) {
+  public boolean vlakDosaoNaStanicu(String oznakaVlaka, Stanica stanica) { // ovo mislim da se nigde
+                                                                           // ne koristi opce
     System.out.println("vlakDosaoNaStanicu u VlakComposite 2");
 
     this.obavijestiObservere(
@@ -33,24 +34,29 @@ public class VlakComposite extends VozniRedBaseComposite {
   }
 
   @Override
-  public boolean dodaj(VozniRedComponent component) {
-    if (component instanceof EtapaLeaf) {
+  public boolean dodaj(VozniRedComponent komponenta) {
+    if (komponenta instanceof EtapaLeaf) {
       int index = 0;
       for (VozniRedComponent postojecaEtapa : djeca) {
         if (postojecaEtapa instanceof EtapaLeaf) {
           EtapaLeaf etapa = (EtapaLeaf) postojecaEtapa;
-          if (((EtapaLeaf) component).getVrijemePolaskaUMinutama() < etapa
+          if (((EtapaLeaf) komponenta).getVrijemePolaskaUMinutama() < etapa
               .getVrijemePolaskaUMinutama()) {
             break;
           }
         }
         index++;
       }
+      djeca.add(index, komponenta);
 
-      djeca.add(index, component);
+      if (imaNeispravneEtape()) {
+        ZeljeznickiSustav.dohvatiInstancu().ukloniVlak(this);
+        ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+        return false;
+      }
       return true;
     } else {
-      djeca.add(component);
+      djeca.add(komponenta);
       return true;
     }
   }
@@ -95,6 +101,23 @@ public class VlakComposite extends VozniRedBaseComposite {
     // provjerava postoji li oznaka dana po toj oznaci
     for (OznakaDana dan : ZeljeznickiSustav.dohvatiInstancu().dohvatiListuOznakaDana()) {
       if (dan.getDaniVoznje().equals(oznakaVlaka)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean imaNeispravneEtape() {
+    if (djeca.size() < 2) {
+      return false;
+    }
+    for (int i = 0; i < djeca.size() - 1; i++) {
+      EtapaLeaf trenutnaEtapa = (EtapaLeaf) djeca.get(i);
+      EtapaLeaf sljedecaEtapa = (EtapaLeaf) djeca.get(i + 1);
+      if (trenutnaEtapa.getVrijemeDolaskaUMinutama() > sljedecaEtapa.getVrijemePolaskaUMinutama()) {
+        return true;
+      }
+      if (!trenutnaEtapa.getZavrsnaStanica().equals(sljedecaEtapa.getPocetnaStanica())) {
         return true;
       }
     }
