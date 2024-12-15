@@ -1,7 +1,7 @@
+
+
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
@@ -9,18 +9,19 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
 public class SimulatorVremena {
   private int virtualnoVrijeme;
   private final int koeficijent;
-  private final Map<Integer, List<DogadajStanice>> rasporedDogadaja;
+  private final Map<Integer, StanicniDogadaj> rasporedDogadaja;
   private boolean simulacijaAktivna = true;
+  private Integer posljednjiDogadaj = null;
 
-  public static class DogadajStanice {
-    public final VlakComposite vlak;
+  public static class StanicniDogadaj {
     public final String nazivStanice;
     public final String oznakaPruge;
+    public final boolean zadnjaStanica;
 
-    public DogadajStanice(VlakComposite vlak, String nazivStanice, String oznakaPruge) {
-      this.vlak = vlak;
+    public StanicniDogadaj(String nazivStanice, String oznakaPruge, boolean zadnjaStanica) {
       this.nazivStanice = nazivStanice;
       this.oznakaPruge = oznakaPruge;
+      this.zadnjaStanica = zadnjaStanica;
     }
   }
 
@@ -30,16 +31,19 @@ public class SimulatorVremena {
     this.rasporedDogadaja = new TreeMap<>();
   }
 
-  public void dodajDogadaj(int vrijeme, VlakComposite vlak, String nazivStanice,
-      String oznakaPruge) {
-    rasporedDogadaja.computeIfAbsent(vrijeme, k -> new ArrayList<>())
-        .add(new DogadajStanice(vlak, nazivStanice, oznakaPruge));
+  public void dodajDogadaj(int vrijeme, String nazivStanice, String oznakaPruge,
+      boolean zadnjaStanica) {
+    rasporedDogadaja.put(vrijeme, new StanicniDogadaj(nazivStanice, oznakaPruge, zadnjaStanica));
+    if (posljednjiDogadaj == null || vrijeme > posljednjiDogadaj) {
+      posljednjiDogadaj = vrijeme;
+    }
   }
 
-  public void pokreniSimulaciju() {
-    System.out.println("\nPočetak simulacije u " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
+  public void pokreniSimulaciju(VlakComposite vlak) {
+    System.out.println("\nPočetak simulacije vožnje vlaka " + vlak.getOznakaVlaka());
+    System.out.println("Virtualno vrijeme: " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
 
-    while (!rasporedDogadaja.isEmpty() && simulacijaAktivna) {
+    while (virtualnoVrijeme <= posljednjiDogadaj && simulacijaAktivna) {
       try {
         Thread.sleep(1000 * 60 / koeficijent);
         virtualnoVrijeme++;
@@ -47,16 +51,19 @@ public class SimulatorVremena {
         System.out.println("Virtualno vrijeme: " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
 
         if (rasporedDogadaja.containsKey(virtualnoVrijeme)) {
-          for (DogadajStanice dogadaj : rasporedDogadaja.get(virtualnoVrijeme)) {
-            System.out.printf("Vlak %s stigao na stanicu %s (pruga %s) u %s%n",
-                dogadaj.vlak.getOznakaVlaka(), dogadaj.nazivStanice, dogadaj.oznakaPruge,
-                pretvoriMinuteUVrijeme(virtualnoVrijeme));
+          StanicniDogadaj dogadaj = rasporedDogadaja.get(virtualnoVrijeme);
 
-            dogadaj.vlak.obavijestiObservere(
-                String.format("Vlak %s stigao na stanicu %s u %s", dogadaj.vlak.getOznakaVlaka(),
-                    dogadaj.nazivStanice, pretvoriMinuteUVrijeme(virtualnoVrijeme)));
+          System.out.println("\n=== DOLAZAK NA STANICU ===" + dogadaj.nazivStanice + " u "
+              + pretvoriMinuteUVrijeme(virtualnoVrijeme));
+
+          vlak.obavijestiObservere(
+              String.format("Vlak %s stigao na stanicu %s u %s", vlak.getOznakaVlaka(),
+                  dogadaj.nazivStanice, pretvoriMinuteUVrijeme(virtualnoVrijeme)));
+
+          if (dogadaj.zadnjaStanica) {
+            System.out.println("\nVlak stigao na odredišnu stanicu.");
+            break;
           }
-          rasporedDogadaja.remove(virtualnoVrijeme);
         }
       } catch (InterruptedException e) {
         simulacijaAktivna = false;

@@ -121,6 +121,11 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
 
     List<Stanica> staniceEtape = ZeljeznickiSustav.dohvatiInstancu()
         .dohvatiListuMedustanica(polaznaStanica, odredisnaStanica, oznakaPruge);
+    // System.out.println("\npruga " + oznakaPruge + "\n\n");
+    /*
+     * for (Stanica st : staniceEtape) { System.out.println("stanica " + st.getNazivStanice() +
+     * " na " + st.getOznakaPruge()); }
+     */
     if (staniceEtape.size() > 0) {
       etapa.setListaStanicaEtape(staniceEtape);
     }

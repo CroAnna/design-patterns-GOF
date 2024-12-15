@@ -18,7 +18,7 @@ public class KorisnikConcreteObserver implements ZeljeznickiObserver {
   @Override
   public void azuriraj(String poruka) {
     // ima implementaciju za azuriranje
-    System.out.println("azuriraj u KorisnikConcreteObserver");
+    // System.out.println("azuriraj u KorisnikConcreteObserver");
     if (stanicaZaPracenje == null || poruka.contains(stanicaZaPracenje)) {
       System.out.println(
           "Obavijest za " + korisnik.getIme() + " " + korisnik.getPrezime() + ": " + poruka);
