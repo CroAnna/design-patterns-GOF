@@ -89,9 +89,13 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
       // Ako nije zadnja stanica u etapi, dodaj vrijeme do sljedeće
       if (i < staniceEtape.size() - 1) {
         if (etapaLeaf.getSmjer().equals("O")) {
+          System.out.println("vrijeme za trenutnaStanica " + trenutnaStanica.getNazivStanice()
+              + ": " + staniceEtape.get(i).getVrNorm());
           // U obrnutom smjeru koristimo vrijeme sljedeće stanice
-          virtualnoVrijeme += staniceEtape.get(i + 1).getVrNorm();
+          virtualnoVrijeme += staniceEtape.get(i).getVrNorm();
         } else {
+          System.out.println("vrijeme za trenutnaStanica" + trenutnaStanica.getNazivStanice() + ": "
+              + trenutnaStanica.getVrNorm());
           // U normalnom smjeru koristimo vrijeme trenutne stanice
           virtualnoVrijeme += trenutnaStanica.getVrNorm();
         }
