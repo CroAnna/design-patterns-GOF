@@ -151,7 +151,15 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         smjer, oznakaDana);
 
     List<Stanica> staniceEtape = ZeljeznickiSustav.dohvatiInstancu()
-        .dohvatiListuMedustanica(polaznaStanica, odredisnaStanica, oznakaPruge);
+        .dohvatiListuMedustanica(polaznaStanica, odredisnaStanica, oznakaPruge, smjer);
+
+    if (oznakaVlaka.equals("3302")) {
+      for (Stanica s : staniceEtape) {
+        System.out.println("- stanica " + s.getNazivStanice() + " " + s.getVrNorm() + ", pruga:"
+            + s.getOznakaPruge());
+      }
+    }
+
 
     if (staniceEtape.size() > 0) {
       etapa.setListaStanicaEtape(staniceEtape);

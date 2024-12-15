@@ -430,7 +430,7 @@ public class ZeljeznickiSustav {
   }
 
   public List<Stanica> dohvatiListuMedustanica(String polaznaStanica, String odredisnaStanica,
-      String oznakaPruge) {
+      String oznakaPruge, String smjer) {
     Pruga pruga = dohvatiPruguPoOznaci(oznakaPruge);
 
     if (pruga != null)

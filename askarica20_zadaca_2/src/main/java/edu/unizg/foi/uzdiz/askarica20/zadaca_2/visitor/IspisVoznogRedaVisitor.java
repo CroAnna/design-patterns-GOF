@@ -1,5 +1,6 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
+import java.util.Collections;
 import java.util.List;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
@@ -48,6 +49,7 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   }
 
   private int dohvatiVrijeme(String tipVlaka, Stanica stanica) {
+    // System.out.println("tip vlaka " + tipVlaka);
     if (tipVlaka.equals("N")) {
       return stanica.getVrNorm();
     } else if (tipVlaka.equals("U")) {
@@ -62,16 +64,42 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   public void posjetiElement(EtapaLeaf etapaLeaf) {
     if (etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
       List<Stanica> staniceEtape = etapaLeaf.getListaStanicaEtape();
+
+
+      System.out.println("smjer " + etapaLeaf.getSmjer());
+
+      if (etapaLeaf.getSmjer().equals("O")) {
+        System.out.println("okretanje smjera");
+        Collections.reverse(staniceEtape);
+      }
+
+      int vrijeme = 0, index = 0;
+      Stanica prethodna = null;
+
       for (Stanica s : staniceEtape) {
-        int vrijeme = dohvatiVrijeme(vlak.getVrstaVlaka(), s);
+        vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), s);
+        // System.out.println("vrijeme " + vrijeme);
+
         udaljenost = udaljenost + s.getDuzina();
+        // System.out
+        // .println(prethodna != null && s.getNazivStanice().equals(prethodna.getNazivStanice()));
+        // System.out.println(index == staniceEtape.size() - 1);
 
-        // TODO slozit da ak je ovakvo vrijeme, da se izbrise cijeli taj vlak jer postoji greska...
-        // to se mora onda nekad pri ucitavanju, a ne tek sad...
+        if (prethodna != null && etapaLeaf.getSmjer().equals("N")
+            && s.getNazivStanice().equals(prethodna.getNazivStanice())
+            && index == staniceEtape.size() - 1) {
+          // ne ispisuj ak je smjer N i ak su 2 iste za redom i ak je to zadnja stanica etape
+        } else {
+          System.out.printf("%-13s %-13s %-30s %-8s %-18s%n", etapaLeaf.getOznakaVlaka(),
+              etapaLeaf.getOznakaPruge(), s.getNazivStanice(),
+              pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme), udaljenost);
+        }
 
-        System.out.printf("%-13s %-13s %-30s %-8s %-18s%n", etapaLeaf.getOznakaVlaka(),
-            etapaLeaf.getOznakaPruge(), s.getNazivStanice(),
-            pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme), udaljenost);
+        if (index != 0) {
+          prethodna = s;
+        }
+        index++;
+
       }
     }
   }
