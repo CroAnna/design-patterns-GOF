@@ -66,6 +66,12 @@ public class VlakComposite extends VozniRedBaseComposite {
   }
 
   public void izracunajUkupnePodatke() {
+    ukupniKilometri = 0;
+    pocetnaStanica = "";
+    zavrsnaStanica = "";
+    vrijemePolaska = Integer.MAX_VALUE;
+    vrijemeDolaska = 0;
+
     for (VozniRedComponent komponenta : djeca) {
       if (komponenta instanceof EtapaLeaf) {
         EtapaLeaf etapa = (EtapaLeaf) komponenta;
@@ -79,8 +85,7 @@ public class VlakComposite extends VozniRedBaseComposite {
           vrijemeDolaska = etapa.getVrijemeDolaskaUMinutama();
           zavrsnaStanica = etapa.getZavrsnaStanica();
         }
-
-        ukupniKilometri += etapa.getUdaljenost();
+        ukupniKilometri = ukupniKilometri + etapa.getUdaljenost();
       }
     }
   }
