@@ -95,7 +95,6 @@ public class Pruga {
 
   public List<Stanica> dohvatiMedustanice(String pocetnaStanica, String zavrsnaStanica) {
     int pocIndex = -1, zavIndex = -1;
-
     for (int i = 0; i < stanice.size(); i++) {
       var st = stanice.get(i).getNazivStanice();
       if (zavrsnaStanica.equals(st))
@@ -113,7 +112,7 @@ public class Pruga {
       zavIndex = temp;
     }
 
-    return stanice.subList(pocIndex, zavIndex + 1);
+    return new ArrayList<>(stanice.subList(pocIndex, zavIndex + 1));
   }
 
 }
