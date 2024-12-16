@@ -55,6 +55,12 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
           if (trenutniVlak.getOznakaVlaka().equals(oznakaVlaka)) {
             vlak = trenutniVlak;
             EtapaLeaf prvaEtapa = (EtapaLeaf) vlak.dohvatiDjecu().get(0);
+
+            if (!voziNaDan(prvaEtapa.getOznakaDana(), oznakaDana)) {
+              System.out.println("\nVlak " + oznakaVlaka + " ne vozi na dan " + oznakaDana);
+              return;
+            }
+
             virtualnoVrijeme = prvaEtapa.getVrijemePolaskaUMinutama();
             break;
           }
@@ -73,6 +79,11 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
         dijete.prihvati(this);
       }
     }
+  }
+
+  private boolean voziNaDan(String oznakaDanaIzEtape, String trazeniDan) {
+    String prviDani = oznakaDanaIzEtape.split("\\s+")[0];
+    return prviDani.contains(trazeniDan);
   }
 
   @Override
