@@ -98,8 +98,18 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
           if (!(index == 0 && s.getDuzina() != 0)) {
             udaljenost = udaljenost + s.getDuzina();
           }
-          vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), s);
+          int dohvacenoVrijeme = dohvatiVrijeme(vlak.getVrstaVlaka(), s);
+          // System.out.println("dohvacenoVrijeme " + dohvacenoVrijeme);
+          if (dohvacenoVrijeme >= 0) {
+            vrijeme = vrijeme + dohvacenoVrijeme;
+          } else {
+            // ak je dohvacen -1 koji znaci da ne staje na toj stanici nemoj dodat taj -1, a ne mogu
+            // vracat 0 jer to ne znaci da ne staje na toj stanici...
+            vrijeme = vrijeme + dohvacenoVrijeme + 1;
+          }
+          // System.out.println("vrijeme " + vrijeme);
           vrijemeZaIspis = etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme;
+          // System.out.println("vrijemeZaIspis " + vrijemeZaIspis);
         } else if (smjer.equals("O")) {
           if (index > 0) { // if not the first station
             // Add distance from previous station
@@ -115,10 +125,23 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
         // .println(prethodna != null && s.getNazivStanice().equals(prethodna.getNazivStanice()));
         // System.out.println(index == staniceEtape.size() - 1);
 
-        if (prethodna != null && smjer.equals("N")
+        if (prethodna != null && smjer.equals("N") && vlak.getVrstaVlaka().equals("N")
             && s.getNazivStanice().equals(prethodna.getNazivStanice())
             && index == staniceEtape.size() - 1) {
-          // ne ispisuj ak je smjer N i ak su 2 iste za redom i ak je to zadnja stanica etape
+          // ne ispisuj ak je smjer N i ak su 2 iste za redom i ak je to zadnja stanica etape i ak
+          // je vlak normalni N
+        } else if (vlak.getVrstaVlaka().equals("B") && smjer.equals("N")
+            && dohvatiVrijeme("B", s) == -1) {
+          // brzi i normalni smjer i tu nema vrijednosti za vrijeme (znaci da ne staje na toj
+          // stanici)
+          System.out.println("ne staje na " + s.getNazivStanice());
+
+        } else if (vlak.getVrstaVlaka().equals("U") && smjer.equals("N")
+            && dohvatiVrijeme("U", s) == -1) {
+          // brzi i normalni smjer i tu nema vrijednosti za vrijeme (znaci da ne staje na toj
+          // stanici)
+          System.out.println("ne staje na " + s.getNazivStanice());
+
         } else {
           System.out.printf("%-13s %-13s %-30s %-8s %-18s%n", etapaLeaf.getOznakaVlaka(),
               etapaLeaf.getOznakaPruge(), s.getNazivStanice(),
