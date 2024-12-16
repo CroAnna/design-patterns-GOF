@@ -1,5 +1,6 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
@@ -50,6 +51,8 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
 
   private int dohvatiVrijeme(String tipVlaka, Stanica stanica) {
     // System.out.println("tip vlaka " + tipVlaka);
+    // TODO Popravi da ak je vlak brzi i na toj stanici nema vremena da to znaci da tu ne staje i da
+    // se ne ispisuje ta stanica
     if (tipVlaka.equals("N")) {
       return stanica.getVrNorm();
     } else if (tipVlaka.equals("U")) {
@@ -63,9 +66,9 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
     if (etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
-      List<Stanica> staniceEtape = etapaLeaf.getListaStanicaEtape();
+      List<Stanica> staniceEtape = new ArrayList<>(etapaLeaf.getListaStanicaEtape());
 
-      System.out.println("lista stanica etape ima " + staniceEtape.size());
+      // System.out.println("lista stanica etape ima " + staniceEtape.size());
 
       System.out.println("smjer " + etapaLeaf.getSmjer());
 
@@ -77,7 +80,7 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
       Integer vrijeme = 0, index = 0, vrijemeZaIspis = 0;
       Stanica prethodna = null;
       for (Stanica s : staniceEtape) {
-        System.out.println("stanica " + s.getNazivStanice() + ", udaljenost:" + s.getDuzina());
+        // System.out.println("stanica " + s.getNazivStanice() + ", udaljenost:" + s.getDuzina());
 
       }
 
