@@ -65,6 +65,7 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
     if (etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
       List<Stanica> staniceEtape = etapaLeaf.getListaStanicaEtape();
 
+      System.out.println("lista stanica etape ima " + staniceEtape.size());
 
       System.out.println("smjer " + etapaLeaf.getSmjer());
 
@@ -73,36 +74,58 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
         Collections.reverse(staniceEtape);
       }
 
-      int vrijeme = 0, index = 0;
+      Integer vrijeme = 0, index = 0, vrijemeZaIspis = 0;
       Stanica prethodna = null;
+      for (Stanica s : staniceEtape) {
+        System.out.println("stanica " + s.getNazivStanice() + ", udaljenost:" + s.getDuzina());
+
+      }
+
 
       for (Stanica s : staniceEtape) {
-        vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), s);
+
         // System.out.println("vrijeme " + vrijeme);
 
-        udaljenost = udaljenost + s.getDuzina();
+        String smjer = etapaLeaf.getSmjer();
+
+        if (smjer.equals("N")) {
+          udaljenost = udaljenost + s.getDuzina();
+          vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), s);
+          vrijemeZaIspis = etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme;
+        } else if (smjer.equals("O")) {
+          if (index > 0) { // if not the first station
+            // Add distance from previous station
+            udaljenost = udaljenost + staniceEtape.get(index - 1).getDuzina();
+            // Add time from previous station
+            vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), staniceEtape.get(index - 1));
+          }
+          vrijemeZaIspis = etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme;
+        }
+
+
         // System.out
         // .println(prethodna != null && s.getNazivStanice().equals(prethodna.getNazivStanice()));
         // System.out.println(index == staniceEtape.size() - 1);
 
-        if (prethodna != null && etapaLeaf.getSmjer().equals("N")
+        if (prethodna != null && smjer.equals("N")
             && s.getNazivStanice().equals(prethodna.getNazivStanice())
             && index == staniceEtape.size() - 1) {
           // ne ispisuj ak je smjer N i ak su 2 iste za redom i ak je to zadnja stanica etape
         } else {
           System.out.printf("%-13s %-13s %-30s %-8s %-18s%n", etapaLeaf.getOznakaVlaka(),
               etapaLeaf.getOznakaPruge(), s.getNazivStanice(),
-              pretvoriMinuteUVrijeme(etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme), udaljenost);
+              pretvoriMinuteUVrijeme(vrijemeZaIspis), udaljenost);
         }
 
-        if (index != 0) {
-          prethodna = s;
-        }
+        // if (index != 0) {
+        prethodna = s;
+        // }
         index++;
 
       }
     }
   }
+
 
   private String pretvoriMinuteUVrijeme(int minute) {
     int sati = minute / 60;
