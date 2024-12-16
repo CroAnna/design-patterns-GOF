@@ -321,12 +321,13 @@ public class ZeljeznickiSustav {
   }
 
   private void provjeriSVV(String[] dijeloviKomande, String unos) {
-    Pattern predlozakSVV =
-        Pattern.compile("^SVV (?<oznaka>\\d+) - (?<dan>[A-Za-z]+) - (?<koeficijent>\\d+)$");
+    Pattern predlozakSVV = Pattern
+        .compile("^SVV (?<oznaka>\\d+) - (?<dan>(Po|U|Sr|Č|Pe|Su|N)) - (?<koeficijent>\\d+)$");
     Matcher poklapanjePredlozakSVV = predlozakSVV.matcher(unos);
 
     if (!poklapanjePredlozakSVV.matches()) {
-      System.out.println("Neispravna komanda - format SVV oznaka - dan - koeficijent");
+      System.out.println(
+          "Neispravna komanda - format SVV oznaka - dan - koeficijent. Dan = (Po U Sr Č Pe Su N)");
     } else {
       try {
         String oznakaVlaka = poklapanjePredlozakSVV.group("oznaka");
