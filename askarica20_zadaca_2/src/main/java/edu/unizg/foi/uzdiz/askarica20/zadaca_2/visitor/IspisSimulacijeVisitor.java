@@ -1,5 +1,8 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,10 +20,11 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
   private final String oznakaDana;
   private final int koeficijent;
   private int virtualnoVrijeme;
-  private boolean simulacijaAktivna = true;
+  private volatile boolean simulacijaAktivna = true;
   private VlakComposite vlak = null;
   private final Map<Integer, StanicniDogadaj> rasporedDogadaja;
   private Integer posljednjiDogadaj = null;
+  private Thread inputThread;
 
   private static class StanicniDogadaj {
     final String nazivStanice;
@@ -39,6 +43,11 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
     this.oznakaDana = oznakaDana;
     this.koeficijent = koeficijent;
     this.rasporedDogadaja = new TreeMap<>();
+  }
+
+  private boolean voziNaDan(String oznakaDanaIzEtape, String trazeniDan) {
+    String prviDani = oznakaDanaIzEtape.split("\\s+")[0];
+    return prviDani.contains(trazeniDan);
   }
 
   @Override
@@ -81,11 +90,6 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
     }
   }
 
-  private boolean voziNaDan(String oznakaDanaIzEtape, String trazeniDan) {
-    String prviDani = oznakaDanaIzEtape.split("\\s+")[0];
-    return prviDani.contains(trazeniDan);
-  }
-
   @Override
   public void posjetiElement(EtapaLeaf etapaLeaf) {
     if (!etapaLeaf.getOznakaVlaka().equals(oznakaVlaka)) {
@@ -99,33 +103,48 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
       Collections.reverse(staniceEtape);
     }
 
-    for (int i = 0; i < staniceEtape.size(); i++) {
+    // First station is always at initial time
+    Stanica prvaStanica = staniceEtape.get(0);
+    boolean prvaJeZadnja = prvaStanica.getNazivStanice().equals(vlak.getZavrsnaStanica())
+        && etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1));
+
+    rasporedDogadaja.put(vrijeme, new StanicniDogadaj(prvaStanica.getNazivStanice(),
+        etapaLeaf.getOznakaPruge(), prvaJeZadnja));
+
+    if (posljednjiDogadaj == null || vrijeme > posljednjiDogadaj) {
+      posljednjiDogadaj = vrijeme;
+    }
+
+    // For remaining stations
+    for (int i = 0; i < staniceEtape.size() - 1; i++) {
       Stanica trenutnaStanica = staniceEtape.get(i);
-      boolean zadnjaStanica = trenutnaStanica.getNazivStanice().equals(vlak.getZavrsnaStanica())
-          && etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1));
+      Stanica sljedecaStanica = staniceEtape.get(i + 1);
 
-      // Dodajemo događaj za ovu stanicu
-      rasporedDogadaja.put(vrijeme, new StanicniDogadaj(trenutnaStanica.getNazivStanice(),
-          etapaLeaf.getOznakaPruge(), zadnjaStanica));
-
-      if (posljednjiDogadaj == null || vrijeme > posljednjiDogadaj) {
-        posljednjiDogadaj = vrijeme;
+      if (etapaLeaf.getSmjer().equals("O")) {
+        vrijeme += trenutnaStanica.getVrNorm();
+      } else {
+        vrijeme += trenutnaStanica.getVrNorm();
       }
 
-      // Računamo vrijeme do sljedeće stanice
-      if (i < staniceEtape.size() - 1) {
-        if (etapaLeaf.getSmjer().equals("O")) {
-          vrijeme += staniceEtape.get(i).getVrNorm();
-        } else {
-          vrijeme += trenutnaStanica.getVrNorm();
-        }
+      boolean jeZadnja = sljedecaStanica.getNazivStanice().equals(vlak.getZavrsnaStanica())
+          && etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1));
+
+      rasporedDogadaja.put(vrijeme, new StanicniDogadaj(sljedecaStanica.getNazivStanice(),
+          etapaLeaf.getOznakaPruge(), jeZadnja));
+
+      if (vrijeme > posljednjiDogadaj) {
+        posljednjiDogadaj = vrijeme;
       }
     }
   }
 
   private void pokreniSimulaciju() {
-    System.out.println("\nPočetak simulacije vožnje vlaka " + vlak.getOznakaVlaka());
+    System.out
+        .println("\nPočetak simulacije vožnje vlaka (X + ENTER za prekid)" + vlak.getOznakaVlaka());
+    System.out.println("Pritisnite 'X' za prekid simulacije");
     System.out.println("Virtualno vrijeme: " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
+
+    pokreniPracenjeUnosa();
 
     while (virtualnoVrijeme <= posljednjiDogadaj && simulacijaAktivna) {
       try {
@@ -139,7 +158,6 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
           System.out.println("\n=== DOLAZAK NA STANICU === " + dogadaj.nazivStanice + " ("
               + dogadaj.oznakaPruge + ") u " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
 
-          // Obavještavanje observera
           vlak.obavijestiObservere(
               String.format("Vlak %s stigao na stanicu %s u %s", vlak.getOznakaVlaka(),
                   dogadaj.nazivStanice, pretvoriMinuteUVrijeme(virtualnoVrijeme)));
@@ -154,7 +172,43 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
         Thread.currentThread().interrupt();
       }
     }
+
+    zaustaviPracenjeUnosa();
     System.out.println("\nSimulacija završena.");
+  }
+
+  private void pokreniPracenjeUnosa() {
+    inputThread = new Thread(() -> {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+      try {
+        while (simulacijaAktivna) {
+          if (reader.ready()) {
+            int input = reader.read();
+            if (input == 'X' || input == 'x') {
+              simulacijaAktivna = false;
+              System.out.println("\nZaustavljanje simulacije...");
+              break;
+            }
+          }
+          Thread.sleep(100);
+        }
+      } catch (IOException | InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    });
+    inputThread.setDaemon(true);
+    inputThread.start();
+  }
+
+  private void zaustaviPracenjeUnosa() {
+    if (inputThread != null && inputThread.isAlive()) {
+      inputThread.interrupt();
+      try {
+        inputThread.join(1000);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
   }
 
   private String pretvoriMinuteUVrijeme(int minute) {
