@@ -50,17 +50,20 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   }
 
   private int dohvatiVrijeme(String tipVlaka, Stanica stanica) {
-    // System.out.println("tip vlaka " + tipVlaka);
-    // TODO Popravi da ak je vlak brzi i na toj stanici nema vremena da to znaci da tu ne staje i da
-    // se ne ispisuje ta stanica
-    if (tipVlaka.equals("N")) {
-      return stanica.getVrNorm();
-    } else if (tipVlaka.equals("U")) {
-      return stanica.getVrUbrz();
-    } else if (tipVlaka.equals("B")) {
-      return stanica.getVrBrzi();
+    try {
+      switch (tipVlaka) {
+        case "N":
+          return stanica.getVrNorm();
+        case "U":
+          return stanica.getVrUbrz();
+        case "B":
+          return stanica.getVrBrzi();
+        default:
+          return -1;
+      }
+    } catch (NullPointerException e) {
+      return -1; // vlak ne staje na stanici
     }
-    return 0;
   }
 
   @Override
@@ -92,7 +95,9 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
         String smjer = etapaLeaf.getSmjer();
 
         if (smjer.equals("N")) {
-          udaljenost = udaljenost + s.getDuzina();
+          if (!(index == 0 && s.getDuzina() != 0)) {
+            udaljenost = udaljenost + s.getDuzina();
+          }
           vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), s);
           vrijemeZaIspis = etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme;
         } else if (smjer.equals("O")) {

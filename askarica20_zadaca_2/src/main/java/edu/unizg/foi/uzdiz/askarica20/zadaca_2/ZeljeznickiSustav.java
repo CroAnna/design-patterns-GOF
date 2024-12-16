@@ -222,7 +222,7 @@ public class ZeljeznickiSustav {
   }
 
   private void provjeriIVRV(String[] dijeloviKomande, String unos) {
-    Pattern predlozakIVRV = Pattern.compile("^IVRV (?<oznaka>\\d+)$");
+    Pattern predlozakIVRV = Pattern.compile("^IVRV (?<oznaka>(\\d+|[A-Z]{1,2} \\d+|[A-Z]\\d+))$");
     Matcher poklapanjePredlozakIVRV = predlozakIVRV.matcher(unos);
 
     if (!poklapanjePredlozakIVRV.matches()) {
