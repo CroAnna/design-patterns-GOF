@@ -2,7 +2,6 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.ZeljeznickiSustav;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
-import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class VlakComposite extends VozniRedBaseComposite {
@@ -14,23 +13,6 @@ public class VlakComposite extends VozniRedBaseComposite {
   public VlakComposite(String oznakaVlaka, String vrstaVlaka) {
     this.oznakaVlaka = oznakaVlaka;
     this.vrstaVlaka = vrstaVlaka;
-  }
-
-  // ne znam jel ove metode moraju tu biti ili u etapi
-  public boolean vlakDosaoNaStanicu(Stanica stanica) {// ovo mislim da se nigde ne koristi opce
-    System.out.println("vlakDosaoNaStanicu u VlakComposite 1");
-
-    this.obavijestiObservere("poruka o stanici " + stanica.getNazivStanice());
-    return true;
-  }
-
-  public boolean vlakDosaoNaStanicu(String oznakaVlaka, Stanica stanica) { // ovo mislim da se nigde
-                                                                           // ne koristi opce
-    System.out.println("vlakDosaoNaStanicu u VlakComposite 2");
-
-    this.obavijestiObservere(
-        "poruka o vlaku " + oznakaVlaka + " na stanici " + stanica.getNazivStanice());
-    return true;
   }
 
   @Override

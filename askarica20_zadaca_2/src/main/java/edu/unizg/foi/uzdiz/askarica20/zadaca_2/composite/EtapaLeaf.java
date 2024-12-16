@@ -136,21 +136,8 @@ public class EtapaLeaf extends VozniRedComponent {
   public void setOznakaDana(String oznakaDana) {
     this.oznakaDana = oznakaDana;
   }
-
-  // ne znam jel ove metode moraju tu biti ili u vlaku
-  public boolean vlakDosaoNaStanicu(Stanica stanica) {
-    System.out.println("vlakDosaoNaStanicu u EtapaLeaf 1");
-
-    this.obavijestiObservere("poruka o stanici " + stanica.getNazivStanice());
-    return true;
-  }
-
-  public boolean vlakDosaoNaStanicu(String oznakaVlaka, Stanica stanica) {
-    System.out.println("vlakDosaoNaStanicu u EtapaLeaf 2");
-
-    this.obavijestiObservere(
-        "poruka o vlaku " + oznakaVlaka + " na stanici " + stanica.getNazivStanice());
-    return true;
-  }
+  /*
+   * public VlakComposite dohvatiVlak() { return (VlakComposite) this.roditelj; }
+   */
 
 }

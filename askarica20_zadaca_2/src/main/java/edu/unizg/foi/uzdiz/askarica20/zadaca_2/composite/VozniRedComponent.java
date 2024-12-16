@@ -10,22 +10,18 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitorElement;
 public abstract class VozniRedComponent
     implements VozniRedVisitorElement, ZeljeznickiObserverSubject {
   protected List<ZeljeznickiObserver> observeri = new ArrayList<>();
+  protected VozniRedComponent roditelj;
 
   public void prikvaciObservera(ZeljeznickiObserver zeljeznickiObserver) {
-    System.out.println("prikvaciObservera u " + this.getClass().getSimpleName());
     this.observeri.add(zeljeznickiObserver);
   }
 
   public void otkvaciObservera(ZeljeznickiObserver zeljeznickiObserver) {
-    System.out.println("otkvaciObservera");
     this.observeri.remove(zeljeznickiObserver);
   }
 
   public void obavijestiObservere(String poruka) {
-    // System.out.println("obavijestiObservere u " + this.getClass().getSimpleName() + " - ima "
-    // + this.observeri.size() + " observera");;
     for (ZeljeznickiObserver obs : this.observeri) {
-      // System.out.println("obavijestiObservere petlja - " + poruka);
       obs.azuriraj(poruka);
     }
   }
@@ -66,4 +62,5 @@ public abstract class VozniRedComponent
     }
     return this.dohvatiDijete(oznaka);
   }
+
 }
