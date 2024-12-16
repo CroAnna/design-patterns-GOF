@@ -191,7 +191,8 @@ public class ZeljeznickiSustav {
   }
 
   private void provjeriIEV(String[] dijeloviKomande, String unos) {
-    Pattern predlozakIEV = Pattern.compile("^IEV (?<oznaka>\\d+)$");
+    Pattern predlozakIEV = Pattern.compile("^IEV (?<oznaka>([A-Z]{1,2}\\s*\\d+|\\d+))$");
+
     Matcher poklapanjePredlozakIEV = predlozakIEV.matcher(unos);
 
     if (!poklapanjePredlozakIEV.matches()) {
@@ -277,7 +278,8 @@ public class ZeljeznickiSustav {
 
   private void provjeriDPK(String[] dijeloviKomande, String unos) {
     Pattern predlozakDPK = Pattern.compile(
-        "^DPK (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) - (?<oznakaVlaka>\\d+)(?:\\s*-\\s*(?<stanica>[\\p{L}- ]+))?$");
+        "^DPK (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) - (?<oznakaVlaka>([A-Z]{1,2}\\s*\\d+|\\d+)(?:\\s*-\\s*(?<stanica>[\\p{L}- ]+))?)$");
+
     Matcher poklapanjePredlozakDPK = predlozakDPK.matcher(unos);
 
     if (!poklapanjePredlozakDPK.matches()) {
@@ -321,8 +323,8 @@ public class ZeljeznickiSustav {
   }
 
   private void provjeriSVV(String[] dijeloviKomande, String unos) {
-    Pattern predlozakSVV = Pattern
-        .compile("^SVV (?<oznaka>\\d+) - (?<dan>(Po|U|Sr|Č|Pe|Su|N)) - (?<koeficijent>\\d+)$");
+    Pattern predlozakSVV = Pattern.compile(
+        "^SVV (?<oznaka>([A-Z]{1,2}\\s*\\d+|\\d+)) - (?<dan>(Po|U|Sr|Č|Pe|Su|N)) - (?<koeficijent>\\d+)$");
     Matcher poklapanjePredlozakSVV = predlozakSVV.matcher(unos);
 
     if (!poklapanjePredlozakSVV.matches()) {
