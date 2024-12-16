@@ -117,23 +117,22 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
         posljednjiDogadaj = vrijeme;
       }
 
-      for (int i = 0; i < staniceEtape.size() - 1; i++) {
-        System.out.println("O trenutna " + staniceEtape.get(i));
+      for (int i = 0; i < staniceEtape.size(); i++) {
+        // System.out.println("O trenutna ");
+        // System.out.println("Naziv stanice: " + staniceEtape.get(i).getNazivStanice());
+        // System.out.println("Oznaka pruge: " + staniceEtape.get(i).getOznakaPruge());
+        // System.out.println("Duzina: " + staniceEtape.get(i).getDuzina());
       }
 
       // Handle subsequent stations
       for (int i = 0; i < staniceEtape.size() - 1; i++) {
         Stanica trenutnaStanica = staniceEtape.get(i);
         Stanica sljedecaStanica = staniceEtape.get(i + 1);
-        System.out.println("tr " + trenutnaStanica.getNazivStanice()
-            + pretvoriMinuteUVrijeme(trenutnaStanica.getVrNorm()));
 
-        // Calculate time to next station based on direction
-        if (etapaLeaf.getSmjer().equals("O")) {
-          vrijeme += trenutnaStanica.getVrNorm();
-        } else {
-          vrijeme += trenutnaStanica.getVrNorm(); // ovo se nece izvrsit nikad
-        }
+        // System.out.println("tr " + trenutnaStanica.getNazivStanice()
+        // + pretvoriMinuteUVrijeme(trenutnaStanica.getVrNorm()));
+
+        vrijeme += trenutnaStanica.getVrNorm();
 
         boolean zadnjaStanica = sljedecaStanica.getNazivStanice().equals(vlak.getZavrsnaStanica())
             && etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1));
@@ -147,62 +146,66 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
       }
     }
 
-    // TODO isto za N
     if (etapaLeaf.getSmjer().equals("N")) {
-      // Handle starting station
-      Stanica prvaStanica = staniceEtape.get(0);
       Stanica zadnja = staniceEtape.get(staniceEtape.size() - 1);
 
-      System.out.println("zadnja - " + zadnja.getNazivStanice());
-      System.out.println("ova etapa je zadnja- "
-          + etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1)));
-      System.out.println("ova etapa je prva - " + etapaLeaf.equals(vlak.dohvatiDjecu().get(0)));
+      // System.out.println("zadnja - " + zadnja.getNazivStanice());
+      // System.out.println("ova etapa je zadnja- "
+      // + etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1)));
+      // System.out.println("ova etapa je prva - " + etapaLeaf.equals(vlak.dohvatiDjecu().get(0)));
 
+      // Handle starting station
+      Stanica prvaStanica = staniceEtape.get(0);
       rasporedDogadaja.put(vrijeme,
-          new StanicniDogadaj(prvaStanica.getNazivStanice(), etapaLeaf.getOznakaPruge(), false)); // First
-                                                                                                  // station
-                                                                                                  // can
-                                                                                                  // never
-                                                                                                  // be
-                                                                                                  // last
+          new StanicniDogadaj(prvaStanica.getNazivStanice(), etapaLeaf.getOznakaPruge(), false));
 
       if (posljednjiDogadaj == null || vrijeme > posljednjiDogadaj) {
         posljednjiDogadaj = vrijeme;
       }
 
-      // Your debug output for stations
-      for (int i = 0; i < staniceEtape.size() - 1; i++) {
-        System.out.println("N trenutna ");
-        System.out.println("Naziv stanice: " + staniceEtape.get(i).getNazivStanice());
-        System.out.println("Oznaka pruge: " + staniceEtape.get(i).getOznakaPruge());
-        System.out.println("Duzina: " + staniceEtape.get(i).getDuzina());
+      // Debug output for all stations
+      for (int i = 0; i < staniceEtape.size(); i++) {
+        // System.out.println("N trenutna ");
+        // System.out.println("Naziv stanice: " + staniceEtape.get(i).getNazivStanice());
+        // System.out.println("Oznaka pruge: " + staniceEtape.get(i).getOznakaPruge());
+        // System.out.println("Duzina: " + staniceEtape.get(i).getDuzina());
       }
 
       // Handle middle stations
       for (int i = 0; i < staniceEtape.size() - 1; i++) {
         Stanica trenutnaStanica = staniceEtape.get(i);
-        Stanica sljedecaStanica = staniceEtape.get(i + 1);
 
         System.out.println("tr " + trenutnaStanica.getNazivStanice()
             + pretvoriMinuteUVrijeme(trenutnaStanica.getVrNorm()));
 
         vrijeme += trenutnaStanica.getVrNorm();
 
-        boolean isLastStation =
-            etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1))
-                && i == staniceEtape.size() - 2
-                && sljedecaStanica.getNazivStanice().equals(vlak.getZavrsnaStanica());
+        boolean isLastStation = false; // Middle stations can't be last
 
-        /*
-         * rasporedDogadaja.put(vrijeme, new StanicniDogadaj(sljedecaStanica.getNazivStanice(),
-         * etapaLeaf.getOznakaPruge(), isLastStation));
-         */
         rasporedDogadaja.put(vrijeme, new StanicniDogadaj(trenutnaStanica.getNazivStanice(),
             etapaLeaf.getOznakaPruge(), isLastStation));
 
         if (vrijeme > posljednjiDogadaj) {
           posljednjiDogadaj = vrijeme;
         }
+      }
+
+      // Handle last station
+      Stanica zadnjaStanica = staniceEtape.get(staniceEtape.size() - 1);
+      System.out.println("tr " + zadnjaStanica.getNazivStanice()
+          + pretvoriMinuteUVrijeme(zadnjaStanica.getVrNorm()));
+
+      vrijeme += staniceEtape.get(staniceEtape.size() - 2).getVrNorm();
+
+      boolean isLastStation =
+          etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1))
+              && zadnjaStanica.getNazivStanice().equals(vlak.getZavrsnaStanica());
+
+      rasporedDogadaja.put(vrijeme, new StanicniDogadaj(zadnjaStanica.getNazivStanice(),
+          etapaLeaf.getOznakaPruge(), isLastStation));
+
+      if (vrijeme > posljednjiDogadaj) {
+        posljednjiDogadaj = vrijeme;
       }
     }
   }
