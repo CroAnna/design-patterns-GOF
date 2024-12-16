@@ -278,7 +278,7 @@ public class ZeljeznickiSustav {
 
   private void provjeriDPK(String[] dijeloviKomande, String unos) {
     Pattern predlozakDPK = Pattern.compile(
-        "^DPK (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) - (?<oznakaVlaka>([A-Z]{1,2}\\s*\\d+|\\d+)(?:\\s*-\\s*(?<stanica>[\\p{L}- ]+))?)$");
+        "^DPK (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) - (?<oznakaVlaka>([A-Z]{1,2}\\s*\\d+|\\d+))(?:\\s*-\\s*(?<stanica>[A-Za-zČčĆćĐđŠšŽž\\- ]+))?$");
 
     Matcher poklapanjePredlozakDPK = predlozakDPK.matcher(unos);
 
