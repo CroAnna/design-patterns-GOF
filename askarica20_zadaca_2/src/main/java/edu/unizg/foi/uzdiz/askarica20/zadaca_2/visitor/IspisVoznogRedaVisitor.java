@@ -115,7 +115,17 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
             // Add distance from previous station
             udaljenost = udaljenost + staniceEtape.get(index - 1).getDuzina();
             // Add time from previous station
-            vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), staniceEtape.get(index - 1));
+            // vrijeme = vrijeme + dohvatiVrijeme(vlak.getVrstaVlaka(), staniceEtape.get(index -
+            // 1));
+
+
+            int dohvacenoVrijeme =
+                dohvatiVrijeme(vlak.getVrstaVlaka(), staniceEtape.get(index - 1));
+            if (dohvacenoVrijeme >= 0) {
+              vrijeme = vrijeme + dohvacenoVrijeme;
+            } else {
+              vrijeme = vrijeme + dohvacenoVrijeme + 1;
+            }
           }
           vrijemeZaIspis = etapaLeaf.getVrijemePolaskaUMinutama() + vrijeme;
         }
@@ -139,6 +149,12 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
         } else if (vlak.getVrstaVlaka().equals("U") && smjer.equals("N")
             && dohvatiVrijeme("U", s) == -1) {
           // brzi i normalni smjer i tu nema vrijednosti za vrijeme (znaci da ne staje na toj
+          // stanici)
+          System.out.println("ne staje na " + s.getNazivStanice());
+
+        } else if (vlak.getVrstaVlaka().equals("B") && smjer.equals("O")
+            && dohvatiVrijeme("B", s) == -1) {
+          // brzi i obrnuti smjer i tu nema vrijednosti za vrijeme (znaci da ne staje na toj
           // stanici)
           System.out.println("ne staje na " + s.getNazivStanice());
 
