@@ -35,7 +35,12 @@ public class VlakComposite extends VozniRedBaseComposite {
         ZeljeznickiSustav.dohvatiInstancu().ukloniVlak(this);
         ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
         return false;
+      } else if (imaNeispravneBrzine()) {
+        ZeljeznickiSustav.dohvatiInstancu().ukloniVlak(this);
+        ZeljeznickiSustav.dohvatiInstancu().dodajGreskuUSustav();
+        return false;
       }
+
       return true;
     } else {
       djeca.add(komponenta);
@@ -96,9 +101,35 @@ public class VlakComposite extends VozniRedBaseComposite {
       EtapaLeaf trenutnaEtapa = (EtapaLeaf) djeca.get(i);
       EtapaLeaf sljedecaEtapa = (EtapaLeaf) djeca.get(i + 1);
       if (trenutnaEtapa.getVrijemeDolaskaUMinutama() > sljedecaEtapa.getVrijemePolaskaUMinutama()) {
+        System.out.println("Greška brzine - vlak " + trenutnaEtapa.getOznakaVlaka()
+            + " ima neispravna vremena - dolazak prethodne je nakon polaska sljedeće");
         return true;
       }
       if (!trenutnaEtapa.getZavrsnaStanica().equals(sljedecaEtapa.getPocetnaStanica())) {
+        System.out.println("Greška brzine - vlak " + trenutnaEtapa.getOznakaVlaka()
+            + " ima nepoklapajuće stanice između etapa (presjedališta)");
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean imaNeispravneBrzine() {
+    if (djeca.size() < 2) {
+      return false;
+    }
+
+    String brzinaPrethodne = null;
+
+    for (VozniRedComponent komponenta : djeca) {
+      EtapaLeaf etapa = (EtapaLeaf) komponenta;
+      String trenutnaBrzina = etapa.getVrstaVlaka().isEmpty() ? "N" : etapa.getVrstaVlaka();
+
+      if (brzinaPrethodne == null) {
+        brzinaPrethodne = trenutnaBrzina;
+      } else if (!trenutnaBrzina.equals(brzinaPrethodne)) {
+        System.out.println("Greška brzine - vlak " + etapa.getOznakaVlaka()
+            + " ima više brzina na razl. etapama (nedozvoljeno)");
         return true;
       }
     }

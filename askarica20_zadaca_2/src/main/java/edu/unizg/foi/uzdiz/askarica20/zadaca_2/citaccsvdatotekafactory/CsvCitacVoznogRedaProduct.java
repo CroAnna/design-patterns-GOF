@@ -97,7 +97,7 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         neispravneOznakeVlakova.add(etapa.getOznakaVlaka());
         List<String> greske = new ArrayList<>();
         greske.add("Neispravne etape vlaka " + etapa.getOznakaVlaka()
-            + " - neusklađena vremena ili stanice između etapa");
+            + " - neusklađena vremena ili stanice između etapa ili brzine na svim etapama nisu iste");
         prikaziGreske(greske, -1, ZeljeznickiSustav.dohvatiInstancu().dohvatiBrojGresakaVlakova());
       }
     } else {
@@ -107,7 +107,7 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
         neispravneOznakeVlakova.add(etapa.getOznakaVlaka());
         List<String> greske = new ArrayList<>();
         greske.add("Neispravne etape vlaka " + etapa.getOznakaVlaka()
-            + " - neusklađena vremena ili stanice između etapa");
+            + " - neusklađena vremena ili stanice između etapa ili brzine na svim etapama nisu iste");
         prikaziGreske(greske, -1, ZeljeznickiSustav.dohvatiInstancu().dohvatiBrojGresakaVlakova());
       } else {
         ((VlakComposite) vlak).izracunajUkupnePodatke();
@@ -152,14 +152,11 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
 
     List<Stanica> staniceEtape = ZeljeznickiSustav.dohvatiInstancu()
         .dohvatiListuMedustanica(polaznaStanica, odredisnaStanica, oznakaPruge, smjer);
-
-    if (oznakaVlaka.equals("3302")) {
-      for (Stanica s : staniceEtape) {
-        System.out.println("- stanica " + s.getNazivStanice() + " " + s.getVrNorm() + ", pruga:"
-            + s.getOznakaPruge());
-      }
-    }
-
+    /*
+     * if (oznakaVlaka.equals("3302")) { for (Stanica s : staniceEtape) { //
+     * System.out.println("- stanica " + s.getNazivStanice() + " " + s.getVrNorm() + ", pruga:" // +
+     * s.getOznakaPruge()); } }
+     */
 
     if (staniceEtape.size() > 0) {
       etapa.setListaStanicaEtape(staniceEtape);
