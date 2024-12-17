@@ -26,6 +26,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisSimulacijeVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaPoDanimaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVlakovaVisitor;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVozRedaDoStaniceVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisVoznogRedaVisitor;
 
 public class ZeljeznickiSustav {
@@ -147,8 +148,6 @@ public class ZeljeznickiSustav {
       provjeriISI2S(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IK")) {
       provjeriIK(dijeloviKomande, unos);
-    } else if (glavniDioKomande.equals("OD")) {
-      ispisiOznakeDana(); // moja komanda koja nije trazena
     } else if (glavniDioKomande.equals("IV")) {
       provjeriIV(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IEV")) {
@@ -178,10 +177,13 @@ public class ZeljeznickiSustav {
     }
   }
 
-  private void ispisiOznakeDana() { // moja komanda koja nije trazena
-    for (OznakaDana o : listaOznakaDana) {
-      System.out.println(o.toString());
+  private boolean postojiLiStanicaPoImenu(String imeStanice) {
+    for (Stanica s : listaStanica) {
+      if (s.getNazivStanice().equals(imeStanice)) {
+        return true;
+      }
     }
+    return false;
   }
 
   private void provjeriIV(String[] dijeloviKomande, String unos) {
@@ -244,14 +246,31 @@ public class ZeljeznickiSustav {
 
   private void provjeriIVI2S(String[] dijeloviKomande, String unos) {
     Pattern predlozakIVI2S = Pattern.compile(
-        "^IVI2S (?<polaznaStanica>[\\p{L}- ]+) - (?<odredisnaStanica>[\\p{L}- ]+) - (?<dan>[A-Za-z]+) - (?<odVr>\\d{1,2}:\\d{2}) - (?<doVr>\\d{1,2}:\\d{2}) - (?<prikaz>[A-Z]+)$");
+        "^IVI2S (?<polaznaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?:-[A-ZŠĐČĆŽ][a-zšđčćž]+)?(?:\\s+[A-ZŠĐČĆŽ][a-zšđčćž]+)?) - "
+            + "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?:-[A-ZŠĐČĆŽ][a-zšđčćž]+)?(?:\\s+[A-ZŠĐČĆŽ][a-zšđčćž]+)?) - "
+            + "(?<dan>Po|U|Sr|Č|Pe|Su|N) - " + "(?<odVr>\\d{1,2}:\\d{2}) - "
+            + "(?<doVr>\\d{1,2}:\\d{2}) - " + "(?<prikaz>[SPKV]+)$");
     Matcher poklapanjePredlozakIVI2S = predlozakIVI2S.matcher(unos);
 
     if (!poklapanjePredlozakIVI2S.matches()) {
       System.out.println(
           "Neispravna komanda - format IVI2S polaznaStanica - odredišnaStanica - dan - odVr - doVr - prikaz ");
     } else {
-      // TODO
+      String polaznaStanica = poklapanjePredlozakIVI2S.group("polaznaStanica");
+      String odredisnaStanica = poklapanjePredlozakIVI2S.group("odredisnaStanica");
+      String dan = poklapanjePredlozakIVI2S.group("dan");
+      String odVr = poklapanjePredlozakIVI2S.group("odVr");
+      String doVr = poklapanjePredlozakIVI2S.group("doVr");
+      String prikaz = poklapanjePredlozakIVI2S.group("prikaz");
+
+      boolean polaznaPostoji = postojiLiStanicaPoImenu(polaznaStanica);
+      boolean odredisnaPostoji = postojiLiStanicaPoImenu(odredisnaStanica);
+      if (!polaznaPostoji || !odredisnaPostoji) {
+        System.out.println("Neispravne stanice. Ne postoje u sustavu.");
+      } else {
+        vozniRed.prihvati(new IspisVozRedaDoStaniceVisitor(polaznaStanica, odredisnaStanica, dan,
+            odVr, doVr, prikaz));
+      }
     }
   }
 
@@ -462,14 +481,22 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakISI2S.matches()) {
       System.out.println("Neispravna komanda - format ISI2S polaziste - odrediste");
     } else {
-      LinkedHashMap<Stanica, Integer> stanicaUdaljenostMapa =
-          dohvatiMedustanice(poklapanjePredlozakISI2S.group("polaznaStanica"),
-              poklapanjePredlozakISI2S.group("odredisnaStanica"));
+      String polaznaStanica = poklapanjePredlozakISI2S.group("polaznaStanica");
+      String odredisnaStanica = poklapanjePredlozakISI2S.group("odredisnaStanica");
 
-      if (stanicaUdaljenostMapa != null && stanicaUdaljenostMapa.size() > 0) {
-        ispisnik.ispisListeStanica(stanicaUdaljenostMapa);
+      boolean polaznaPostoji = postojiLiStanicaPoImenu(polaznaStanica);
+      boolean odredisnaPostoji = postojiLiStanicaPoImenu(odredisnaStanica);
+      if (!polaznaPostoji || !odredisnaPostoji) {
+        System.out.println("Neispravne stanice. Ne postoje u sustavu.");
       } else {
-        System.out.println("Pokusajte s nekim drugim stanicama.");
+        LinkedHashMap<Stanica, Integer> stanicaUdaljenostMapa =
+            dohvatiMedustanice(polaznaStanica, odredisnaStanica);
+
+        if (stanicaUdaljenostMapa != null && stanicaUdaljenostMapa.size() > 0) {
+          ispisnik.ispisListeStanica(stanicaUdaljenostMapa);
+        } else {
+          System.out.println("Pokusajte s nekim drugim stanicama.");
+        }
       }
     }
   }
@@ -862,16 +889,6 @@ public class ZeljeznickiSustav {
       }
     }
     return sortirano.toString();
-  }
-
-  private Korisnik dohvatiKorisnikaPoIdu(int id) {
-    for (Korisnik k : listaKorisnika) {
-      if (k.getId() == id) {
-        return k;
-      }
-    }
-    System.out.println("Korisnik s ID " + id + " ne postoji.");
-    return null;
   }
 
   private Korisnik dohvatiKorisnikaPoImenu(String ime, String prezime) {

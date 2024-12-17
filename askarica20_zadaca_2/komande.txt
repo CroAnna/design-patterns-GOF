@@ -39,6 +39,36 @@ DK Ana Anic
 NAD Marko Maric mobitel Samsung_Galaxy_crni
 IZG Ana Anic mobitel Samsung_Galaxy_crni
 
+N smjer:
+SVV B 791 - Po - 400
+SVV 3301 - Po - 240
+SVV 3053 - Po - 240
+SVV 991 - Po - 240
+SVV EN 415 - Po - 240
+SVV 3311 - Po - 240
+SVV 3613 - N - 240
+
+O smjer:
+SVV B 790 - Po - 400
+SVV 3302 - Po - 240
+SVV B792 - Po - 400
+SVV B 792 - Po - 400
+SVV B 777 - Po - 400
+
+Mix smjerova (N pa O):
+SVV B 211 - Po - 400
+SVV 8087 - Po - 400
+
+IVI2S Donji Kraljevec - Čakovec - N - 0:00 - 23:59 - S
+IVI2S Donji Kraljevec - Novi Marof - Pe - 8:00 - 16:00 - KV
+IVI2S Donji Kraljevec - Ludbreg - Su - 5:20 - 20:30 - VSPKV
+IVI2S Donji-Kraljevec - Čakovec - N - 10:00 - 23:59 - SPKVP
+IVI2S Čakovec-Buzovec - Čakovec - N - 0:00 - 23:59 - SPKV
+IVI2S Čakovec - Čakovec-Buzovec - N - 7:40 - 23:59 - SPKV
+IVI2S Čakovec - Čakovec-Buzovec - N - 7:80 - 23:59 - SPKV
+IVI2S Nepostoji - Čakovec - N - 0:00 - 23:59 - SPKV
+IVI2S Nepostoji - Nepostoji - N - 0:00 - 23:59 - SPKV
+IVI2S Čakovec-Buzovec - Nepostoji - N - 0:00 - 23:59 - SPKV
 
 obrnuti redoslijed, ali mora raditi ok:
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zps DZ_1_vozila.csv --zs DZ_1_stanice.csv --zk DZ_1_kompozicije.csv
@@ -84,6 +114,10 @@ ISI2S Novo Selo Rok - Turčin
 
 ISI2S Pojatno - Gajnice
 15
+
+ISI2S Čikovec - Donji Kraljevec - greska
+ISI2S Čakovec - Donjo Kraljevec - greska
+ISI2S Čikovec - Donjo Kraljevec - greska
 
 IP
 
