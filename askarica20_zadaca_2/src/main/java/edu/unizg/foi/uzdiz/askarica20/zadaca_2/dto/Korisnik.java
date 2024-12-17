@@ -14,13 +14,6 @@ public class Korisnik implements KorisnikColleague {
     super();
   }
 
-  public Korisnik(int id, String ime, String prezime) {
-    super();
-    this.id = id;
-    this.ime = ime;
-    this.prezime = prezime;
-  }
-
   public Korisnik(int id, String ime, String prezime, PosrednikMediator mediator) {
     super();
     this.id = id;
@@ -80,12 +73,7 @@ public class Korisnik implements KorisnikColleague {
   }
 
   @Override
-  public void pregledPredmeta() {
-    if (mediator == null) {
-      System.out.println("Korisnik nema pristup uredu izgubljeno-nadeno.");
-      return;
-    }
-    mediator.pregledPredmeta(this);
+  public void obavijesti(String poruka) {
+    System.out.println(poruka);
   }
-
 }

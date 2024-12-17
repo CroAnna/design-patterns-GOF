@@ -169,8 +169,6 @@ public class ZeljeznickiSustav {
       provjeriSVV(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("IZG")) {
       provjeriIZG(dijeloviKomande, unos);
-    } else if (glavniDioKomande.equals("PPR")) {
-      provjeriPPR(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("NAD")) {
       provjeriNAD(dijeloviKomande, unos);
     } else {
@@ -271,7 +269,8 @@ public class ZeljeznickiSustav {
       if (dohvatiKorisnikaPoImenu(ime, prezime) != null) {
         System.out.println("Korisnik " + ime + " " + prezime + " vec postoji.");
       } else {
-        Korisnik korisnik = new Korisnik(brojacKorisnika, ime, prezime);
+        Korisnik korisnik = new Korisnik(brojacKorisnika, ime, prezime, posrednikMediator);
+
         dodajKorisnika(korisnik);
         System.out.println("Korisnik uspjesno dodan.");
       }
@@ -381,7 +380,6 @@ public class ZeljeznickiSustav {
         return;
       }
 
-      korisnik.setMediator(posrednikMediator);
       korisnik.prijaviNadenPredmet(predmet, opis);
     }
   }
@@ -407,30 +405,6 @@ public class ZeljeznickiSustav {
       korisnik.setMediator(posrednikMediator);
 
       korisnik.prijaviIzgubljenPredmet(predmet, opis);
-    }
-  }
-
-  private void provjeriPPR(String[] dijeloviKomande, String unos) {
-    Pattern predlozakPPR =
-        Pattern.compile("^PPR (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+)$");
-    Matcher poklapanjePredlozakPPR = predlozakPPR.matcher(unos);
-    if (!poklapanjePredlozakPPR.matches()) {
-      System.out.println("Neispravna komanda - format PPR ime prezime");
-    } else {
-      String ime = poklapanjePredlozakPPR.group("ime");
-      String prezime = poklapanjePredlozakPPR.group("prezime");
-
-      Korisnik korisnik = dohvatiKorisnikaPoImenu(ime, prezime);
-      if (korisnik == null) {
-        System.out.println("Korisnik " + ime + " " + prezime + " nije pronađen.");
-        return;
-      }
-
-      if (korisnik.getMediator() == null) {
-        korisnik.setMediator(new UredIzgubljenoNadenoMediator());
-      }
-
-      korisnik.pregledPredmeta();
     }
   }
 

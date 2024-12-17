@@ -6,5 +6,5 @@ public interface KorisnikColleague {
 
   void prijaviIzgubljenPredmet(String predmet, String opis);
 
-  void pregledPredmeta();
+  void obavijesti(String poruka);
 }

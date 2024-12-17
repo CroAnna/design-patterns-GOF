@@ -36,6 +36,5 @@ public class IzgubljeniPredmet {
   public String toString() {
     return "Predmet: " + predmet + ", Opis: " + opis + ", Prijavio: " + korisnik.getIme() + " "
         + korisnik.getPrezime();
-
   }
 }
