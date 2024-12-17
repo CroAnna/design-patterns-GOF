@@ -33,6 +33,4 @@ public abstract class VozniRedBaseComposite extends VozniRedComponent {
     return djeca;
   }
 
-  public abstract boolean postojiLi(String oznaka);
-
 }

@@ -24,7 +24,8 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
   @Override
   public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
     if (vozniRedBaseComposite instanceof VozniRedComposite) {
-      if (!vozniRedBaseComposite.postojiLi(oznakaVlaka)) {
+      VozniRedComposite red = (VozniRedComposite) vozniRedBaseComposite;
+      if (!red.postojiLi(oznakaVlaka)) {
         System.out.println("\nVlak s oznakom " + oznakaVlaka + " ne postoji u voznom redu.");
         return;
       }

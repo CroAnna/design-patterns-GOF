@@ -10,7 +10,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitorElement;
 public abstract class VozniRedComponent
     implements VozniRedVisitorElement, ZeljeznickiObserverSubject {
   protected List<ZeljeznickiObserver> observeri = new ArrayList<>();
-  protected VozniRedComponent roditelj;
+  // protected VozniRedComponent roditelj;
 
   public void prikvaciObservera(ZeljeznickiObserver zeljeznickiObserver) {
     this.observeri.add(zeljeznickiObserver);

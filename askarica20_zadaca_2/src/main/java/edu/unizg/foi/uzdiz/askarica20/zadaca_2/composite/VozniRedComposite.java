@@ -12,7 +12,6 @@ public class VozniRedComposite extends VozniRedBaseComposite {
     return null;
   }
 
-  @Override
   public boolean postojiLi(String oznakaVlaka) {
     // provjerava postoji li vlak po toj oznaci
     for (VozniRedComponent komponenta : djeca) {

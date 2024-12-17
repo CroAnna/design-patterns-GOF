@@ -14,6 +14,32 @@ IVRV 8000
 IVRV 3001
 IVRV 9999
 
+SVV B790 - Po - 240
+
+DPK Pero Peric - 991
+SVV 991 - Po - 240
+
+DPK Pero Peric - EN 415
+SVV EN 415 - Po - 240
+
+SVV 3053 - Po - 320
+
+DPK Pero Peric - 8087
+DPK Ana Anic - 8087 - Sesvetski Kraljevec
+SVV 8087 - Po - 450
+SVV 3613 - Po - 450
+SVV 3613 - Ne - 450
+SVV 3613 - N - 450
+
+SVV 3311 - N - 450
+
+-----------------
+DK Marko Maric
+DK Ana Anic
+NAD Marko Maric mobitel Samsung_Galaxy_crni
+IZG Ana Anic mobitel Samsung_Galaxy_crni
+
+
 obrnuti redoslijed, ali mora raditi ok:
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zps DZ_1_vozila.csv --zs DZ_1_stanice.csv --zk DZ_1_kompozicije.csv
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zps DZ_1_vozila.csv --zk DZ_1_kompozicije.csv --zs DZ_1_stanice.csv

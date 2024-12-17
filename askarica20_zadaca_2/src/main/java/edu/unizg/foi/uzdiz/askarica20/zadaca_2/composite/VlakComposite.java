@@ -78,7 +78,6 @@ public class VlakComposite extends VozniRedBaseComposite {
     }
   }
 
-  @Override
   public boolean postojiLi(String oznakaDana) {
     // provjerava postoji li oznaka dana po toj oznaci
     for (OznakaDana dan : ZeljeznickiSustav.dohvatiInstancu().dohvatiListuOznakaDana()) {
