@@ -108,6 +108,10 @@ public class ZeljeznickiSustav {
     return brojacGresakaVlakova;
   }
 
+  public List<Stanica> dohvatiListuStanica() {
+    return this.listaStanica;
+  }
+
   public IspisnikPodataka dohvatiIspisnik() {
     return this.ispisnik;
   }
@@ -246,10 +250,11 @@ public class ZeljeznickiSustav {
 
   private void provjeriIVI2S(String[] dijeloviKomande, String unos) {
     Pattern predlozakIVI2S = Pattern.compile(
-        "^IVI2S (?<polaznaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?:-[A-ZŠĐČĆŽ][a-zšđčćž]+)?(?:\\s+[A-ZŠĐČĆŽ][a-zšđčćž]+)?) - "
-            + "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?:-[A-ZŠĐČĆŽ][a-zšđčćž]+)?(?:\\s+[A-ZŠĐČĆŽ][a-zšđčćž]+)?) - "
+        "^IVI2S (?<polaznaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}|[A-ZŠĐČĆŽ][a-zšđčćž]+(?:-[A-ZŠĐČĆŽ][a-zšđčćž]+)) - "
+            + "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}|[A-ZŠĐČĆŽ][a-zšđčćž]+(?:-[A-ZŠĐČĆŽ][a-zšđčćž]+)) - "
             + "(?<dan>Po|U|Sr|Č|Pe|Su|N) - " + "(?<odVr>\\d{1,2}:\\d{2}) - "
             + "(?<doVr>\\d{1,2}:\\d{2}) - " + "(?<prikaz>[SPKV]+)$");
+
     Matcher poklapanjePredlozakIVI2S = predlozakIVI2S.matcher(unos);
 
     if (!poklapanjePredlozakIVI2S.matches()) {

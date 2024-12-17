@@ -216,22 +216,20 @@ public class PronalaziteljPutanje {
       }
     }
 
-    String prethodnaStanica = "";
-
     if (indexPolazne < indexOdredisne) {
       for (int i = indexPolazne; i <= indexOdredisne; i++) {
         Stanica stanica = staniceNaPruzi.get(i);
-        if (!stanica.getNazivStanice().equals(prethodnaStanica)) {
+        if (putanja.isEmpty() || !putanja.get(putanja.size() - 1).getNazivStanice()
+            .equals(stanica.getNazivStanice())) {
           putanja.add(stanica);
-          prethodnaStanica = stanica.getNazivStanice();
         }
       }
     } else {
       for (int i = indexPolazne; i >= indexOdredisne; i--) {
         Stanica stanica = staniceNaPruzi.get(i);
-        if (!stanica.getNazivStanice().equals(prethodnaStanica)) {
+        if (putanja.isEmpty() || !putanja.get(putanja.size() - 1).getNazivStanice()
+            .equals(stanica.getNazivStanice())) {
           putanja.add(stanica);
-          prethodnaStanica = stanica.getNazivStanice();
         }
       }
     }
@@ -257,13 +255,27 @@ public class PronalaziteljPutanje {
 
       String prugaDoOdredisne = pronadiPrugu(zajednickaStanica, odredisnaStanica);
       if (prugaDoOdredisne != null) {
-        putanja.addAll(dohvatiPutanjuNaIstojPruzi(polaznaStanica, zajednickaStanica, prugaDoPrve));
-        // Remove the last station to avoid duplication of the transfer station
-        if (!putanja.isEmpty()) {
-          putanja.remove(putanja.size() - 1);
+        // Prvi dio puta na prvoj pruzi
+        List<Stanica> prviDio =
+            dohvatiPutanjuNaIstojPruzi(polaznaStanica, zajednickaStanica, prugaDoPrve);
+        putanja.addAll(prviDio);
+
+        // Pronađi stanicu presjedanja na drugoj pruzi
+        List<Stanica> staniceNaDrugojPruzi =
+            listaStanica.stream().filter(s -> s.getOznakaPruge().equals(prugaDoOdredisne)
+                && s.getNazivStanice().equals(zajednickaStanica)).collect(Collectors.toList());
+
+        if (!staniceNaDrugojPruzi.isEmpty()) {
+          putanja.add(staniceNaDrugojPruzi.get(0));
         }
-        putanja.addAll(
-            dohvatiPutanjuNaIstojPruzi(zajednickaStanica, odredisnaStanica, prugaDoOdredisne));
+
+        // Drugi dio puta na drugoj pruzi, bez početne stanice jer je već dodana
+        List<Stanica> drugiDio =
+            dohvatiPutanjuNaIstojPruzi(zajednickaStanica, odredisnaStanica, prugaDoOdredisne);
+        if (!drugiDio.isEmpty()) {
+          putanja.addAll(drugiDio.subList(1, drugiDio.size()));
+        }
+
         return putanja;
       }
 
@@ -272,8 +284,6 @@ public class PronalaziteljPutanje {
           dohvatiPutanjuNaIstojPruzi(polaznaStanica, zajednickaStanica, prugaDoPrve);
       if (!prviDioPuta.isEmpty()) {
         putanja.addAll(prviDioPuta);
-        // Remove the last station to avoid duplication of the transfer station
-        putanja.remove(putanja.size() - 1);
         putanja.addAll(dohvatiPutanjuPrekoPresjedanja(zajednickaStanica, odredisnaStanica,
             novePosjeceneStanice));
         return putanja;
@@ -282,4 +292,7 @@ public class PronalaziteljPutanje {
 
     return putanja;
   }
+
+
+
 }
