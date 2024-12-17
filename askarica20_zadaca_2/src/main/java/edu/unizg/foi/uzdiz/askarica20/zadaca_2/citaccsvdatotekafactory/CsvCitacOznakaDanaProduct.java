@@ -41,8 +41,6 @@ public class CsvCitacOznakaDanaProduct extends CsvCitacProduct {
 
         String[] dijeloviRetka = redak.split(";");
         try {
-          // TODO mozda tu dodat provjeru - ne znam jel su prazni retci greska ili se kao i etape
-          // ispune s PoUSrČPeSuN - za sad sam stavila da se ispuni
           String oznaka = (dijeloviRetka.length > 1) ? dijeloviRetka[1] : "PoUSrČPeSuN";
           OznakaDana oznakaDana =
               new OznakaDana(brojRetka, Integer.valueOf(dijeloviRetka[0]), oznaka);

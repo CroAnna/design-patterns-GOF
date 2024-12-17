@@ -51,6 +51,23 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
     return prviDani.contains(trazeniDan);
   }
 
+  private int dohvatiVrijeme(String tipVlaka, Stanica stanica) {
+    try {
+      switch (tipVlaka) {
+        case "N":
+          return stanica.getVrNorm();
+        case "U":
+          return stanica.getVrUbrz();
+        case "B":
+          return stanica.getVrBrzi();
+        default:
+          return -1;
+      }
+    } catch (NullPointerException e) {
+      return -1; // vlak ne staje na stanici
+    }
+  }
+
   @Override
   public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
     if (vozniRedBaseComposite instanceof VozniRedComposite) {
@@ -128,7 +145,7 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
         Stanica trenutnaStanica = staniceEtape.get(i);
         Stanica sljedecaStanica = staniceEtape.get(i + 1);
         System.out.println("tr " + trenutnaStanica.getNazivStanice()
-            + pretvoriMinuteUVrijeme(trenutnaStanica.getVrNorm()));
+            + pretvoriMinuteUVrijeme(dohvatiVrijeme(vlak.getVrstaVlaka(), trenutnaStanica)));
 
 
         vrijeme += trenutnaStanica.getVrNorm();
@@ -177,10 +194,18 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
         Stanica trenutnaStanica = staniceEtape.get(i);
         // Stanica sljedecaStanica = staniceEtape.get(i + 1);
 
-        System.out.println("tr " + trenutnaStanica.getNazivStanice()
-            + pretvoriMinuteUVrijeme(trenutnaStanica.getVrNorm()));
+        System.out.println("tr " + trenutnaStanica.getNazivStanice() + ", originalno "
+            + +dohvatiVrijeme(vlak.getVrstaVlaka(), trenutnaStanica) + " ili pretvoreno "
+            + pretvoriMinuteUVrijeme(dohvatiVrijeme(vlak.getVrstaVlaka(), trenutnaStanica)));
 
-        vrijeme += trenutnaStanica.getVrNorm();
+        int dohvati = dohvatiVrijeme(vlak.getVrstaVlaka(), trenutnaStanica);
+        if (dohvati == -1) {
+          vrijeme = vrijeme + dohvati + 1;
+        } else {
+          vrijeme = vrijeme + dohvati;
+        }
+
+
 
         boolean isLastStation =
             etapaLeaf.equals(vlak.dohvatiDjecu().get(vlak.dohvatiDjecu().size() - 1))
@@ -191,8 +216,24 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
          * rasporedDogadaja.put(vrijeme, new StanicniDogadaj(sljedecaStanica.getNazivStanice(),
          * etapaLeaf.getOznakaPruge(), isLastStation));
          */
-        rasporedDogadaja.put(vrijeme, new StanicniDogadaj(trenutnaStanica.getNazivStanice(),
-            etapaLeaf.getOznakaPruge(), isLastStation));
+
+
+        int vrijemeZaUnos = vrijeme;
+        // System.out.println("-- staro iznosi " + vrijeme);
+        if (dohvatiVrijeme(vlak.getVrstaVlaka(), trenutnaStanica) == -1) {
+          System.out.println(trenutnaStanica.getNazivStanice() + " -- -1 je... postavljanje na 0 "
+              + "vrijeme ne unos" + pretvoriMinuteUVrijeme(vrijeme) + ", stanica "
+              + trenutnaStanica.getNazivStanice());
+          vrijemeZaUnos = 0; // da se ne strga racunanje za one koje se preskacu
+        } else {
+          System.out.println(trenutnaStanica.getNazivStanice() + " - unosi se! vrijeme unos "
+              + pretvoriMinuteUVrijeme(vrijeme));
+          // unesi stanicu u sustav samo ako se ne preskace
+          rasporedDogadaja.put(vrijemeZaUnos, new StanicniDogadaj(trenutnaStanica.getNazivStanice(),
+              etapaLeaf.getOznakaPruge(), isLastStation));
+        }
+
+
 
         if (vrijeme > posljednjiDogadaj) {
           posljednjiDogadaj = vrijeme;
