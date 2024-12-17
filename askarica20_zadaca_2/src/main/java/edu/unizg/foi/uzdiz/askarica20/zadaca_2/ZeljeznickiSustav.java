@@ -19,6 +19,8 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Vozilo;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.mediator.PosrednikMediator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_2.mediator.UredIzgubljenoNadenoMediator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.obavjestavacobserver.KorisnikConcreteObserver;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisEtapaVisitor;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.IspisSimulacijeVisitor;
@@ -35,6 +37,7 @@ public class ZeljeznickiSustav {
   private final List<Pruga> listaPruga = new ArrayList<Pruga>();
   private final List<Korisnik> listaKorisnika = new ArrayList<Korisnik>();
   private final VozniRedComposite vozniRed = new VozniRedComposite();
+  private final PosrednikMediator posrednikMediator = new UredIzgubljenoNadenoMediator();
 
   private int ukupanBrojGresakaUSustavu = 0, brojacKorisnika = 0, brojacGresakaVlakova = 0;
   private IspisnikPodataka ispisnik = new IspisnikPodataka();
@@ -164,6 +167,12 @@ public class ZeljeznickiSustav {
       provjeriDPK(dijeloviKomande, unos);
     } else if (glavniDioKomande.equals("SVV")) {
       provjeriSVV(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("IZG")) {
+      provjeriIZG(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("PPR")) {
+      provjeriPPR(dijeloviKomande, unos);
+    } else if (glavniDioKomande.equals("NAD")) {
+      provjeriNAD(dijeloviKomande, unos);
     } else {
       if (!unos.equalsIgnoreCase("Q")) {
         System.out.println("Neispravna komanda.");
@@ -259,9 +268,13 @@ public class ZeljeznickiSustav {
       brojacKorisnika++;
       String ime = poklapanjePredlozakDK.group("ime");
       String prezime = poklapanjePredlozakDK.group("prezime");
-      Korisnik korisnik = new Korisnik(brojacKorisnika, ime, prezime);
-      dodajKorisnika(korisnik);
-      System.out.println("Korisnik uspjesno dodan.");
+      if (dohvatiKorisnikaPoImenu(ime, prezime) != null) {
+        System.out.println("Korisnik " + ime + " " + prezime + " vec postoji.");
+      } else {
+        Korisnik korisnik = new Korisnik(brojacKorisnika, ime, prezime);
+        dodajKorisnika(korisnik);
+        System.out.println("Korisnik uspjesno dodan.");
+      }
     }
   }
 
@@ -294,6 +307,8 @@ public class ZeljeznickiSustav {
       Korisnik korisnik = dohvatiKorisnikaPoImenu(ime, prezime);
       if (korisnik != null) {
         zakaciKorisnikaZaPracenje(korisnik, oznakaVlaka, nazivStanice, ime, prezime);
+      } else {
+        System.out.println("Korisnik s imenom " + ime + " " + prezime + " ne postoji.");
       }
     }
   }
@@ -345,6 +360,77 @@ public class ZeljeznickiSustav {
       } catch (NumberFormatException e) {
         System.out.println("Koeficijent mora biti cijeli broj.");
       }
+    }
+  }
+
+  private void provjeriNAD(String[] dijeloviKomande, String unos) {
+    Pattern predlozakNAD = Pattern.compile(
+        "^NAD (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) (?<predmet>[A-Za-zČčĆćĐđŠšŽž_]+) (?<opis>[A-Za-zČčĆćĐđŠšŽž0-9_]+)$");
+    Matcher poklapanjePredlozakNAD = predlozakNAD.matcher(unos);
+    if (!poklapanjePredlozakNAD.matches()) {
+      System.out.println("Neispravna komanda - format NAD ime prezime predmet opis");
+    } else {
+      String ime = poklapanjePredlozakNAD.group("ime");
+      String prezime = poklapanjePredlozakNAD.group("prezime");
+      String predmet = poklapanjePredlozakNAD.group("predmet");
+      String opis = poklapanjePredlozakNAD.group("opis");
+
+      Korisnik korisnik = dohvatiKorisnikaPoImenu(ime, prezime);
+      if (korisnik == null) {
+        System.out.println("Korisnik " + ime + " " + prezime + " nije pronađen.");
+        return;
+      }
+
+      korisnik.setMediator(posrednikMediator);
+      korisnik.prijaviNadenPredmet(predmet, opis);
+    }
+  }
+
+  private void provjeriIZG(String[] dijeloviKomande, String unos) {
+    Pattern predlozakIZG = Pattern.compile(
+        "^IZG (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+) (?<predmet>[A-Za-zČčĆćĐđŠšŽž_]+) (?<opis>[A-Za-zČčĆćĐđŠšŽž0-9_]+)$");
+    Matcher poklapanjePredlozakIZG = predlozakIZG.matcher(unos);
+    if (!poklapanjePredlozakIZG.matches()) {
+      System.out.println("Neispravna komanda - format IZG ime prezime predmet opis");
+    } else {
+      String ime = poklapanjePredlozakIZG.group("ime");
+      String prezime = poklapanjePredlozakIZG.group("prezime");
+      String predmet = poklapanjePredlozakIZG.group("predmet");
+      String opis = poklapanjePredlozakIZG.group("opis");
+
+      Korisnik korisnik = dohvatiKorisnikaPoImenu(ime, prezime);
+      if (korisnik == null) {
+        System.out.println("Korisnik " + ime + " " + prezime + " nije pronađen.");
+        return;
+      }
+
+      korisnik.setMediator(posrednikMediator);
+
+      korisnik.prijaviIzgubljenPredmet(predmet, opis);
+    }
+  }
+
+  private void provjeriPPR(String[] dijeloviKomande, String unos) {
+    Pattern predlozakPPR =
+        Pattern.compile("^PPR (?<ime>[A-Za-zČčĆćĐđŠšŽž]+) (?<prezime>[A-Za-zČčĆćĐđŠšŽž]+)$");
+    Matcher poklapanjePredlozakPPR = predlozakPPR.matcher(unos);
+    if (!poklapanjePredlozakPPR.matches()) {
+      System.out.println("Neispravna komanda - format PPR ime prezime");
+    } else {
+      String ime = poklapanjePredlozakPPR.group("ime");
+      String prezime = poklapanjePredlozakPPR.group("prezime");
+
+      Korisnik korisnik = dohvatiKorisnikaPoImenu(ime, prezime);
+      if (korisnik == null) {
+        System.out.println("Korisnik " + ime + " " + prezime + " nije pronađen.");
+        return;
+      }
+
+      if (korisnik.getMediator() == null) {
+        korisnik.setMediator(new UredIzgubljenoNadenoMediator());
+      }
+
+      korisnik.pregledPredmeta();
     }
   }
 
@@ -820,7 +906,7 @@ public class ZeljeznickiSustav {
         return k;
       }
     }
-    System.out.println("Korisnik s imenom " + ime + " " + prezime + " ne postoji.");
+    // System.out.println("Korisnik s imenom " + ime + " " + prezime + " ne postoji.");
     return null;
   }
 }
