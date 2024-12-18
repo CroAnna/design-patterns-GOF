@@ -37,10 +37,6 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
     PronalaziteljPutanje pronalazitelj =
         new PronalaziteljPutanje(ZeljeznickiSustav.dohvatiInstancu().dohvatiListuStanica());
     this.putanja = pronalazitelj.dohvatiPutanjuIzmeduStanica(polaznaStanica, odredisnaStanica);
-
-    for (Stanica s : putanja) {
-      System.out.println("Stanica: " + s.getNazivStanice() + ", udaljenost: " + s.getDuzina());
-    }
   }
 
   @Override
@@ -51,45 +47,12 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
     }
   }
 
-  private String dohvatiSmjerEtape(VlakComposite vlak) {
-    for (VozniRedComponent komponenta : vlak.dohvatiDjecu()) {
-      if (komponenta instanceof EtapaLeaf) {
-        EtapaLeaf etapa = (EtapaLeaf) komponenta;
-        List<Stanica> staniceEtape = etapa.getListaStanicaEtape();
-
-        // Check if both our stations are in this etapa
-        boolean containsPolazna = false;
-        boolean containsOdredisna = false;
-        int indexPolazna = -1;
-        int indexOdredisna = -1;
-
-        for (int i = 0; i < staniceEtape.size(); i++) {
-          String nazivStanice = staniceEtape.get(i).getNazivStanice();
-          if (nazivStanice.equals(polaznaStanica)) {
-            containsPolazna = true;
-            indexPolazna = i;
-          }
-          if (nazivStanice.equals(odredisnaStanica)) {
-            containsOdredisna = true;
-            indexOdredisna = i;
-          }
-        }
-
-        if (containsPolazna && containsOdredisna) {
-          return indexPolazna < indexOdredisna ? "N" : "O";
-        }
-      }
-    }
-    return "N"; // default to N if not found
-  }
-
   private void ispisiRezultate() {
     if (putanja.isEmpty()) {
       System.out.println("Nema pronađenog puta između zadanih stanica.");
       return;
     }
 
-    // Find all trains that pass through this route
     List<VlakComposite> vlakovi = new ArrayList<>();
     for (VozniRedComponent komponenta : vozniRed.dohvatiDjecu()) {
       if (komponenta instanceof VlakComposite) {
@@ -102,10 +65,8 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
     vlakovi.sort(Comparator.comparingInt(VlakComposite::getVrijemePolaska));
 
     if (!vlakovi.isEmpty()) {
-      // Get direction from the first train that matches our route
-      String smjer = dohvatiSmjerEtape(vlakovi.get(0));
+      String smjer = "N";
 
-      // Print header dynamically based on prikaz
       StringBuilder zaglavlje = new StringBuilder();
       for (char format : prikaz.toCharArray()) {
         switch (format) {
@@ -127,12 +88,10 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
       }
       System.out.println(zaglavlje.toString());
 
-      // Print rows dynamically based on prikaz
       int ukupnoKm = 0;
       for (Stanica stanica : putanja) {
         StringBuilder red = new StringBuilder();
 
-        // Add distance before printing for direction N
         if (smjer.equals("N")) {
           ukupnoKm += stanica.getDuzina();
         }
@@ -162,7 +121,6 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
         }
         System.out.println(red.toString());
 
-        // Add distance after printing for direction O
         if (smjer.equals("O")) {
           ukupnoKm += stanica.getDuzina();
         }
@@ -173,17 +131,14 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
   private String dohvatiVrijemePolaska(VlakComposite vlak, Stanica stanica) {
     int vrijemePolaska = -1;
 
-    // Prolazimo kroz sve etape vlaka
     for (VozniRedComponent komponenta : vlak.dohvatiDjecu()) {
       if (komponenta instanceof EtapaLeaf) {
         EtapaLeaf etapa = (EtapaLeaf) komponenta;
 
-        // Provjeravamo sve stanice u etapi
         List<Stanica> staniceEtape = etapa.getListaStanicaEtape();
         for (int i = 0; i < staniceEtape.size(); i++) {
           if (staniceEtape.get(i).getNazivStanice().equals(stanica.getNazivStanice())) {
             vrijemePolaska = etapa.getVrijemePolaskaUMinutama();
-            // Dodajemo vrijeme potrebno da vlak dođe do ove stanice
             for (int j = 0; j < i; j++) {
               vrijemePolaska += staniceEtape.get(j).getVrNorm();
             }
@@ -202,19 +157,14 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
       return false;
     }
 
-    // First check if the train operates within the specified time range
     int odVrijeme = pretvoriVrijemeUMinute(odVr);
     int doVrijeme = pretvoriVrijemeUMinute(doVr);
-
-    // Get train's departure time from first station
     int vrijemePolaskaVlaka = vlak.getVrijemePolaska();
 
-    // Filter out trains that don't match the time criteria
     if (vrijemePolaskaVlaka < odVrijeme || vrijemePolaskaVlaka > doVrijeme) {
       return false;
     }
 
-    // Collect all stations the train passes through
     for (VozniRedComponent komponenta : vlak.dohvatiDjecu()) {
       if (komponenta instanceof EtapaLeaf) {
         EtapaLeaf etapa = (EtapaLeaf) komponenta;
@@ -224,7 +174,6 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
       }
     }
 
-    // Check if the train passes through both required stations
     return staniceVlaka.contains(polaznaStanica) && staniceVlaka.contains(odredisnaStanica);
   }
 
@@ -252,12 +201,6 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
       }
     }
     return true;
-  }
-
-  private boolean jesuLiVremenaUnutarIntervala(VlakComposite vlak) {
-    int odVrijeme = pretvoriVrijemeUMinute(odVr);
-    int doVrijeme = pretvoriVrijemeUMinute(doVr);
-    return vlak.getVrijemePolaska() >= odVrijeme && vlak.getVrijemeDolaska() <= doVrijeme;
   }
 
   @Override
