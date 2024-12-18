@@ -1,6 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.EtapaLeaf;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VlakComposite;
@@ -63,16 +64,27 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   }
 
   private void ispisiRezultate() {
-    System.out.println("\nVLAKOVI KOJI VOZE NA DANE: " + trazeniDani);
+    System.out.println("\n------------------------------ VLAKOVI KOJI VOZE NA DANE: " + trazeniDani
+        + " -------------------------------");
     System.out.printf("%-8s %-8s %-23s %-23s %-8s %-8s %-15s%n", "Vlak", "Pruga", "Polazna",
         "Odredišna", "Polazak", "Dolazak", "Dani");
-    System.out.println("-".repeat(95));
+    System.out.println(
+        "--------------------------------------------------------------------------------------------");
+
+    VlakComposite[] sortiraniVlakovi = vlakoviKojiVoze.toArray(new VlakComposite[0]);
+
+    Arrays.sort(sortiraniVlakovi, (v1, v2) -> {
+      EtapaLeaf e1 = (EtapaLeaf) v1.dohvatiDjecu().get(0);
+      EtapaLeaf e2 = (EtapaLeaf) v2.dohvatiDjecu().get(0);
+      return Integer.compare(e1.getVrijemePolaskaUMinutama(), e2.getVrijemePolaskaUMinutama());
+    });
+
     int brojac = 0;
-    for (VlakComposite vlak : vlakoviKojiVoze) {
+    for (VlakComposite vlak : sortiraniVlakovi) {
       for (VozniRedComponent etapa : vlak.dohvatiDjecu()) {
         if (etapa instanceof EtapaLeaf) {
           EtapaLeaf e = (EtapaLeaf) etapa;
-          System.out.printf("%-8s %-8s %-23s %-23s %02d:%02d %02d:%02d %-15s%n",
+          System.out.printf("%-8s %-8s %-23s %-25s %02d:%02d %02d:%02d %-15s%n",
               vlak.getOznakaVlaka(), e.getOznakaPruge(), e.getPocetnaStanica(),
               e.getZavrsnaStanica(), e.getVrijemePolaskaUMinutama() / 60,
               e.getVrijemePolaskaUMinutama() % 60, e.getVrijemeDolaskaUMinutama() / 60,
@@ -80,6 +92,8 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
           brojac++;
         }
       }
+      System.out.println(
+          "--------------------------------------------------------------------------------------------");
     }
     System.out.println("Ukupno vozi vlakova: " + brojac);
   }
