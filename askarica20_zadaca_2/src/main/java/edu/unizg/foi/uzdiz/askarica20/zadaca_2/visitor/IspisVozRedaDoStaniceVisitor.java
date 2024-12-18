@@ -147,6 +147,10 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
   private boolean prolaziliVlakKrozStanice(VlakComposite vlak) {
     Set<String> staniceVlaka = new HashSet<>();
 
+    if (!voziLiVlakNaDan(vlak.getOznakaVlaka(), dan)) {
+      return false;
+    }
+
     // First check if the train operates within the specified time range
     int odVrijeme = pretvoriVrijemeUMinute(odVr);
     int doVrijeme = pretvoriVrijemeUMinute(doVr);
