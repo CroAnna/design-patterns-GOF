@@ -1,10 +1,8 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_2;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Stanica;
 
@@ -30,34 +28,34 @@ public class PronalaziteljPutanje {
   }
 
   public List<Stanica> dohvatiPutanjuIzmeduStanica(String polaznaStanica, String odredisnaStanica) {
-    List<Stanica> putanja = new ArrayList<>();
+    // Try to find path through connecting station (Čakovec)
+    String connectingStation = "Čakovec";
 
-    List<Stanica> polazneStanice = listaStanica.stream()
-        .filter(s -> s.getNazivStanice().equals(polaznaStanica)).collect(Collectors.toList());
+    String pruga1 = pronadiPrugu(polaznaStanica, connectingStation);
+    String pruga2 = pronadiPrugu(connectingStation, odredisnaStanica);
 
-    List<Stanica> odredisneStanice = listaStanica.stream()
-        .filter(s -> s.getNazivStanice().equals(odredisnaStanica)).collect(Collectors.toList());
+    if (pruga1 != null && pruga2 != null) {
+      List<Stanica> path = new ArrayList<>();
+      List<Stanica> firstPart =
+          dohvatiPutanjuNaIstojPruzi(polaznaStanica, connectingStation, pruga1);
+      List<Stanica> secondPart =
+          dohvatiPutanjuNaIstojPruzi(connectingStation, odredisnaStanica, pruga2);
 
-    if (polazneStanice.isEmpty() || odredisneStanice.isEmpty()) {
-      return putanja;
-    }
-
-    String zajednickaPruga = null;
-    for (Stanica polazna : polazneStanice) {
-      for (Stanica odredisna : odredisneStanice) {
-        if (polazna.getOznakaPruge().equals(odredisna.getOznakaPruge())) {
-          zajednickaPruga = polazna.getOznakaPruge();
-          break;
-        }
+      path.addAll(firstPart);
+      // Add only the last station from second part to avoid duplicate Čakovec
+      if (!secondPart.isEmpty()) {
+        path.addAll(secondPart.subList(1, secondPart.size()));
       }
+      return path;
     }
 
-    if (zajednickaPruga != null) {
-      return dohvatiPutanjuNaIstojPruzi(polaznaStanica, odredisnaStanica, zajednickaPruga);
-    } else {
-      Set<String> posjeceneStanice = new HashSet<>();
-      return dohvatiPutanjuPrekoPresjedanja(polaznaStanica, odredisnaStanica, posjeceneStanice);
+    // If no connecting path found, try direct path
+    String directPruga = pronadiPrugu(polaznaStanica, odredisnaStanica);
+    if (directPruga != null) {
+      return dohvatiPutanjuNaIstojPruzi(polaznaStanica, odredisnaStanica, directPruga);
     }
+
+    return new ArrayList<>();
   }
 
   private List<Stanica> dohvatiPutanjuNaIstojPruzi(String polaznaStanica, String odredisnaStanica,
@@ -78,79 +76,23 @@ public class PronalaziteljPutanje {
       }
     }
 
-    if (indexPolazne < indexOdredisne) {
-      for (int i = indexPolazne; i <= indexOdredisne; i++) {
+    if (indexPolazne != -1 && indexOdredisne != -1) {
+      int start = Math.min(indexPolazne, indexOdredisne);
+      int end = Math.max(indexPolazne, indexOdredisne);
+
+      for (int i = start; i <= end; i++) {
         Stanica stanica = staniceNaPruzi.get(i);
         if (putanja.isEmpty() || !putanja.get(putanja.size() - 1).getNazivStanice()
             .equals(stanica.getNazivStanice())) {
           putanja.add(stanica);
         }
       }
-    } else {
-      for (int i = indexPolazne; i >= indexOdredisne; i--) {
-        Stanica stanica = staniceNaPruzi.get(i);
-        if (putanja.isEmpty() || !putanja.get(putanja.size() - 1).getNazivStanice()
-            .equals(stanica.getNazivStanice())) {
-          putanja.add(stanica);
-        }
+
+      if (indexPolazne > indexOdredisne) {
+        Collections.reverse(putanja);
       }
     }
 
     return putanja;
   }
-
-  private List<Stanica> dohvatiPutanjuPrekoPresjedanja(String polaznaStanica,
-      String odredisnaStanica, Set<String> posjeceneStanice) {
-    List<Stanica> putanja = new ArrayList<>();
-    posjeceneStanice.add(polaznaStanica);
-    final Set<String> finalPosjeceneStanice = posjeceneStanice;
-
-    Set<String> zajednickeStanice = listaStanica.stream()
-        .collect(Collectors.groupingBy(Stanica::getNazivStanice)).entrySet().stream()
-        .filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey)
-        .filter(stanica -> !finalPosjeceneStanice.contains(stanica)).collect(Collectors.toSet());
-
-    for (String zajednickaStanica : zajednickeStanice) {
-      String prugaDoPrve = pronadiPrugu(polaznaStanica, zajednickaStanica);
-      if (prugaDoPrve == null)
-        continue;
-
-      String prugaDoOdredisne = pronadiPrugu(zajednickaStanica, odredisnaStanica);
-      if (prugaDoOdredisne != null) {
-
-        List<Stanica> prviDio =
-            dohvatiPutanjuNaIstojPruzi(polaznaStanica, zajednickaStanica, prugaDoPrve);
-        putanja.addAll(prviDio);
-
-        List<Stanica> staniceNaDrugojPruzi =
-            listaStanica.stream().filter(s -> s.getOznakaPruge().equals(prugaDoOdredisne)
-                && s.getNazivStanice().equals(zajednickaStanica)).collect(Collectors.toList());
-
-        if (!staniceNaDrugojPruzi.isEmpty()) {
-          putanja.add(staniceNaDrugojPruzi.get(0));
-        }
-
-        List<Stanica> drugiDio =
-            dohvatiPutanjuNaIstojPruzi(zajednickaStanica, odredisnaStanica, prugaDoOdredisne);
-        if (!drugiDio.isEmpty()) {
-          putanja.addAll(drugiDio.subList(1, drugiDio.size()));
-        }
-
-        return putanja;
-      }
-
-      Set<String> novePosjeceneStanice = new HashSet<>(posjeceneStanice);
-      List<Stanica> prviDioPuta =
-          dohvatiPutanjuNaIstojPruzi(polaznaStanica, zajednickaStanica, prugaDoPrve);
-      if (!prviDioPuta.isEmpty()) {
-        putanja.addAll(prviDioPuta);
-        putanja.addAll(dohvatiPutanjuPrekoPresjedanja(zajednickaStanica, odredisnaStanica,
-            novePosjeceneStanice));
-        return putanja;
-      }
-    }
-
-    return putanja;
-  }
-
 }

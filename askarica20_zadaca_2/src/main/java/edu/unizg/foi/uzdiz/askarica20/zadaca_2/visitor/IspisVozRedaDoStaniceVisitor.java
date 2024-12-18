@@ -37,6 +37,10 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
     PronalaziteljPutanje pronalazitelj =
         new PronalaziteljPutanje(ZeljeznickiSustav.dohvatiInstancu().dohvatiListuStanica());
     this.putanja = pronalazitelj.dohvatiPutanjuIzmeduStanica(polaznaStanica, odredisnaStanica);
+
+    for (Stanica s : putanja) {
+      System.out.println("Stanica: " + s.getNazivStanice() + ", udaljenost: " + s.getDuzina());
+    }
   }
 
   @Override
@@ -45,6 +49,38 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
       this.vozniRed = (VozniRedComposite) vozniRedBaseComposite;
       ispisiRezultate();
     }
+  }
+
+  private String dohvatiSmjerEtape(VlakComposite vlak) {
+    for (VozniRedComponent komponenta : vlak.dohvatiDjecu()) {
+      if (komponenta instanceof EtapaLeaf) {
+        EtapaLeaf etapa = (EtapaLeaf) komponenta;
+        List<Stanica> staniceEtape = etapa.getListaStanicaEtape();
+
+        // Check if both our stations are in this etapa
+        boolean containsPolazna = false;
+        boolean containsOdredisna = false;
+        int indexPolazna = -1;
+        int indexOdredisna = -1;
+
+        for (int i = 0; i < staniceEtape.size(); i++) {
+          String nazivStanice = staniceEtape.get(i).getNazivStanice();
+          if (nazivStanice.equals(polaznaStanica)) {
+            containsPolazna = true;
+            indexPolazna = i;
+          }
+          if (nazivStanice.equals(odredisnaStanica)) {
+            containsOdredisna = true;
+            indexOdredisna = i;
+          }
+        }
+
+        if (containsPolazna && containsOdredisna) {
+          return indexPolazna < indexOdredisna ? "N" : "O";
+        }
+      }
+    }
+    return "N"; // default to N if not found
   }
 
   private void ispisiRezultate() {
@@ -65,57 +101,72 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
     }
     vlakovi.sort(Comparator.comparingInt(VlakComposite::getVrijemePolaska));
 
-    // Print header dynamically based on prikaz
-    StringBuilder zaglavlje = new StringBuilder();
-    for (char format : prikaz.toCharArray()) {
-      switch (format) {
-        case 'K':
-          zaglavlje.append(String.format("%-6s", "km"));
-          break;
-        case 'P':
-          zaglavlje.append(String.format("%-10s", "Pruga"));
-          break;
-        case 'S':
-          zaglavlje.append(String.format("%-20s", "Stanica"));
-          break;
-        case 'V':
-          for (VlakComposite vlak : vlakovi) {
-            zaglavlje.append(String.format("%-10s", "vlak " + vlak.getOznakaVlaka()));
-          }
-          break;
-      }
-    }
-    System.out.println(zaglavlje.toString());
+    if (!vlakovi.isEmpty()) {
+      // Get direction from the first train that matches our route
+      String smjer = dohvatiSmjerEtape(vlakovi.get(0));
 
-    // Print rows dynamically based on prikaz
-    int ukupnoKm = 0;
-    for (Stanica stanica : putanja) {
-      StringBuilder red = new StringBuilder();
+      // Print header dynamically based on prikaz
+      StringBuilder zaglavlje = new StringBuilder();
       for (char format : prikaz.toCharArray()) {
         switch (format) {
           case 'K':
-            red.append(String.format("%-6d", ukupnoKm));
+            zaglavlje.append(String.format("%-6s", "km"));
             break;
           case 'P':
-            red.append(String.format("%-10s", stanica.getOznakaPruge()));
+            zaglavlje.append(String.format("%-10s", "Pruga"));
             break;
           case 'S':
-            String nazivStanice = stanica.getNazivStanice();
-            if (nazivStanice.length() > 19) {
-              nazivStanice = nazivStanice.substring(0, 19);
-            }
-            red.append(String.format("%-20s", nazivStanice));
+            zaglavlje.append(String.format("%-20s", "Stanica"));
             break;
           case 'V':
             for (VlakComposite vlak : vlakovi) {
-              String vrijemePolaska = dohvatiVrijemePolaska(vlak, stanica);
-              red.append(String.format("%-10s", vrijemePolaska));
+              zaglavlje.append(String.format("%-10s", "vlak " + vlak.getOznakaVlaka()));
             }
             break;
         }
       }
-      System.out.println(red.toString());
-      ukupnoKm += stanica.getDuzina();
+      System.out.println(zaglavlje.toString());
+
+      // Print rows dynamically based on prikaz
+      int ukupnoKm = 0;
+      for (Stanica stanica : putanja) {
+        StringBuilder red = new StringBuilder();
+
+        // Add distance before printing for direction N
+        if (smjer.equals("N")) {
+          ukupnoKm += stanica.getDuzina();
+        }
+
+        for (char format : prikaz.toCharArray()) {
+          switch (format) {
+            case 'K':
+              red.append(String.format("%-6d", ukupnoKm));
+              break;
+            case 'P':
+              red.append(String.format("%-10s", stanica.getOznakaPruge()));
+              break;
+            case 'S':
+              String nazivStanice = stanica.getNazivStanice();
+              if (nazivStanice.length() > 19) {
+                nazivStanice = nazivStanice.substring(0, 19);
+              }
+              red.append(String.format("%-20s", nazivStanice));
+              break;
+            case 'V':
+              for (VlakComposite vlak : vlakovi) {
+                String vrijemePolaska = dohvatiVrijemePolaska(vlak, stanica);
+                red.append(String.format("%-10s", vrijemePolaska));
+              }
+              break;
+          }
+        }
+        System.out.println(red.toString());
+
+        // Add distance after printing for direction O
+        if (smjer.equals("O")) {
+          ukupnoKm += stanica.getDuzina();
+        }
+      }
     }
   }
 
