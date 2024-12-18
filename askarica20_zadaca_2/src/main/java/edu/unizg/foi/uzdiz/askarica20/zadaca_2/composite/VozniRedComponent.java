@@ -10,7 +10,6 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitorElement;
 public abstract class VozniRedComponent
     implements VozniRedVisitorElement, ZeljeznickiObserverSubject {
   protected List<ZeljeznickiObserver> observeri = new ArrayList<>();
-  // protected VozniRedComponent roditelj;
 
   public void prikvaciObservera(ZeljeznickiObserver zeljeznickiObserver) {
     this.observeri.add(zeljeznickiObserver);
@@ -35,7 +34,7 @@ public abstract class VozniRedComponent
     }
   }
 
-  public boolean dodaj(VozniRedComponent komponenta) { // Add(Component)
+  public boolean dodaj(VozniRedComponent komponenta) {
     if (!(this instanceof VozniRedComponent)) {
       return false;
     }
@@ -49,14 +48,14 @@ public abstract class VozniRedComponent
     return this.ukloni(komponenta);
   }
 
-  public VozniRedComponent dohvatiDijete(int i) { // GetChild(int)
+  public VozniRedComponent dohvatiDijete(int i) {
     if (!(this instanceof VozniRedComposite)) {
       return null;
     }
-    return this.dohvatiDijete(i); // ovo stvara stackoverflow, a s preze je...
+    return this.dohvatiDijete(i);
   }
 
-  public VozniRedComponent dohvatiDijete(String oznaka) { // GetChild(String) - ja dodala
+  public VozniRedComponent dohvatiDijete(String oznaka) {
     if (!(this instanceof VozniRedComposite)) {
       return null;
     }

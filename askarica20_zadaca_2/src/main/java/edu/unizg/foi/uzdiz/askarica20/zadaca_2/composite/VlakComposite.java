@@ -6,7 +6,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 
 public class VlakComposite extends VozniRedBaseComposite {
   private String oznakaVlaka;
-  private String vrstaVlaka; // U, B ili N
+  private String vrstaVlaka;
   private String pocetnaStanica = "", zavrsnaStanica = "";
   private int vrijemePolaska = Integer.MAX_VALUE, vrijemeDolaska = 0, ukupniKilometri = 0;
 
@@ -84,7 +84,6 @@ public class VlakComposite extends VozniRedBaseComposite {
   }
 
   public boolean postojiLi(String oznakaDana) {
-    // provjerava postoji li oznaka dana po toj oznaci
     for (OznakaDana dan : ZeljeznickiSustav.dohvatiInstancu().dohvatiListuOznakaDana()) {
       if (dan.getDaniVoznje().equals(oznakaVlaka)) {
         return true;
@@ -145,7 +144,7 @@ public class VlakComposite extends VozniRedBaseComposite {
     return vrstaVlaka;
   }
 
-  public void setVrstaVlaka(String vrstaVlaka) { // nez jel mi treba setter igdje
+  public void setVrstaVlaka(String vrstaVlaka) {
     this.vrstaVlaka = vrstaVlaka;
   }
 
@@ -154,7 +153,7 @@ public class VlakComposite extends VozniRedBaseComposite {
   }
 
   public void setOznakaVlaka(String oznakaVlaka) {
-    this.oznakaVlaka = oznakaVlaka; // nez jel mi treba setter igdje
+    this.oznakaVlaka = oznakaVlaka;
   }
 
   public String getPocetnaStanica() {

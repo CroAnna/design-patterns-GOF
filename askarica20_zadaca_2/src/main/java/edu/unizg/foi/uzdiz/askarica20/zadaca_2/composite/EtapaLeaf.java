@@ -8,17 +8,17 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.visitor.VozniRedVisitor;
 public class EtapaLeaf extends VozniRedComponent {
   private List<Stanica> listaStanicaEtape = new ArrayList<>();
 
-  private String oznakaPruge; // etapa je poddio pruge
-  private String oznakaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
-  private String vrstaVlaka; // ovo mozda ne treba pod etapu ic (jer je pod Vlak)
-  private String pocetnaStanica; // ak nije definirano = pocetna stanica pruge (po oznaci pruge)
-  private String zavrsnaStanica; // ak nije definirano = zavrsna stanica pruge (po oznaci pruge)
+  private String oznakaPruge;
+  private String oznakaVlaka;
+  private String vrstaVlaka;
+  private String pocetnaStanica;
+  private String zavrsnaStanica;
   private int trajanjeVoznjeUMinutama;
-  private int vrijemePolaskaUMinutama; // od 00:00 u ponoci
-  private int vrijemeDolaskaUMinutama; // na odredisnu stanicu = vrijeme polaska + trajanje
-  private int udaljenost; // ukupan br. km od polazne stanice do zavrsne na toj etapi
-  private String smjer; // O ili N
-  private String oznakaDana; // nez kaj ce mi ovo iskreno
+  private int vrijemePolaskaUMinutama;
+  private int vrijemeDolaskaUMinutama;
+  private int udaljenost;
+  private String smjer;
+  private String oznakaDana;
 
   @Override
   public void prihvati(VozniRedVisitor visitor) {
@@ -136,8 +136,5 @@ public class EtapaLeaf extends VozniRedComponent {
   public void setOznakaDana(String oznakaDana) {
     this.oznakaDana = oznakaDana;
   }
-  /*
-   * public VlakComposite dohvatiVlak() { return (VlakComposite) this.roditelj; }
-   */
 
 }

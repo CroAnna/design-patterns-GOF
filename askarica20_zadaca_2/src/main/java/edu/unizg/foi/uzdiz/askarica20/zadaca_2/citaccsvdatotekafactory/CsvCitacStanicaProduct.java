@@ -18,7 +18,6 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
       "Vrsta pruge", "Broj kolosjeka", "DO po osovini", "DO po duznom m", "Status pruge", "Dužina",
       "Vrijeme normalni vlak", "Vrijeme ubrzani vlak", "Vrijeme brzi vlak"};
 
-  // TODO jel osim kol i staj sad moze bit i rasp i otpr ili je to greska?
   private static final Pattern[] UZORCI_STUPACA =
       {Pattern.compile("[^;]+"), Pattern.compile("[^;]+"), Pattern.compile("(kol\\.|staj\\.)"),
           Pattern.compile("[^;]+"), Pattern.compile("DA|NE"), Pattern.compile("DA|NE"),
@@ -130,7 +129,7 @@ public class CsvCitacStanicaProduct extends CsvCitacProduct {
     List<String> greske = new ArrayList<>();
     String[] dijeloviRetka = redak.split(";");
 
-    if (dijeloviRetka.length <= NAZIVI_STUPACA.length - 3) { // TODO ovo popravit da bolje radi
+    if (dijeloviRetka.length <= NAZIVI_STUPACA.length - 3) {
       greske.add("Neispravan broj stupaca. Očekivano: " + NAZIVI_STUPACA.length + ", dobiveno: "
           + dijeloviRetka.length);
       return greske;

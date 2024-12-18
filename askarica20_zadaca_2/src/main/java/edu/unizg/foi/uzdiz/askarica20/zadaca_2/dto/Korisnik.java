@@ -4,7 +4,6 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.mediator.KorisnikColleague;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.mediator.PosrednikMediator;
 
 public class Korisnik implements KorisnikColleague {
-  // concrete colleague koja implementira korisnikove radnje
   private int id;
   private String ime;
   private String prezime;

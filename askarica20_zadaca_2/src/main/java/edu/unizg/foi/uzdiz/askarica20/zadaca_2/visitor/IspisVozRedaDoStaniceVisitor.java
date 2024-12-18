@@ -34,7 +34,6 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
     this.doVr = doVr;
     this.prikaz = prikaz;
 
-    // Inicijalno pronađi putanju između stanica
     PronalaziteljPutanje pronalazitelj =
         new PronalaziteljPutanje(ZeljeznickiSustav.dohvatiInstancu().dohvatiListuStanica());
     this.putanja = pronalazitelj.dohvatiPutanjuIzmeduStanica(polaznaStanica, odredisnaStanica);

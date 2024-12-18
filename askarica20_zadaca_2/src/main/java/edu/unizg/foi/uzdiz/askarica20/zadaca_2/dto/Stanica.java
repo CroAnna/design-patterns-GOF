@@ -16,7 +16,7 @@ public class Stanica {
   private double doPoDuznomM;
   private String statusPruge;
   private int duzina;
-  private Integer vrNorm; // da moze biti int ili null
+  private Integer vrNorm;
   private Integer vrUbrz;
   private Integer vrBrzi;
 

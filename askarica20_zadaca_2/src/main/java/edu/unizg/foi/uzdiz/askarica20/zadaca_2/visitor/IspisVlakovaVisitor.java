@@ -7,7 +7,6 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComponent;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaVisitor implements VozniRedVisitor {
-  // za IV - pregled vlakova
   private boolean jePrviProlaz = true;
 
   @Override

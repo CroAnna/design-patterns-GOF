@@ -43,7 +43,7 @@ public class Pruga {
       indexPocetne = indexZavrsne;
       indexZavrsne = pom;
     }
-    return new ArrayList<>(stanice.subList(indexPocetne, indexZavrsne + 1));
+    return new ArrayList<>(stanice.subList(indexPocetne, 1 + indexZavrsne));
   }
 
   public Stanica dohvatiPocetnuStanicu() {

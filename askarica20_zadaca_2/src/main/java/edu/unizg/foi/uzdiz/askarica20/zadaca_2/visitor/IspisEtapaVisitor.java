@@ -34,7 +34,6 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
             "Dani");
         System.out.println(
             "--------------------------------------------------------------------------------------------------------------");
-        // TODO dodaj da se brisu etape ako nisu dobre - pitanje s foruma
         for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
           dijete.prihvati(this);
         }
@@ -61,8 +60,5 @@ public class IspisEtapaVisitor implements VozniRedVisitor {
     int preostaleMinute = minute % 60;
     return String.format("%02d:%02d", sati, preostaleMinute);
   }
-  /*
-   * public String getOznakaVlaka() { return oznakaVlaka; }
-   */
 
 }

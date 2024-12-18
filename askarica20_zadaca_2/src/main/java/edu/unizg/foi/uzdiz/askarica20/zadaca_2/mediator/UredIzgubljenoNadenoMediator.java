@@ -6,7 +6,6 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.IzgubljeniPredmet;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_2.dto.Korisnik;
 
 public class UredIzgubljenoNadenoMediator implements PosrednikMediator {
-  // concrete mediator koji implementira logiku
 
   private List<IzgubljeniPredmet> nadeniPredmeti = new ArrayList<>();
   private List<IzgubljeniPredmet> izgubljeniPredmeti = new ArrayList<>();

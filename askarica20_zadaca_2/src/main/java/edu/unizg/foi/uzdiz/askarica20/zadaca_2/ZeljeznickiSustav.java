@@ -117,7 +117,7 @@ public class ZeljeznickiSustav {
   }
 
   public List<Pruga> dohvatiListuPruga() {
-    return listaPruga; // TODO di se ovo koristi - makni to...
+    return listaPruga;
   }
 
   public List<OznakaDana> dohvatiListuOznakaDana() {
@@ -197,8 +197,6 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIV.matches()) {
       System.out.println("Neispravna komanda - format IV");
     } else {
-      // double dispatch - odabire se prava metoda za izvrsavanje na temelju konkretnog tipa
-      // visitora i konkretnog tipa elementa koji se posjecuje
       vozniRed.prihvati(new IspisVlakovaVisitor());
     }
   }
@@ -211,7 +209,6 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIEV.matches()) {
       System.out.println("Neispravna komanda - format IEV oznaka");
     } else {
-      // TODO
       String oznakaVlaka = poklapanjePredlozakIEV.group("oznaka");
       vozniRed.prihvati(new IspisEtapaVisitor(oznakaVlaka));
     }
@@ -242,7 +239,6 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakIVRV.matches()) {
       System.out.println("Neispravna komanda - format IVRV oznaka");
     } else {
-      // TODO
       String oznakaVlaka = poklapanjePredlozakIVRV.group("oznaka");
       vozniRed.prihvati(new IspisVoznogRedaVisitor(oznakaVlaka));
     }
@@ -321,7 +317,6 @@ public class ZeljeznickiSustav {
     if (!poklapanjePredlozakDPK.matches()) {
       System.out.println("Neispravna komanda - format DPK ime prezime - oznakaVlaka [- stanica]");
     } else {
-      // TODO
       String ime = poklapanjePredlozakDPK.group("ime");
       String prezime = poklapanjePredlozakDPK.group("prezime");
       String oznakaVlaka = poklapanjePredlozakDPK.group("oznakaVlaka");
@@ -339,8 +334,7 @@ public class ZeljeznickiSustav {
   private void zakaciKorisnikaZaPracenje(Korisnik korisnik, String oznakaVlaka, String nazivStanice,
       String ime, String prezime) {
     System.out.println("Tražim vlak s oznakom: " + oznakaVlaka);
-    KorisnikConcreteObserver observer =
-        new KorisnikConcreteObserver(korisnik, oznakaVlaka, nazivStanice);
+    KorisnikConcreteObserver observer = new KorisnikConcreteObserver(korisnik, nazivStanice);
 
     VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
     if (vlak != null) {
@@ -902,7 +896,6 @@ public class ZeljeznickiSustav {
         return k;
       }
     }
-    // System.out.println("Korisnik s imenom " + ime + " " + prezime + " ne postoji.");
     return null;
   }
 }

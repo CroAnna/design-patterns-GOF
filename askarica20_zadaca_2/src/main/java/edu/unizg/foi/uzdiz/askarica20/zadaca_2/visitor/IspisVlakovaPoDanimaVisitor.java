@@ -11,8 +11,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_2.composite.VozniRedComposite;
 
 public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   private String trazeniDani;
-  private List<VlakComposite> vlakoviKojiVoze = new ArrayList<>(); // TODO probaj slozit ovo bez
-                                                                   // pomocne liste
+  private List<VlakComposite> vlakoviKojiVoze = new ArrayList<>();
 
   public IspisVlakovaPoDanimaVisitor(String dani) {
     this.trazeniDani = dani;
@@ -21,7 +20,6 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   @Override
   public void posjetiElement(VozniRedBaseComposite vozniRedBaseComposite) {
     if (vozniRedBaseComposite instanceof VozniRedComposite) {
-      // Prvi prolaz - skupi sve vlakove koji voze u tražene dane
       for (VozniRedComponent dijete : vozniRedBaseComposite.dohvatiDjecu()) {
         dijete.prihvati(this);
       }
@@ -30,7 +28,6 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
       VlakComposite vlak = (VlakComposite) vozniRedBaseComposite;
       boolean sveEtapeVoze = true;
 
-      // Provjeri sve etape vlaka
       for (VozniRedComponent etapa : vlak.dohvatiDjecu()) {
         if (etapa instanceof EtapaLeaf) {
           if (!voziLiEtapaUDane((EtapaLeaf) etapa)) {
@@ -47,9 +44,7 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
   }
 
   @Override
-  public void posjetiElement(EtapaLeaf etapaLeaf) {
-    // ne radi nis za ovu komandu
-  }
+  public void posjetiElement(EtapaLeaf etapaLeaf) {}
 
   private boolean voziLiEtapaUDane(EtapaLeaf etapa) {
     String daniVoznje = etapa.getOznakaDana();
@@ -95,6 +90,5 @@ public class IspisVlakovaPoDanimaVisitor implements VozniRedVisitor {
       System.out.println(
           "--------------------------------------------------------------------------------------------");
     }
-    System.out.println("Ukupno vozi vlakova: " + brojac);
   }
 }

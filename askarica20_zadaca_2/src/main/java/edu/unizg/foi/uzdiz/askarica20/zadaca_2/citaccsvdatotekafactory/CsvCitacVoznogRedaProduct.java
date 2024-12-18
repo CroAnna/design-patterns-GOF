@@ -26,7 +26,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
       Pattern.compile("[NO]"), Pattern.compile(".*"), Pattern.compile(".*"),
       Pattern.compile("[^;]+"), Pattern.compile("(B|U)?"), Pattern.compile("\\d{1,2}:\\d{2}"),
       Pattern.compile("\\d{1,2}:\\d{2}"), Pattern.compile("\\d*")};
-  // format vremena (1-2 znamenke za sate, : i dvije znamenke za minute)
 
   @Override
   public void ucitaj(String datoteka) {
@@ -80,7 +79,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     EtapaLeaf etapa = pripremiEtapu(dijeloviRetka);
 
     if (neispravneOznakeVlakova.contains(etapa.getOznakaVlaka())) {
-      // da ne moze ponovo napravit isti vlak koji je vec oznacen kao invalidan
       return;
     }
 
@@ -152,11 +150,6 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
 
     List<Stanica> staniceEtape = ZeljeznickiSustav.dohvatiInstancu()
         .dohvatiListuMedustanica(polaznaStanica, odredisnaStanica, oznakaPruge, smjer);
-    /*
-     * if (oznakaVlaka.equals("3302")) { for (Stanica s : staniceEtape) { //
-     * System.out.println("- stanica " + s.getNazivStanice() + " " + s.getVrNorm() + ", pruga:" // +
-     * s.getOznakaPruge()); } }
-     */
 
     if (staniceEtape.size() > 0) {
       etapa.setListaStanicaEtape(staniceEtape);
@@ -196,7 +189,7 @@ public class CsvCitacVoznogRedaProduct extends CsvCitacProduct {
     List<String> greske = new ArrayList<>();
     String[] dijeloviRetka = redak.split(";");
 
-    var minimalniBrojObaveznihStupaca = 6; // TODO ovo nije bas najsretnija implementacija
+    var minimalniBrojObaveznihStupaca = 6;
 
     if (dijeloviRetka.length <= minimalniBrojObaveznihStupaca) {
       greske.add("Neispravan broj stupaca. Očekivano: " + NAZIVI_STUPACA.length + ", dobiveno: "
