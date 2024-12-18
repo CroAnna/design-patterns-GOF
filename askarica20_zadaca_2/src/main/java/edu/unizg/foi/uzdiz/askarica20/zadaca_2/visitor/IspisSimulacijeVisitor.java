@@ -233,10 +233,13 @@ public class IspisSimulacijeVisitor implements VozniRedVisitor {
         Thread.sleep(1000 * 60 / koeficijent);
         virtualnoVrijeme++;
 
-        System.out.println("Virtualno vrijeme: " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
+        // System.out.println("Virtualno vrijeme: " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
 
         if (rasporedDogadaja.containsKey(virtualnoVrijeme)) {
           StanicniDogadaj dogadaj = rasporedDogadaja.get(virtualnoVrijeme);
+
+          System.out.println("\n=== DOLAZAK NA STANICU === " + dogadaj.nazivStanice + " ("
+              + dogadaj.oznakaPruge + ") u " + pretvoriMinuteUVrijeme(virtualnoVrijeme));
 
           vlak.obavijestiObservere(
               String.format("Vlak %s na stanici %s u %s", vlak.getOznakaVlaka(),
