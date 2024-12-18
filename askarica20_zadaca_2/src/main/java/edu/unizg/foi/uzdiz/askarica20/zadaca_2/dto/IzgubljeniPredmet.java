@@ -15,7 +15,6 @@ public class IzgubljeniPredmet {
     this.vrijeme = LocalDateTime.now();
   }
 
-  // Getters
   public Korisnik getKorisnik() {
     return korisnik;
   }
