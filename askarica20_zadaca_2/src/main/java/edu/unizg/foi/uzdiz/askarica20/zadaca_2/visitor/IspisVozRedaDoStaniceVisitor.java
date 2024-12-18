@@ -147,7 +147,19 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
   private boolean prolaziliVlakKrozStanice(VlakComposite vlak) {
     Set<String> staniceVlaka = new HashSet<>();
 
-    // Skupi sve stanice kroz koje vlak prolazi
+    // First check if the train operates within the specified time range
+    int odVrijeme = pretvoriVrijemeUMinute(odVr);
+    int doVrijeme = pretvoriVrijemeUMinute(doVr);
+
+    // Get train's departure time from first station
+    int vrijemePolaskaVlaka = vlak.getVrijemePolaska();
+
+    // Filter out trains that don't match the time criteria
+    if (vrijemePolaskaVlaka < odVrijeme || vrijemePolaskaVlaka > doVrijeme) {
+      return false;
+    }
+
+    // Collect all stations the train passes through
     for (VozniRedComponent komponenta : vlak.dohvatiDjecu()) {
       if (komponenta instanceof EtapaLeaf) {
         EtapaLeaf etapa = (EtapaLeaf) komponenta;
@@ -157,7 +169,7 @@ public class IspisVozRedaDoStaniceVisitor implements VozniRedVisitor {
       }
     }
 
-    // Provjeri prolazi li vlak kroz obje tražene stanice
+    // Check if the train passes through both required stations
     return staniceVlaka.contains(polaznaStanica) && staniceVlaka.contains(odredisnaStanica);
   }
 
