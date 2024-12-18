@@ -25,6 +25,27 @@ public class Pruga {
     return new ArrayList<Stanica>(stanice);
   }
 
+  public List<Stanica> dohvatiMedustanice(String pocetnaStanica, String zavrsnaStanica) {
+    int indexPocetne = -1, indexZavrsne = -1;
+    for (int i = 0; i < stanice.size(); i++) {
+      var st = stanice.get(i).getNazivStanice();
+      if (zavrsnaStanica.equals(st))
+        indexZavrsne = i;
+      if (pocetnaStanica.equals(st))
+        indexPocetne = i;
+    }
+
+    if (indexPocetne == -1 || indexZavrsne == -1)
+      return new ArrayList<Stanica>();
+
+    if (indexPocetne > indexZavrsne) {
+      int pom = indexPocetne;
+      indexPocetne = indexZavrsne;
+      indexZavrsne = pom;
+    }
+    return new ArrayList<>(stanice.subList(indexPocetne, indexZavrsne + 1));
+  }
+
   public Stanica dohvatiPocetnuStanicu() {
     if (stanice.isEmpty())
       return null;
@@ -77,42 +98,12 @@ public class Pruga {
     stanice.add(stanica);
   }
 
-  public List<Stanica> getStaniceObrnuto() {
-    List<Stanica> obrnuto = new ArrayList<Stanica>();
-    for (int i = stanice.size() - 1; i >= 0; i--) {
-      obrnuto.add(stanice.get(i));
-    }
-    return obrnuto;
-  }
-
   public int dohvatiUkupnuUdaljenost() {
     int uk = 0;
     for (Stanica stanica : stanice) {
       uk += stanica.getDuzina();
     }
     return uk;
-  }
-
-  public List<Stanica> dohvatiMedustanice(String pocetnaStanica, String zavrsnaStanica) {
-    int pocIndex = -1, zavIndex = -1;
-    for (int i = 0; i < stanice.size(); i++) {
-      var st = stanice.get(i).getNazivStanice();
-      if (zavrsnaStanica.equals(st))
-        zavIndex = i;
-      if (pocetnaStanica.equals(st))
-        pocIndex = i;
-    }
-
-    if (pocIndex == -1 || zavIndex == -1)
-      return new ArrayList<Stanica>();
-
-    if (pocIndex > zavIndex) {
-      int temp = pocIndex;
-      pocIndex = zavIndex;
-      zavIndex = temp;
-    }
-
-    return new ArrayList<>(stanice.subList(pocIndex, zavIndex + 1));
   }
 
 }

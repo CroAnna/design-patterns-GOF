@@ -74,7 +74,9 @@ public class IspisVoznogRedaVisitor implements VozniRedVisitor {
 
       // System.out.println("lista stanica etape ima " + staniceEtape.size());
 
-      System.out.println("smjer " + etapaLeaf.getSmjer());
+      // System.out.println("smjer " + etapaLeaf.getSmjer());
+
+      System.out.println("");
 
       if (etapaLeaf.getSmjer().equals("O")) {
         System.out.println("okretanje smjera");
