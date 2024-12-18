@@ -333,12 +333,10 @@ public class ZeljeznickiSustav {
 
   private void zakaciKorisnikaZaPracenje(Korisnik korisnik, String oznakaVlaka, String nazivStanice,
       String ime, String prezime) {
-    System.out.println("Tražim vlak s oznakom: " + oznakaVlaka);
     KorisnikConcreteObserver observer = new KorisnikConcreteObserver(korisnik, nazivStanice);
 
     VlakComposite vlak = (VlakComposite) vozniRed.dohvatiDijete(oznakaVlaka);
     if (vlak != null) {
-      System.out.println("Pronađen vlak: " + vlak.getClass().getSimpleName());
       vlak.prikvaciObservera(observer);
 
       if (nazivStanice != null) {

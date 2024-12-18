@@ -28,7 +28,6 @@ public class PronalaziteljPutanje {
   }
 
   public List<Stanica> dohvatiPutanjuIzmeduStanica(String polaznaStanica, String odredisnaStanica) {
-    // Try to find path through connecting station (Čakovec)
     String connectingStation = "Čakovec";
 
     String pruga1 = pronadiPrugu(polaznaStanica, connectingStation);
@@ -42,14 +41,12 @@ public class PronalaziteljPutanje {
           dohvatiPutanjuNaIstojPruzi(connectingStation, odredisnaStanica, pruga2);
 
       path.addAll(firstPart);
-      // Add only the last station from second part to avoid duplicate Čakovec
       if (!secondPart.isEmpty()) {
         path.addAll(secondPart.subList(1, secondPart.size()));
       }
       return path;
     }
 
-    // If no connecting path found, try direct path
     String directPruga = pronadiPrugu(polaznaStanica, odredisnaStanica);
     if (directPruga != null) {
       return dohvatiPutanjuNaIstojPruzi(polaznaStanica, odredisnaStanica, directPruga);
