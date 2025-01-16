@@ -1,5 +1,9 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_3;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +24,9 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Vozilo;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.KartaOriginator;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.PovijestKarataCaretaker;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.IzracunCijeneContext;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.mediator.PosrednikMediator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.mediator.UredIzgubljenoNadenoMediator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.obavjestavacobserver.KorisnikConcreteObserver;
@@ -40,6 +47,8 @@ public class ZeljeznickiSustav {
 	private final List<Korisnik> listaKorisnika = new ArrayList<Korisnik>();
 	private final VozniRedComposite vozniRed = new VozniRedComposite();
 	private final PosrednikMediator posrednikMediator = new UredIzgubljenoNadenoMediator();
+	private final IzracunCijeneContext izracunCijeneContext = new IzracunCijeneContext();
+	private final PovijestKarataCaretaker povijestKarata = new PovijestKarataCaretaker();
 
 	private int ukupanBrojGresakaUSustavu = 0, brojacKorisnika = 0, brojacGresakaVlakova = 0;
 	private IspisnikPodataka ispisnik = new IspisnikPodataka();
@@ -56,6 +65,10 @@ public class ZeljeznickiSustav {
 
 	public VozniRedComposite dohvatiVozniRed() {
 		return this.vozniRed;
+	}
+
+	public PovijestKarataCaretaker dohvatiPovijestKarata() {
+		return povijestKarata;
 	}
 
 	public void ukloniVlak(VlakComposite vlak) {
@@ -124,6 +137,10 @@ public class ZeljeznickiSustav {
 
 	public List<OznakaDana> dohvatiListuOznakaDana() {
 		return listaOznakaDana;
+	}
+
+	public IzracunCijeneContext dohvatiIzracunCijeneContext() {
+		return this.izracunCijeneContext;
 	}
 
 	public void zapocniRadSustava() {
@@ -214,8 +231,31 @@ public class ZeljeznickiSustav {
 			System.out.println(
 					"Neispravna komanda - format CVP cijenaNormalni cijenaUbrzani cijenaBrzi popustSuN popustWebMob uvecanjeVlak");
 		} else {
-			// TODO
+			double cijenaNormalni = Double
+					.parseDouble(poklapanjePredlozakCVP.group("cijenaNormalni").replace(',', '.'));
+			double cijenaUbrzani = Double.parseDouble(poklapanjePredlozakCVP.group("cijenaUbrzani").replace(',', '.'));
+			double cijenaBrzi = Double.parseDouble(poklapanjePredlozakCVP.group("cijenaBrzi").replace(',', '.'));
+			double popustSuN = Double.parseDouble(poklapanjePredlozakCVP.group("popustSuN").replace(',', '.'));
+			double popustWebMob = Double.parseDouble(poklapanjePredlozakCVP.group("popustWebMob").replace(',', '.'));
+			double uvecanjeVlak = Double.parseDouble(poklapanjePredlozakCVP.group("uvecanjeVlak").replace(',', '.'));
+
+			ZeljeznickiSustav.dohvatiInstancu().postaviCijeneKarata(cijenaNormalni, cijenaUbrzani, cijenaBrzi,
+					popustSuN, popustWebMob, uvecanjeVlak);
+
+			System.out.println("Uspješno postavljene cijene i popusti za karte.");
+
 		}
+	}
+
+	public void postaviCijeneKarata(double cijenaNormalni, double cijenaUbrzani, double cijenaBrzi, double popustSuN,
+			double popustWebMob, double uvecanjeVlak) {
+		izracunCijeneContext.postaviCijene(cijenaNormalni, cijenaUbrzani, cijenaBrzi, popustSuN, popustWebMob,
+				uvecanjeVlak);
+	}
+
+	public double izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine) {
+		izracunCijeneContext.postaviNacinKupovine(nacinKupovine);
+		return izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
 	}
 
 	private void provjeriKKPV2S(String[] dijeloviKomande, String unos) {
@@ -224,12 +264,40 @@ public class ZeljeznickiSustav {
 				+ "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}) - "
 				+ "(?<datum>\\d{2}\\.\\d{2}\\.\\d{4}\\.) - " + "(?<nacinKupovine>WM|B|V)$");
 		Matcher poklapanjePredlozakKKPV2S = predlozakprovjeriKKPV2S.matcher(unos);
-
 		if (!poklapanjePredlozakKKPV2S.matches()) {
 			System.out.println(
 					"Neispravna komanda - format KKPV2S oznaka - polaznaStanica - odredišnaStanica - datum - načinKupovine");
 		} else {
-			// TODO
+			String oznakaVlaka = poklapanjePredlozakKKPV2S.group("oznaka");
+			String polaznaStanica = poklapanjePredlozakKKPV2S.group("polaznaStanica");
+			String odredisnaStanica = poklapanjePredlozakKKPV2S.group("odredisnaStanica");
+			String datumString = poklapanjePredlozakKKPV2S.group("datum");
+			String nacinKupovine = poklapanjePredlozakKKPV2S.group("nacinKupovine");
+
+			VlakComposite vlak = (VlakComposite) ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed()
+					.dohvatiDijete(oznakaVlaka);
+
+			if (vlak == null) {
+				System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
+				return;
+			}
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
+			LocalDateTime datumVoznje = LocalDate.parse(datumString, formatter).atStartOfDay();
+
+			ZeljeznickiSustav.dohvatiInstancu().izracunCijeneContext.postaviNacinKupovine(nacinKupovine);
+			double cijena = ZeljeznickiSustav.dohvatiInstancu().izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
+
+			KartaOriginator karta = new KartaOriginator(oznakaVlaka, polaznaStanica, odredisnaStanica,
+					LocalDateTime.of(datumVoznje.toLocalDate(),
+							LocalTime.of(vlak.getVrijemePolaska() / 60, vlak.getVrijemePolaska() % 60)),
+					LocalDateTime.of(datumVoznje.toLocalDate(),
+							LocalTime.of(vlak.getVrijemeDolaska() / 60, vlak.getVrijemeDolaska() % 60)),
+					cijena, cijena, nacinKupovine, LocalDateTime.now());
+
+			ZeljeznickiSustav.dohvatiInstancu().dohvatiPovijestKarata().dodajKartu(karta.spremiStanjeUMemento());
+
+			System.out.println("Uspješno kupljena karta. Cijena: " + String.format("%.2f", cijena) + " €");
 		}
 	}
 
