@@ -3,7 +3,14 @@ java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.
 druga dz:
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_2_stanice.csv --zps DZ_2_vozila.csv --zk DZ_2_kompozicije.csv --zvr DZ_2_vozni_red.csv --zod DZ_2_oznake_dana.csv
 
-java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_3/target/askarica20_zadaca_3-1.0.0.jar --zs DZ_2_stanice.csv --zps DZ_2_vozila.csv --zk DZ_2_kompozicije.csv --zvr DZ_2_vozni_red.csv --zod DZ_2_oznake_dana.csv
+treca dz:
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_3/target/askarica20_zadaca_3-1.0.0.jar --zs DZ_3_stanice.csv --zps DZ_3_vozila.csv --zk DZ_3_kompozicije.csv --zvr DZ_3_vozni_red.csv --zod DZ_3_oznake_dana.csv
+
+CVP 0,10 0,12 0,15 20,0 10,0 10,0
+IKKPV
+IKKPV 3
+IRPS K
+IRPS Z M501
 
 IEVD PoUSrČPeSuN
 IEVD PoSrPeN
