@@ -28,7 +28,7 @@ public class IzracunCijeneContext {
 		this.uvecanjeVlak = uvecanjeVlak;
 	}
 
-	public double izracunajCijenu(VlakComposite vlak, LocalDateTime datumVoznje) {
+	public double[] izracunajCijenu(VlakComposite vlak, LocalDateTime datumVoznje) {
 		if (strategija == null) {
 			throw new IllegalStateException("Strategija nije ispravno odabrana!");
 		}

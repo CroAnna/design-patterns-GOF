@@ -24,6 +24,7 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.OznakaDana;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Pruga;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Vozilo;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.CuvateljKarteMemento;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.KartaOriginator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.PovijestKarataCaretaker;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.BlagajnaStrategy;
@@ -283,22 +284,22 @@ public class ZeljeznickiSustav {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
 			LocalDateTime datumVoznje = LocalDate.parse(datumString, formatter).atStartOfDay();
 
-			double cijena = izracunajCijenuKarte(vlak, datumVoznje, nacinKupovine);
+			double[] cijene = izracunajCijenuKarte(vlak, datumVoznje, nacinKupovine);
 
 			KartaOriginator karta = new KartaOriginator(oznakaVlaka, polaznaStanica, odredisnaStanica,
 					LocalDateTime.of(datumVoznje.toLocalDate(),
 							LocalTime.of(vlak.getVrijemePolaska() / 60, vlak.getVrijemePolaska() % 60)),
 					LocalDateTime.of(datumVoznje.toLocalDate(),
 							LocalTime.of(vlak.getVrijemeDolaska() / 60, vlak.getVrijemeDolaska() % 60)),
-					cijena, cijena, nacinKupovine, LocalDateTime.now());
+					cijene[0], cijene[1], nacinKupovine, LocalDateTime.now());
 
-			dohvatiPovijestKarata().dodajKartu(karta.spremiStanjeUMemento());
+			dohvatiPovijestKarata().dodajKartu(karta.kreirajMemento());
 
-			System.out.println("Uspješno kupljena karta. Cijena: " + String.format("%.2f", cijena) + " €");
+			System.out.println("Uspješno kupljena karta. Cijena: " + String.format("%.2f", cijene[1]) + " €");
 		}
 	}
 
-	public double izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine) {
+	public double[] izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine) {
 		KupnjaKarteStrategy strategija = postaviNacinKupovine(nacinKupovine);
 		izracunCijeneContext.setStrategija(strategija);
 		return izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
@@ -320,12 +321,69 @@ public class ZeljeznickiSustav {
 	private void provjeriIKKPV(String[] dijeloviKomande, String unos) {
 		Pattern predlozakprovjeriIKKPV = Pattern.compile("^IKKPV(?:\\s+(?<redniBroj>\\d+))?$");
 		Matcher poklapanjePredlozakIKKPV = predlozakprovjeriIKKPV.matcher(unos);
-
 		if (!poklapanjePredlozakIKKPV.matches()) {
 			System.out.println("Neispravna komanda - format IKKPV [n]");
-		} else {
-			// TODO
+			return;
 		}
+
+		String redniBrojStr = poklapanjePredlozakIKKPV.group("redniBroj");
+
+		if (redniBrojStr != null) {
+			int redniBroj = Integer.parseInt(redniBrojStr);
+			try {
+				System.out.println("\n\n--------------------------------------------------- KARTA " + redniBroj
+						+ " ---------------------------------------------------\n");
+				System.out.printf("%-8s %-20s %-20s %-8s %-8s %-10s %-10s %-15s %-19s%n", "Vlak", "Polazna stanica",
+						"Odredišna stanica", "Polazak", "Dolazak", "Osn.cijena", "Kon.cijena", "Način kupnje",
+						"Datum kupnje");
+				System.out.println(
+						"--------------------------------------------------------------------------------------------------------------------");
+
+				ispisiKartu(povijestKarata.dohvatiKartu(redniBroj - 1));
+				System.out.println(
+						"\n--------------------------------------------------------------------------------------------------------------------\n");
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println("Karta s rednim brojem " + redniBroj + " ne postoji.");
+			}
+		} else {
+			List<CuvateljKarteMemento> karte = povijestKarata.dohvatiSveKarte();
+			if (karte.isEmpty()) {
+				System.out.println("Nema kupljenih karata.");
+				return;
+			}
+
+			System.out.println("\n\n----------------------------------------------------- POPIS KARATA"
+					+ " -----------------------------------------------------\n");
+			System.out.printf("%-8s %-20s %-20s %-8s %-8s %-10s %-10s %-15s %-19s%n", "Vlak", "Polazna stanica",
+					"Odredišna stanica", "Polazak", "Dolazak", "Osn.cijena", "Kon.cijena", "Način kupnje",
+					"Datum kupnje");
+			System.out.println(
+					"--------------------------------------------------------------------------------------------------------------------");
+			for (CuvateljKarteMemento karta : karte) {
+				ispisiKartu(karta);
+			}
+			System.out.println(
+					"\n--------------------------------------------------------------------------------------------------------------------\n");
+		}
+	}
+
+	private void ispisiKartu(CuvateljKarteMemento karta) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		DateTimeFormatter datumFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
+
+		System.out.printf("%-8s %-20s %-20s %-8s %-8s %-10.2f %-10.2f %-15s %-19s%n", karta.getOznakaVlaka(),
+				karta.getPolaznaStanica(), karta.getOdredisnaStanica(), karta.getVrijemePolaska().format(formatter),
+				karta.getVrijemeDolaska().format(formatter), karta.getOsnovnaCijena(), karta.getKonacnaCijena(),
+				pretvoriNacinKupnje(karta.getNacinKupnje()), karta.getDatumKupovine().format(datumFormatter));
+	}
+
+	private String pretvoriNacinKupnje(String nacinKupnje) {
+		return switch (nacinKupnje) {
+		case "B" -> "Blagajna";
+		case "WM" -> "Web/Mobilna";
+		case "V" -> "U vlaku";
+		default -> nacinKupnje;
+		};
 	}
 
 	private void provjeriUKP2S(String[] dijeloviKomande, String unos) {

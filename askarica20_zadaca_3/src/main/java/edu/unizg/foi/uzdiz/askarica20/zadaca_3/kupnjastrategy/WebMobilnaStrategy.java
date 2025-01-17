@@ -14,26 +14,26 @@ public class WebMobilnaStrategy implements KupnjaKarteStrategy {
 	}
 
 	@Override
-	public double izracunajCijenuOvisnoOVrsti(VlakComposite vlak, LocalDateTime datumVoznje, double cijenaNormalni,
+	public double[] izracunajCijenuOvisnoOVrsti(VlakComposite vlak, LocalDateTime datumVoznje, double cijenaNormalni,
 			double cijenaUbrzani, double cijenaBrzi, double popustVikendom) {
-		double cijena;
+		double osnovna, konacna;
+
 		switch (vlak.getVrstaVlaka()) {
 		case "U":
-			cijena = vlak.getUkupniKilometri() * cijenaUbrzani;
+			osnovna = vlak.getUkupniKilometri() * cijenaUbrzani;
 			break;
 		case "B":
-			cijena = vlak.getUkupniKilometri() * cijenaBrzi;
+			osnovna = vlak.getUkupniKilometri() * cijenaBrzi;
 			break;
 		default:
-			cijena = vlak.getUkupniKilometri() * cijenaNormalni;
+			osnovna = vlak.getUkupniKilometri() * cijenaNormalni;
 		}
 
-		cijena = cijena * (1 - popustWeb / 100);
-
+		konacna = osnovna * (1 - popustWeb / 100);
 		if (datumVoznje.getDayOfWeek() == DayOfWeek.SATURDAY || datumVoznje.getDayOfWeek() == DayOfWeek.SUNDAY) {
-			cijena = cijena * (1 - popustVikendom / 100);
+			konacna = konacna * (1 - popustVikendom / 100);
 		}
 
-		return cijena;
+		return new double[] { osnovna, konacna };
 	}
 }

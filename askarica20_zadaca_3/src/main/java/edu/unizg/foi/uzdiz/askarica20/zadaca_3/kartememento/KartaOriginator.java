@@ -29,13 +29,13 @@ public class KartaOriginator {
 		this.datumKupovine = datumKupovine;
 	}
 
-	public CuvateljKarteMemento spremiStanjeUMemento() {
+	public CuvateljKarteMemento kreirajMemento() {
 		// kreiranje mementa
 		return new CuvateljKarteMemento(oznakaVlaka, polaznaStanica, odredisnaStanica, vrijemePolaska, vrijemeDolaska,
 				osnovnaCijena, konacnaCijena, nacinKupnje, datumKupovine);
 	}
 
-	public void vratiStanjeIzMementa(CuvateljKarteMemento memento) {
+	public void postaviMemento(CuvateljKarteMemento memento) {
 		// vracanje stanja
 		this.oznakaVlaka = memento.getOznakaVlaka();
 		this.polaznaStanica = memento.getPolaznaStanica();
