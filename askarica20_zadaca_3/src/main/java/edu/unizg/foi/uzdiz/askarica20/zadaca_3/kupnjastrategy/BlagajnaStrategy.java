@@ -6,20 +6,10 @@ import java.time.LocalDateTime;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.composite.VlakComposite;
 
 public class BlagajnaStrategy implements KupnjaKarteStrategy {
-	private final double cijenaNormalni;
-	private final double cijenaUbrzani;
-	private final double cijenaBrzi;
-	private final double popustVikendom;
-
-	public BlagajnaStrategy(double cijenaNormalni, double cijenaUbrzani, double cijenaBrzi, double popustVikendom) {
-		this.cijenaNormalni = cijenaNormalni;
-		this.cijenaUbrzani = cijenaUbrzani;
-		this.cijenaBrzi = cijenaBrzi;
-		this.popustVikendom = popustVikendom;
-	}
 
 	@Override
-	public double izracunajCijenu(VlakComposite vlak, LocalDateTime datumVoznje) {
+	public double izracunajCijenuOvisnoOVrsti(VlakComposite vlak, LocalDateTime datumVoznje, double cijenaNormalni,
+			double cijenaUbrzani, double cijenaBrzi, double popustVikendom) {
 		double cijena;
 		switch (vlak.getVrstaVlaka()) {
 		case "U":

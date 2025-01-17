@@ -26,7 +26,11 @@ import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Stanica;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Vozilo;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.KartaOriginator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento.PovijestKarataCaretaker;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.BlagajnaStrategy;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.IzracunCijeneContext;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.KupnjaKarteStrategy;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.UVlakuStrategy;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy.WebMobilnaStrategy;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.mediator.PosrednikMediator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.mediator.UredIzgubljenoNadenoMediator;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.obavjestavacobserver.KorisnikConcreteObserver;
@@ -47,11 +51,11 @@ public class ZeljeznickiSustav {
 	private final List<Korisnik> listaKorisnika = new ArrayList<Korisnik>();
 	private final VozniRedComposite vozniRed = new VozniRedComposite();
 	private final PosrednikMediator posrednikMediator = new UredIzgubljenoNadenoMediator();
-	private final IzracunCijeneContext izracunCijeneContext = new IzracunCijeneContext();
+	private IzracunCijeneContext izracunCijeneContext;
 	private final PovijestKarataCaretaker povijestKarata = new PovijestKarataCaretaker();
+	private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
 	private int ukupanBrojGresakaUSustavu = 0, brojacKorisnika = 0, brojacGresakaVlakova = 0;
-	private IspisnikPodataka ispisnik = new IspisnikPodataka();
 
 	private ZeljeznickiSustav() {
 	}
@@ -243,19 +247,13 @@ public class ZeljeznickiSustav {
 					popustSuN, popustWebMob, uvecanjeVlak);
 
 			System.out.println("Uspješno postavljene cijene i popusti za karte.");
-
 		}
 	}
 
-	public void postaviCijeneKarata(double cijenaNormalni, double cijenaUbrzani, double cijenaBrzi, double popustSuN,
-			double popustWebMob, double uvecanjeVlak) {
-		izracunCijeneContext.postaviCijene(cijenaNormalni, cijenaUbrzani, cijenaBrzi, popustSuN, popustWebMob,
-				uvecanjeVlak);
-	}
-
-	public double izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine) {
-		izracunCijeneContext.postaviNacinKupovine(nacinKupovine);
-		return izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
+	public void postaviCijeneKarata(double cijenaNormalni, double cijenaUbrzani, double cijenaBrzi,
+			double popustVikendom, double popustWebMob, double uvecanjeVlak) {
+		izracunCijeneContext = new IzracunCijeneContext(cijenaNormalni, cijenaUbrzani, cijenaBrzi, popustVikendom,
+				popustWebMob, uvecanjeVlak);
 	}
 
 	private void provjeriKKPV2S(String[] dijeloviKomande, String unos) {
@@ -285,8 +283,7 @@ public class ZeljeznickiSustav {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
 			LocalDateTime datumVoznje = LocalDate.parse(datumString, formatter).atStartOfDay();
 
-			ZeljeznickiSustav.dohvatiInstancu().izracunCijeneContext.postaviNacinKupovine(nacinKupovine);
-			double cijena = ZeljeznickiSustav.dohvatiInstancu().izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
+			double cijena = izracunajCijenuKarte(vlak, datumVoznje, nacinKupovine);
 
 			KartaOriginator karta = new KartaOriginator(oznakaVlaka, polaznaStanica, odredisnaStanica,
 					LocalDateTime.of(datumVoznje.toLocalDate(),
@@ -295,9 +292,28 @@ public class ZeljeznickiSustav {
 							LocalTime.of(vlak.getVrijemeDolaska() / 60, vlak.getVrijemeDolaska() % 60)),
 					cijena, cijena, nacinKupovine, LocalDateTime.now());
 
-			ZeljeznickiSustav.dohvatiInstancu().dohvatiPovijestKarata().dodajKartu(karta.spremiStanjeUMemento());
+			dohvatiPovijestKarata().dodajKartu(karta.spremiStanjeUMemento());
 
 			System.out.println("Uspješno kupljena karta. Cijena: " + String.format("%.2f", cijena) + " €");
+		}
+	}
+
+	public double izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine) {
+		KupnjaKarteStrategy strategija = postaviNacinKupovine(nacinKupovine);
+		izracunCijeneContext.setStrategija(strategija);
+		return izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
+	}
+
+	public KupnjaKarteStrategy postaviNacinKupovine(String nacinKupovine) {
+		switch (nacinKupovine) {
+		case "B":
+			return new BlagajnaStrategy();
+		case "WM":
+			return new WebMobilnaStrategy(izracunCijeneContext.getPopustWeb());
+		case "V":
+			return new UVlakuStrategy(izracunCijeneContext.getUvecanjeVlak());
+		default:
+			throw new IllegalArgumentException("Nepoznat način kupovine: " + nacinKupovine);
 		}
 	}
 
