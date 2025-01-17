@@ -12,7 +12,14 @@ KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - WM
 
 IKKPV
 IKKPV 3
+
+PSP2S M501 - Donji Kraljevec - Mala Subotica - K
+PSP2S M501 - Donji Kraljevec - Mala Subotica - T
+PSP2S M501 - Donji Kraljevec - Mala Subotica - I
+PSP2S M501 - Donji Kraljevec - Mala Subotica - Z
 IRPS K
+IRPS I
+IRPS K M501
 IRPS Z M501
 
 IEVD PoUSrČPeSuN

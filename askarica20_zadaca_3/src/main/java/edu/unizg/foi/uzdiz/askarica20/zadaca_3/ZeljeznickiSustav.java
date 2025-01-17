@@ -408,23 +408,50 @@ public class ZeljeznickiSustav {
 				+ "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}) - "
 				+ "(?<status>[IKTZ])$");
 		Matcher poklapanjePredlozakPSP2S = predlozakprovjeriPSP2S.matcher(unos);
-
 		if (!poklapanjePredlozakPSP2S.matches()) {
 			System.out.println("Neispravna komanda - format PSP2S oznaka - polaznaStanica - odredišnaStanica - status");
-		} else {
-			// TODO
+			return;
 		}
+
+		String oznaka = poklapanjePredlozakPSP2S.group("oznaka");
+		String polaznaStanica = poklapanjePredlozakPSP2S.group("polaznaStanica");
+		String odredisnaStanica = poklapanjePredlozakPSP2S.group("odredisnaStanica");
+		String status = poklapanjePredlozakPSP2S.group("status");
+
+		if (!postojiLiStanicaPoImenu(polaznaStanica) || !postojiLiStanicaPoImenu(odredisnaStanica)) {
+			System.out.println("Jedna ili obje stanice ne postoje u sustavu!");
+			return;
+		}
+
+		Pruga pruga = null;
+		for (Pruga p : listaPruga) {
+			if (p.getOznaka().equals(oznaka)) {
+				pruga = p;
+				break;
+			}
+		}
+
+		if (pruga == null) {
+			System.out.println("Pruga s oznakom " + oznaka + " ne postoji!");
+			return;
+		}
+
+		boolean uspjesno = pruga.promijeniStanjeRelacije(polaznaStanica, odredisnaStanica, status);
+		ispisnik.ispisPromjeneStanjaPruge(oznaka, polaznaStanica, odredisnaStanica, status, uspjesno);
 	}
 
 	private void provjeriIRPS(String[] dijeloviKomande, String unos) {
 		Pattern predlozakprovjeriIRPS = Pattern.compile("^IRPS (?<status>[IKTZ])(?:\\s+(?<oznaka>[A-Z]\\d{3}))?$");
 		Matcher poklapanjePredlozakIRPS = predlozakprovjeriIRPS.matcher(unos);
-
 		if (!poklapanjePredlozakIRPS.matches()) {
 			System.out.println("Neispravna komanda - format IRPS status [oznaka]");
-		} else {
-			// TODO
+			return;
 		}
+
+		String status = poklapanjePredlozakIRPS.group("status");
+		String oznaka = poklapanjePredlozakIRPS.group("oznaka");
+
+		ispisnik.ispisRelacijaSaStatusom(status, oznaka, listaPruga);
 	}
 
 	private void provjeriIV(String[] dijeloviKomande, String unos) {
