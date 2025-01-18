@@ -16,6 +16,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.command.PotrubiCommand;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.command.UpaliKlimuCommand;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.command.UpaliSvjetlaCommand;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.command.UpravljackaTablaInvoker;
+import edu.unizg.foi.uzdiz.askarica20.zadaca_3.command.VlakReceiver;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.composite.VlakComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.composite.VozniRedComposite;
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.dto.Kompozicija;
@@ -210,6 +215,8 @@ public class ZeljeznickiSustav {
 			provjeriPSP2S(dijeloviKomande, unos);
 		} else if (glavniDioKomande.equals("IRPS")) {
 			provjeriIRPS(dijeloviKomande, unos);
+		} else if (glavniDioKomande.equals("CMD")) {
+			provjeriCMD(dijeloviKomande, unos);
 		} else {
 			if (!unos.equalsIgnoreCase("Q")) {
 				System.out.println("Neispravna komanda.");
@@ -224,6 +231,46 @@ public class ZeljeznickiSustav {
 			}
 		}
 		return false;
+	}
+
+	private void provjeriCMD(String[] dijeloviKomande, String unos) {
+		Pattern predlozakCMD = Pattern
+				.compile("^CMD (?<oznaka>(\\d+|[A-Z]{1,2} \\d+|[A-Z]\\d+)) - (?<akcije>[KTS]{1,3})$");
+		Matcher poklapanjePredlozakCMD = predlozakCMD.matcher(unos);
+
+		if (!poklapanjePredlozakCMD.matches()) {
+			System.out.println("Neispravna komanda - format CMD oznaka - [KTS]");
+		} else {
+			String oznakaVlaka = poklapanjePredlozakCMD.group("oznaka");
+			String akcije = poklapanjePredlozakCMD.group("akcije");
+
+			VlakComposite vlak = (VlakComposite) ZeljeznickiSustav.dohvatiInstancu().dohvatiVozniRed()
+					.dohvatiDijete(oznakaVlaka);
+
+			if (vlak == null) {
+				System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
+				return;
+			}
+
+			VlakReceiver receiver = new VlakReceiver(vlak);
+			UpravljackaTablaInvoker invoker = new UpravljackaTablaInvoker();
+
+			for (char akcija : akcije.toCharArray()) {
+				switch (akcija) {
+				case 'K':
+					invoker.dodajKomandu(new UpaliKlimuCommand(receiver));
+					break;
+				case 'T':
+					invoker.dodajKomandu(new PotrubiCommand(receiver));
+					break;
+				case 'S':
+					invoker.dodajKomandu(new UpaliSvjetlaCommand(receiver));
+					break;
+				}
+			}
+
+			invoker.izvrsiKomande();
+		}
 	}
 
 	private void provjeriCVP(String[] dijeloviKomande, String unos) {
@@ -439,12 +486,7 @@ public class ZeljeznickiSustav {
 		boolean uspjesno = pruga.promijeniStanjeRelacije(polaznaStanica, odredisnaStanica, status);
 		if (uspjesno) {
 			System.out.println("Uspjesna promjena.");
-		} else {
-			System.out.println("Greska pri mijenjanju.");
 		}
-
-		// ispisnik.ispisPromjeneStanjaPruge(oznaka, polaznaStanica, odredisnaStanica,
-		// status, uspjesno);
 	}
 
 	private void provjeriIRPS(String[] dijeloviKomande, String unos) {

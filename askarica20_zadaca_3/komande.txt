@@ -6,6 +6,15 @@ java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.
 treca dz:
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_3/target/askarica20_zadaca_3-1.0.0.jar --zs DZ_3_stanice.csv --zps DZ_3_vozila.csv --zk DZ_3_kompozicije.csv --zvr DZ_3_vozni_red.csv --zod DZ_3_oznake_dana.csv
 
+CMD 3001 - K
+CMD 3001 - T
+CMD 3001 - S
+CMD B 747 - KT
+CMD EC 213 - TS
+CMD EN 415 - SK
+CMD 3001 - KTS
+CMD 3001 - STK
+
 CVP 0,10 0,12 0,15 20,0 10,0 10,0
 KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - WM
 =3,69 €
@@ -13,6 +22,7 @@ KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - WM
 IKKPV
 IKKPV 3
 
+PSP2S M501 - Donji Mihaljevec - Čehovec - K
 PSP2S M501 - Donji Kraljevec - Mala Subotica - K
 PSP2S M501 - Donji Kraljevec - Mala Subotica - T
 PSP2S M501 - Donji Kraljevec - Mala Subotica - I
