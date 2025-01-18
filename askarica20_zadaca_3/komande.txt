@@ -19,6 +19,8 @@ PSP2S M501 - Donji Kraljevec - Mala Subotica - I
 PSP2S M501 - Donji Kraljevec - Mala Subotica - Z
 IRPS K
 IRPS I
+IRPS Z
+IRPS T
 IRPS K M501
 IRPS Z M501
 

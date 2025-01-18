@@ -32,4 +32,31 @@ public class PrugaContext {
 	public int getBrojKolosijeka() {
 		return brojKolosijeka;
 	}
+
+	public String promijeniStanje(String novoStanje) {
+		if (trenutnoStanje.getOznaka().equals(novoStanje)) {
+			System.out.println("Pruga je već u tom stanju.");
+			return "OK";
+		}
+
+		PrugaState novoStanjeObj = switch (novoStanje) {
+		case "I" -> new StanjeIspravna();
+		case "K" -> new StanjeKvar();
+		case "T" -> new StanjeTestiranje();
+		case "Z" -> new StanjeZatvorena();
+		default -> null;
+		};
+
+		if (novoStanjeObj == null) {
+			return "Nepoznato stanje!";
+		}
+
+		if (novoStanjeObj.handle(this)) {
+			trenutnoStanje = novoStanjeObj; // Postavljamo novo stanje tek nakon što znamo da je prijelaz dozvoljen
+			return "OK";
+		} else {
+			return "Nedozvoljen prijelaz iz stanja " + trenutnoStanje.getOznaka() + " u stanje " + novoStanje;
+		}
+	}
+
 }

@@ -437,7 +437,14 @@ public class ZeljeznickiSustav {
 		}
 
 		boolean uspjesno = pruga.promijeniStanjeRelacije(polaznaStanica, odredisnaStanica, status);
-		ispisnik.ispisPromjeneStanjaPruge(oznaka, polaznaStanica, odredisnaStanica, status, uspjesno);
+		if (uspjesno) {
+			System.out.println("Uspjesna promjena.");
+		} else {
+			System.out.println("Greska pri mijenjanju.");
+		}
+
+		// ispisnik.ispisPromjeneStanjaPruge(oznaka, polaznaStanica, odredisnaStanica,
+		// status, uspjesno);
 	}
 
 	private void provjeriIRPS(String[] dijeloviKomande, String unos) {

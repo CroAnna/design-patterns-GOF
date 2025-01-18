@@ -35,43 +35,45 @@ public class Pruga {
 		String kljucRelacije = polaznaStanica + "-" + odredisnaStanica;
 
 		List<Stanica> medustanice = dohvatiMedustanice(polaznaStanica, odredisnaStanica);
-		if (medustanice.isEmpty())
+		if (medustanice.isEmpty()) {
+			System.out.println("Nema medustanica.");
 			return false;
-
+		}
 		// Provjera preklapanja relacija za pruge s jednim kolosijekom
 		if (medustanice.get(0).getBrojKolosjeka() == 1) {
 			for (var entry : stanjaRelacija.entrySet()) {
+				// Preskočimo provjeru ako gledamo istu relaciju
+				if (entry.getKey().equals(kljucRelacije)) {
+					continue;
+				}
+
 				String[] stanice = entry.getKey().split("-");
 				List<Stanica> postojeceMedustanice = dohvatiMedustanice(stanice[0], stanice[1]);
 
 				// Provjera presjeka relacija
 				for (Stanica s : postojeceMedustanice) {
 					if (medustanice.contains(s)) {
+						System.out.println("Greška: Postoji preklapanje relacija na pruzi s jednim kolosijekom!");
 						return false;
 					}
 				}
 			}
 		}
 
-		PrugaContext context = stanjaRelacija.computeIfAbsent(kljucRelacije,
-				k -> new PrugaContext(polaznaStanica, odredisnaStanica, medustanice.get(0).getBrojKolosjeka()));
-
-		boolean uspjesno = false;
-		switch (novoStanje) {
-		case "I":
-			uspjesno = context.getTrenutnoStanje().postaviIspravna(context);
-			break;
-		case "K":
-			uspjesno = context.getTrenutnoStanje().postaviKvar(context);
-			break;
-		case "T":
-			uspjesno = context.getTrenutnoStanje().postaviTestiranje(context);
-			break;
-		case "Z":
-			uspjesno = context.getTrenutnoStanje().postaviZatvorena(context);
-			break;
+		PrugaContext context;
+		if (!stanjaRelacija.containsKey(kljucRelacije)) {
+			context = new PrugaContext(polaznaStanica, odredisnaStanica, medustanice.get(0).getBrojKolosjeka());
+			stanjaRelacija.put(kljucRelacije, context);
+		} else {
+			context = stanjaRelacija.get(kljucRelacije);
 		}
-		return uspjesno;
+
+		String rezultat = context.promijeniStanje(novoStanje);
+		if (!rezultat.equals("OK")) {
+			System.out.println("Greška: " + rezultat);
+			return false;
+		}
+		return true;
 	}
 
 	public List<String> dohvatiRelacijeUStanju(String status) {

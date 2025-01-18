@@ -2,26 +2,15 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_3.stanjaprugestate;
 
 public class StanjeTestiranje implements PrugaState {
 	@Override
-	public boolean postaviIspravna(PrugaContext context) {
-		context.setStanje(new StanjeIspravna());
-		return true;
-	}
-
-	@Override
-	public boolean postaviKvar(PrugaContext context) {
-		context.setStanje(new StanjeKvar());
-		return true;
-	}
-
-	@Override
-	public boolean postaviTestiranje(PrugaContext context) {
-		return false; // već je u testiranju
-	}
-
-	@Override
-	public boolean postaviZatvorena(PrugaContext context) {
-		context.setStanje(new StanjeZatvorena());
-		return true;
+	public boolean handle(PrugaContext context) {
+		// Iz kvara ili zatvorenog može u testiranje
+		String trenutnaOznaka = context.getTrenutnoStanje().getOznaka();
+		System.out.println("trenutnaOznaka " + trenutnaOznaka + "mijenja se u T");
+		if (trenutnaOznaka.equals("K") || trenutnaOznaka.equals("Z")) {
+			context.setStanje(this);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
