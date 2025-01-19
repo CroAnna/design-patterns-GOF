@@ -1,5 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_3.composite;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import edu.unizg.foi.uzdiz.askarica20.zadaca_3.ZeljeznickiSustav;
@@ -187,6 +189,63 @@ public class VlakComposite extends VozniRedBaseComposite {
 		}
 
 		return false;
+	}
+
+	public int izracunajUdaljenostIzmeduStanica(String polaznaStanica, String odredisnaStanica) {
+		int udaljenost = 0;
+
+		for (VozniRedComponent komponenta : djeca) {
+			if (komponenta instanceof EtapaLeaf) {
+				EtapaLeaf etapa = (EtapaLeaf) komponenta;
+
+				udaljenost = izracunajUdaljenostZaSmjer(etapa, polaznaStanica, odredisnaStanica, false);
+				if (udaljenost > 0) {
+					return udaljenost;
+				}
+
+				udaljenost = izracunajUdaljenostZaSmjer(etapa, polaznaStanica, odredisnaStanica, true);
+				if (udaljenost > 0) {
+					return udaljenost;
+				}
+			}
+		}
+		return 0;
+	}
+
+	private int izracunajUdaljenostZaSmjer(EtapaLeaf etapa, String polaznaStanica, String odredisnaStanica,
+			boolean obrnuto) {
+		int udaljenost = 0;
+		boolean polaznaPronadena = false;
+		List<Stanica> stanice = new ArrayList<>(etapa.getListaStanicaEtape());
+
+		if (obrnuto) {
+			Collections.reverse(stanice);
+		}
+
+		int index = 0;
+		for (Stanica stanica : stanice) {
+			if (!polaznaPronadena) {
+				if (stanica.getNazivStanice().equals(polaznaStanica)) {
+					polaznaPronadena = true;
+				}
+			} else {
+				if (!obrnuto) {
+					if (!(index == 0 && stanica.getDuzina() != 0)) {
+						udaljenost = udaljenost + stanica.getDuzina();
+					}
+				} else {
+					if (index > 0) {
+						udaljenost = udaljenost + stanice.get(index - 1).getDuzina();
+					}
+				}
+
+				if (stanica.getNazivStanice().equals(odredisnaStanica)) {
+					return udaljenost;
+				}
+			}
+			index++;
+		}
+		return 0;
 	}
 
 	@Override

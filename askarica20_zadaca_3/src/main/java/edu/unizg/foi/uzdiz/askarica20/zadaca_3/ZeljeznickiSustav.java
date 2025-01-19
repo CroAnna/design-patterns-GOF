@@ -339,7 +339,7 @@ public class ZeljeznickiSustav {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
 			LocalDateTime datumVoznje = LocalDate.parse(datumString, formatter).atStartOfDay();
 
-			double[] cijene = izracunajCijenuKarte(vlak, datumVoznje, nacinKupovine);
+			double[] cijene = izracunajCijenuKarte(vlak, datumVoznje, nacinKupovine, polaznaStanica, odredisnaStanica);
 
 			KartaOriginator karta = new KartaOriginator(oznakaVlaka, polaznaStanica, odredisnaStanica,
 					LocalDateTime.of(datumVoznje.toLocalDate(),
@@ -354,10 +354,11 @@ public class ZeljeznickiSustav {
 		}
 	}
 
-	public double[] izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine) {
+	public double[] izracunajCijenuKarte(VlakComposite vlak, LocalDateTime datumVoznje, String nacinKupovine,
+			String polaznaStanica, String odredisnaStanica) {
 		KupnjaKarteStrategy strategija = postaviNacinKupovine(nacinKupovine);
 		izracunCijeneContext.setStrategija(strategija);
-		return izracunCijeneContext.izracunajCijenu(vlak, datumVoznje);
+		return izracunCijeneContext.izracunajCijenu(vlak, datumVoznje, polaznaStanica, odredisnaStanica);
 	}
 
 	public KupnjaKarteStrategy postaviNacinKupovine(String nacinKupovine) {

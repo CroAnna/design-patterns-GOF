@@ -28,12 +28,13 @@ public class IzracunCijeneContext {
 		this.uvecanjeVlak = uvecanjeVlak;
 	}
 
-	public double[] izracunajCijenu(VlakComposite vlak, LocalDateTime datumVoznje) {
+	public double[] izracunajCijenu(VlakComposite vlak, LocalDateTime datumVoznje, String polaznaStanica,
+			String odredisnaStanica) {
 		if (strategija == null) {
 			throw new IllegalStateException("Strategija nije ispravno odabrana!");
 		}
-		return strategija.izracunajCijenuOvisnoOVrsti(vlak, datumVoznje, cijenaNormalni, cijenaUbrzani, cijenaBrzi,
-				popustVikendom);
+		return strategija.izracunajCijenuOvisnoOVrsti(vlak, datumVoznje, polaznaStanica, odredisnaStanica,
+				cijenaNormalni, cijenaUbrzani, cijenaBrzi, popustVikendom);
 	}
 
 	public double getPopustWeb() {
