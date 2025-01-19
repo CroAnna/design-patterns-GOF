@@ -19,6 +19,13 @@ CVP 0,10 0,12 0,15 20,0 10,0 10,0
 KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - WM
 =3,69 €
 
+KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - B
+KKPV2S 3301 - Čakovec - Donji Kraljevec - 10.01.2025. - B
+KKPV2S B790 - Donji Kraljevec - Čakovec - 10.01.2025. - B
+KKPV2S B 743 - Donji Kraljevec - Čakovec - 10.01.2025. - B
+KKPV2S EN 415 - Donji Kraljevec - Mala Subotica - 10.01.2025. - V
+KKPV2S 3001 - Donji Kraljevec - Mala Subotica - 10.01.2025. - V
+
 IKKPV
 IKKPV 3
 

@@ -305,7 +305,7 @@ public class ZeljeznickiSustav {
 	}
 
 	private void provjeriKKPV2S(String[] dijeloviKomande, String unos) {
-		Pattern predlozakprovjeriKKPV2S = Pattern.compile("^KKPV2S (?<oznaka>\\d+) - "
+		Pattern predlozakprovjeriKKPV2S = Pattern.compile("^KKPV2S (?<oznaka>(\\d+|[A-Z]{1,2} \\d+|[A-Z]\\d+)) - "
 				+ "(?<polaznaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}) - "
 				+ "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}) - "
 				+ "(?<datum>\\d{2}\\.\\d{2}\\.\\d{4}\\.) - " + "(?<nacinKupovine>WM|B|V)$");
@@ -313,6 +313,8 @@ public class ZeljeznickiSustav {
 		if (!poklapanjePredlozakKKPV2S.matches()) {
 			System.out.println(
 					"Neispravna komanda - format KKPV2S oznaka - polaznaStanica - odredišnaStanica - datum - načinKupovine");
+		} else if (izracunCijeneContext == null) {
+			System.out.println("Cijene karata nisu postavljene.");
 		} else {
 			String oznakaVlaka = poklapanjePredlozakKKPV2S.group("oznaka");
 			String polaznaStanica = poklapanjePredlozakKKPV2S.group("polaznaStanica");
@@ -325,6 +327,12 @@ public class ZeljeznickiSustav {
 
 			if (vlak == null) {
 				System.out.println("Vlak s oznakom " + oznakaVlaka + " ne postoji.");
+				return;
+			}
+
+			if (!vlak.provjeriPostojanjeRute(polaznaStanica, odredisnaStanica)) {
+				System.out.println("Na vlaku " + oznakaVlaka + " ne postoji ruta između stanica " + polaznaStanica
+						+ " i " + odredisnaStanica);
 				return;
 			}
 
