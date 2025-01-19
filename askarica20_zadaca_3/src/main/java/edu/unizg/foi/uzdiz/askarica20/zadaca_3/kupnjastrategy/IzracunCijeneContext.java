@@ -33,7 +33,9 @@ public class IzracunCijeneContext {
 		if (strategija == null) {
 			throw new IllegalStateException("Strategija nije ispravno odabrana!");
 		}
-		return strategija.izracunajCijenuOvisnoOVrsti(vlak, datumVoznje, polaznaStanica, odredisnaStanica,
+		int stvarnaUdaljenost = vlak.izracunajUdaljenostIzmeduStanica(polaznaStanica, odredisnaStanica);
+
+		return strategija.izracunajCijenuOvisnoOVrsti(vlak.getVrstaVlaka(), datumVoznje, stvarnaUdaljenost,
 				cijenaNormalni, cijenaUbrzani, cijenaBrzi, popustVikendom);
 	}
 

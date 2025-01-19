@@ -17,7 +17,8 @@ CMD 3001 - STK
 
 CVP 0,10 0,12 0,15 20,0 10,0 10,0
 KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - WM
-=3,69 €
+KKPV2S 3301 - Čakovec - Donji Kraljevec - 10.01.2025. - WM
+=1.53 €
 
 KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - B
 KKPV2S 3301 - Čakovec - Donji Kraljevec - 10.01.2025. - B

@@ -3,27 +3,23 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_3.kupnjastrategy;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
-import edu.unizg.foi.uzdiz.askarica20.zadaca_3.composite.VlakComposite;
-
 public class BlagajnaStrategy implements KupnjaKarteStrategy {
 
 	@Override
-	public double[] izracunajCijenuOvisnoOVrsti(VlakComposite vlak, LocalDateTime datumVoznje, String polaznaStanica,
-			String odredisnaStanica, double cijenaNormalni, double cijenaUbrzani, double cijenaBrzi,
-			double popustVikendom) {
+	public double[] izracunajCijenuOvisnoOVrsti(String vrstaVlaka, LocalDateTime datumVoznje, int udaljenost,
+			double cijenaNormalni, double cijenaUbrzani, double cijenaBrzi, double popustVikendom) {
 
 		double osnovna, konacna;
-		int stvarnaUdaljenost = vlak.izracunajUdaljenostIzmeduStanica(polaznaStanica, odredisnaStanica);
 
-		switch (vlak.getVrstaVlaka()) {
+		switch (vrstaVlaka) {
 		case "U":
-			osnovna = stvarnaUdaljenost * cijenaUbrzani;
+			osnovna = udaljenost * cijenaUbrzani;
 			break;
 		case "B":
-			osnovna = stvarnaUdaljenost * cijenaBrzi;
+			osnovna = udaljenost * cijenaBrzi;
 			break;
 		default:
-			osnovna = stvarnaUdaljenost * cijenaNormalni;
+			osnovna = udaljenost * cijenaNormalni;
 		}
 
 		konacna = osnovna;
