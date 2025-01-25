@@ -57,7 +57,7 @@ This Java project manages railway transport for passengers and goods, involving 
           <li>Container freight wagons</li>
         </ul>
       </li>
-      <li>According to the file, while all vehicle data is mandatory, vehicles of certain categories have some data (columns) filled with value 0</li>
+      <li>All vehicle data is mandatory, vehicles of certain categories have some data (columns) filled with value 0</li>
       <li>This means that data isn't relevant for that vehicle group</li>
       <li>Allows multiple different construction processes for vehicles, each providing a different representation</li>
     </ul>
@@ -149,8 +149,89 @@ New patterns:
 
 ## 🔨 Project #3
 
+Project #3 builds upon project #2, adding new functionality for ticket management, railway status handling, and train controls. 
+
 ### Design patterns
 
+Old patterns changes:
+
+<b>Singleton:</b>
+<ul> <li>Added several new methods and needed objects for new commands</li> </ul>
+
+New patterns:
+
+<b>Command:</b>
+- Implements train control functionality with actions: turn on the lights, turn on the AC, honk
+- Concrete commands: PotrubiCommand (honk), UpaliSvjetlaCommand (lights), UpaliKlimuCommand (AC)
+- Allows chaining multiple actions in sequence (e.g. honk then lights)
+
+<b>State:</b>
+- Manages railway track segment states:
+ - I = ispravna (working)
+ - K = kvar (faulty) 
+ - Z = zatvorena (closed)
+ - T = testiranje (testing)
+- Handles state transitions -  railway can't directly change state from Z to I, it must be tested first (Z to T to I) 
+
+<b>Strategy:</b>
+- Implements ticket pricing strategies based on purchase method (web/mobile app, on-train or counter purchase)
+- Concrete strategies:
+ - BlagajnaStrategy (counter purchase) = B - normal price
+ - UVlakuStrategy (on-train purchase) = V - more expensive price
+ - WebMobilnaStrategy (web/mobile purchase) - WM - cheaper price
+- Each calculates final price with applicable discounts/fees
+
+<b>Memento:</b>
+- Stores ticket purchase history
+- Enables retrieving past tickets
+
+
+![uzdiz3 3 drawio](https://github.com/user-attachments/assets/14a599c7-846e-4b17-8d6b-a4be03b07bfd)
+
+
+### Commands
+
+<ul>
+<li><b>CVP price1 price2 price3 discountSuN discountWebMob increaseTrain</b>: Set ticket base prices and discounts:
+ <ul>
+   <li>price1 - normal train price per km</li>
+   <li>price2 - accelerated train price per km</li>
+   <li>price3 - fast train price per km</li>
+   <li>discountSuN - weekend discount %</li>
+   <li>discountWebMob - web/mobile purchase discount %</li>
+   <li>increaseTrain - on-train purchase fee %</li>
+ </ul>
+ Example: CVP 0,10 0,12 0,15 20,0 10,0 10,0</li>
+
+<li><b>KKPV2S trainNumber - startStation - endStation - date - purchaseType</b>: Purchase ticket
+ <ul>
+   <li>purchaseType: B (counter), WM (web/mobile), V (on-train)</li>
+ </ul>
+ Example: KKPV2S 3301 - Čakovec - Donji Kraljevec - 10.01.2025. - WM</li>
+
+<li><b>IKKPV [n]</b>: Display all purchased tickets or nth purchase</li>
+
+<li><b>PSP2S lineCode - startStation - endStation - status</b>: Change track segment status
+ <ul>
+   <li>status: I (working), K (faulty), T (testing), Z (closed)</li>
+ </ul>
+ Example: PSP2S M501 - Donji Mihaljevec - Čehovec - K</li>
+
+<li><b>IRPS status [lineCode]</b>: Show track segments with specified status, optionally filtered by line</li>
+
+<li><b>CMD trainNumber - actions</b>: Control train features
+ <ul>
+   <li>S - turn on lights</li>
+   <li>T - honk horn</li>
+   <li>K - activate climate control</li>
+   <li>Actions can be combined (e.g. KTS)</li>
+ </ul>
+ Example: CMD 3001 - KTS</li>
+</ul>
+
+### Demo
+
+![dz3-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/e30ad385-cb42-4a2d-8b13-7235bfe81b4a)
 
 
 
@@ -167,7 +248,7 @@ To set up and run the Railway Transport Management System, follow these steps:
 On Linux, open the terminal and navigate to the selected project
 
 ```
-cd askarica20_zadaca_1
+cd askarica20_zadaca_1 // or cd askarica20_zadaca_2 or cd askarica20_zadaca_3
 ```
 
 Run the following command to compile and package the application:
@@ -176,7 +257,12 @@ Run the following command to compile and package the application:
 mvn clean package
 ```
 
-After building, start the application using the following command:
+After building, go back to podaci folder and start the application using the following command:
+
+```
+cd ..
+cd podaci/
+```
 
 Project #1:
 
@@ -187,4 +273,9 @@ java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_1/target/askarica20_zadaca_1-1.0.
 Project #2:
 ```
 java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_2/target/askarica20_zadaca_2-1.0.0.jar --zs DZ_2_stanice.csv --zps DZ_2_vozila.csv --zk DZ_2_kompozicije.csv --zvr DZ_2_vozni_red.csv --zod DZ_2_oznake_dana.csv
+```
+
+Project #3:
+```
+java -jar /home/NWTiS_1/DZ_1/askarica20_zadaca_3/target/askarica20_zadaca_3-1.0.0.jar --zs DZ_3_stanice.csv --zps DZ_3_vozila.csv --zk DZ_3_kompozicije.csv --zvr DZ_3_vozni_red.csv --zod DZ_3_oznake_dana.csv
 ```
