@@ -306,8 +306,8 @@ public class ZeljeznickiSustav {
 
 	private void provjeriKKPV2S(String[] dijeloviKomande, String unos) {
 		Pattern predlozakprovjeriKKPV2S = Pattern.compile("^KKPV2S (?<oznaka>(\\d+|[A-Z]{1,2} \\d+|[A-Z]\\d+)) - "
-				+ "(?<polaznaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}) - "
-				+ "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+(?: [A-ZŠĐČĆŽ][a-zšđčćž]+){0,2}) - "
+				+ "(?<polaznaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+((?:[ -][A-ZŠĐČĆŽ][a-zšđčćž]+){0,2})) - "
+				+ "(?<odredisnaStanica>[A-ZŠĐČĆŽ][a-zšđčćž]+((?:[ -][A-ZŠĐČĆŽ][a-zšđčćž]+){0,2})) - "
 				+ "(?<datum>\\d{2}\\.\\d{2}\\.\\d{4}\\.) - " + "(?<nacinKupovine>WM|B|V)$");
 		Matcher poklapanjePredlozakKKPV2S = predlozakprovjeriKKPV2S.matcher(unos);
 		if (!poklapanjePredlozakKKPV2S.matches()) {
@@ -330,9 +330,25 @@ public class ZeljeznickiSustav {
 				return;
 			}
 
+			if (!postojiLiStanicaPoImenu(polaznaStanica) || !postojiLiStanicaPoImenu(odredisnaStanica)) {
+				System.out.println("Jedna ili obje stanice ne postoje u sustavu!");
+				return;
+			}
+
+			if (polaznaStanica.equals(odredisnaStanica)) {
+				System.out.println("Pocetna i odredisna stanica ne mogu biti iste.");
+				return;
+			}
+
 			if (!vlak.provjeriPostojanjeRute(polaznaStanica, odredisnaStanica)) {
 				System.out.println("Na vlaku " + oznakaVlaka + " ne postoji ruta između stanica " + polaznaStanica
 						+ " i " + odredisnaStanica);
+				return;
+			}
+
+			if (konvertirajMinuteUVrijeme(vlak.getVrijemePolaska()) == null
+					|| konvertirajMinuteUVrijeme(vlak.getVrijemeDolaska()) == null) {
+				System.out.println("Greška s vremenima polaska/dolaska za vlak " + oznakaVlaka);
 				return;
 			}
 
@@ -342,15 +358,48 @@ public class ZeljeznickiSustav {
 			double[] cijene = izracunajCijenuKarte(vlak, datumVoznje, nacinKupovine, polaznaStanica, odredisnaStanica);
 
 			KartaOriginator karta = new KartaOriginator(oznakaVlaka, polaznaStanica, odredisnaStanica,
-					LocalDateTime.of(datumVoznje.toLocalDate(),
-							LocalTime.of(vlak.getVrijemePolaska() / 60, vlak.getVrijemePolaska() % 60)),
-					LocalDateTime.of(datumVoznje.toLocalDate(),
-							LocalTime.of(vlak.getVrijemeDolaska() / 60, vlak.getVrijemeDolaska() % 60)),
+					LocalDateTime.of(datumVoznje.toLocalDate(), konvertirajMinuteUVrijeme(vlak.getVrijemePolaska())),
+					LocalDateTime.of(datumVoznje.toLocalDate(), konvertirajMinuteUVrijeme(vlak.getVrijemeDolaska())),
 					cijene[0], cijene[1], nacinKupovine, LocalDateTime.now());
 
 			dohvatiPovijestKarata().dodajKartu(karta.kreirajMemento());
 
-			System.out.println("Uspješno kupljena karta. Cijena: " + String.format("%.2f", cijene[1]) + " €");
+			System.out.println("\nKarta za vlak " + oznakaVlaka);
+			System.out.println("Relacija: " + polaznaStanica + " - " + odredisnaStanica);
+			System.out.println("Datum putovanja: " + datumVoznje.format(DateTimeFormatter.ofPattern("dd.MM.yyyy.")));
+			System.out.println("Vrijeme polaska: " + konvertirajMinuteUVrijeme(vlak.getVrijemePolaska()));
+			System.out.println("Vrijeme dolaska: " + konvertirajMinuteUVrijeme(vlak.getVrijemeDolaska()));
+			System.out.println("Izvorna cijena: " + String.format("%.2f", cijene[0]) + " €");
+			System.out.println("Primijenjen popust: " + String.format("%.2f", cijene[0] - cijene[1]) + " €");
+			System.out.println("Konačna cijena: " + String.format("%.2f", cijene[1]) + " €");
+			System.out.println("Način kupovine: " + pretvoriNacinKupovine(nacinKupovine));
+			System.out.println("Datum i vrijeme kupovine: "
+					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm")));
+		}
+	}
+
+	private String pretvoriNacinKupovine(String nacin) {
+		switch (nacin) {
+		case "WM":
+			return "Web/Mobilna aplikacija";
+		case "B":
+			return "Blagajna";
+		case "V":
+			return "U vlaku";
+		default:
+			return nacin;
+		}
+	}
+
+	private LocalTime konvertirajMinuteUVrijeme(int minute) {
+		try {
+			if (minute < 0 || minute >= 24 * 60) {
+				return null;
+			}
+			return LocalTime.of(minute / 60, minute % 60);
+		} catch (Exception e) {
+			System.out.println("Greška pri konverziji vremena.");
+			return null;
 		}
 	}
 
@@ -454,7 +503,19 @@ public class ZeljeznickiSustav {
 			System.out.println(
 					"Neispravna komanda - format UKP2S polaznaStanica - odredišnaStanica - datum - odVr - doVr - načinKupovine");
 		} else {
-			// TODO
+			String polaznaStanica = poklapanjePredlozakUKP2S.group("polaznaStanica");
+			String odredisnaStanica = poklapanjePredlozakUKP2S.group("odredisnaStanica");
+
+			if (!postojiLiStanicaPoImenu(polaznaStanica) || !postojiLiStanicaPoImenu(odredisnaStanica)) {
+				System.out.println("Jedna ili obje stanice ne postoje u sustavu!");
+				return;
+			}
+
+			if (polaznaStanica.equals(odredisnaStanica)) {
+				System.out.println("Pocetna i odredisna stanica ne mogu biti iste.");
+				return;
+			}
+
 		}
 	}
 

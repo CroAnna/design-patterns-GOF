@@ -1,7 +1,7 @@
 package edu.unizg.foi.uzdiz.askarica20.zadaca_3.stanjaprugestate;
 
 public class PrugaContext {
-	private PrugaState trenutnoStanje; // privatno stanje
+	private PrugaState trenutnoStanje;
 	private final String polaznaStanica;
 	private final String odredisnaStanica;
 	private final int brojKolosijeka;
@@ -13,11 +13,11 @@ public class PrugaContext {
 		this.trenutnoStanje = new StanjeIspravna();
 	}
 
-	public PrugaState getTrenutnoStanje() { // get stanje
+	public PrugaState getTrenutnoStanje() {
 		return this.trenutnoStanje;
 	}
 
-	public void setStanje(PrugaState novoStanje) { // set stanje
+	public void setStanje(PrugaState novoStanje) {
 		this.trenutnoStanje = novoStanje;
 	}
 
@@ -52,7 +52,7 @@ public class PrugaContext {
 		}
 
 		if (novoStanjeObj.handle(this)) {
-			trenutnoStanje = novoStanjeObj; // Postavljamo novo stanje tek nakon što znamo da je prijelaz dozvoljen
+			trenutnoStanje = novoStanjeObj;
 			return "OK";
 		} else {
 			return "Nedozvoljen prijelaz iz stanja " + trenutnoStanje.getOznaka() + " u stanje " + novoStanje;

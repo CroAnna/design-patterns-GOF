@@ -20,6 +20,9 @@ KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - WM
 KKPV2S 3301 - Čakovec - Donji Kraljevec - 10.01.2025. - WM
 =1.53 €
 
+
+KKPV2S 3002 - Čakovec - Mala Subotica - 10.01.2025. - WM
+KKPV2S 3002 - Čakovec - Mala Subotica - 10.01.2025. - B
 KKPV2S 3301 - Donji Kraljevec - Čakovec - 10.01.2025. - B
 KKPV2S 3301 - Čakovec - Donji Kraljevec - 10.01.2025. - B
 KKPV2S B790 - Donji Kraljevec - Čakovec - 10.01.2025. - B

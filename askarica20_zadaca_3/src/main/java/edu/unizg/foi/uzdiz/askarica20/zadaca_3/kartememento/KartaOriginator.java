@@ -2,9 +2,7 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento;
 
 import java.time.LocalDateTime;
 
-// klasa cije stanje zelimo sacuvati
 public class KartaOriginator {
-	// atributi s getterima i setterima
 	private String oznakaVlaka;
 	private String polaznaStanica;
 	private String odredisnaStanica;
@@ -30,13 +28,11 @@ public class KartaOriginator {
 	}
 
 	public CuvateljKarteMemento kreirajMemento() {
-		// kreiranje mementa
 		return new CuvateljKarteMemento(oznakaVlaka, polaznaStanica, odredisnaStanica, vrijemePolaska, vrijemeDolaska,
 				osnovnaCijena, konacnaCijena, nacinKupnje, datumKupovine);
 	}
 
 	public void postaviMemento(CuvateljKarteMemento memento) {
-		// vracanje stanja
 		this.oznakaVlaka = memento.getOznakaVlaka();
 		this.polaznaStanica = memento.getPolaznaStanica();
 		this.odredisnaStanica = memento.getOdredisnaStanica();

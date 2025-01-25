@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// upravlja i cuva memento objekte
 public class PovijestKarataCaretaker {
 
-	// lista za cuvanje povijesti
 	private List<CuvateljKarteMemento> povijestKarata = new ArrayList<>();
 
 	public void dodajKartu(CuvateljKarteMemento memento) {

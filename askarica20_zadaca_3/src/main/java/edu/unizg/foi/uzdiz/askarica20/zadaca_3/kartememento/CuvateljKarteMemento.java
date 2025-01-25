@@ -2,7 +2,6 @@ package edu.unizg.foi.uzdiz.askarica20.zadaca_3.kartememento;
 
 import java.time.LocalDateTime;
 
-// cuva stanje Originatora - bez settera (jer je immutable)
 public class CuvateljKarteMemento {
 	private String oznakaVlaka;
 	private String polaznaStanica;
